@@ -26,3 +26,14 @@ Outil local et PWA pour cadrer, suivre, enrichir et réouvrir des projets de man
 ```bash
 npm install
 npm run dev
+```
+
+Build
+```bash
+npm run build
+npm run preview
+```
+
+Déploiement
+
+Le dépôt est prévu pour être publié via GitHub Pages avec GitHub Actions.
