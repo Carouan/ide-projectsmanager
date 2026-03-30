@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
+  base: "/ide-projectsmanager/",
   plugins: [
     react(),
     VitePWA({
@@ -13,6 +14,7 @@ export default defineConfig({
         "apple-touch-icon.png",
       ],
       manifest: {
+        id: "/ide-projectsmanager/",
         name: "IDE de projet personnel",
         short_name: "IDE Projet",
         description:
@@ -20,8 +22,8 @@ export default defineConfig({
         theme_color: "#0f172a",
         background_color: "#0f172a",
         display: "standalone",
-        scope: "/",
-        start_url: "/",
+        scope: "/ide-projectsmanager/",
+        start_url: "/ide-projectsmanager/",
         icons: [
           {
             src: "pwa-192x192.png",
@@ -37,7 +39,7 @@ export default defineConfig({
             src: "pwa-512x512.png",
             sizes: "512x512",
             type: "image/png",
-            purpose: "any maskable",
+            purpose: "maskable",
           },
         ],
       },
