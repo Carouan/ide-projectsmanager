@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { STAGE_DEFINITIONS } from "../constants/stages";
 
 export default function JournalPanel({
   projectId,
@@ -63,12 +64,11 @@ export default function JournalPanel({
         <label className="field">
           <span>Étape</span>
           <select value={stage} onChange={(e) => setStage(e.target.value)}>
-            <option value="v0_0">v0_0</option>
-            <option value="v0_1">v0_1</option>
-            <option value="v0_2">v0_2</option>
-            <option value="v0_3">v0_3</option>
-            <option value="v0_4">v0_4</option>
-            <option value="v1_0">v1_0</option>
+            {STAGE_DEFINITIONS.map((stageDefinition) => (
+              <option key={stageDefinition.key} value={stageDefinition.key}>
+                {stageDefinition.shortTitle}
+              </option>
+            ))}
           </select>
         </label>
 
