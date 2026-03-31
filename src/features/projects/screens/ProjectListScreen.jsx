@@ -1,10 +1,9 @@
-import { useState } from "react";
-
 export default function ProjectListScreen({
   projects,
   onCreateProject,
   onOpenProject,
   onDeleteProject,
+  onOpenSettings,
 }) {
   return (
     <div className="page-shell">
@@ -18,9 +17,14 @@ export default function ProjectListScreen({
             </p>
           </div>
 
-          <button className="btn btn-primary" onClick={onCreateProject}>
-            + Nouveau projet
-          </button>
+          <div className="project-actions">
+            <button className="btn btn-secondary" onClick={onOpenSettings}>
+              Paramètres
+            </button>
+            <button className="btn btn-primary" onClick={onCreateProject}>
+              + Nouveau projet
+            </button>
+          </div>
         </div>
 
         {projects.length === 0 ? (

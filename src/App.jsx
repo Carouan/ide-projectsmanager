@@ -2,6 +2,7 @@
 import { useAppStore } from "./store/useAppStore";
 import ProjectListScreen from "./features/projects/screens/ProjectListScreen";
 import ProjectScreen from "./features/projects/screens/ProjectScreen";
+import SettingsScreen from "./features/projects/screens/SettingsScreen";
 import PwaPrompt from "./components/PwaPrompt";
 import AppShell from "./app/AppShell";
 
@@ -23,9 +24,12 @@ export default function App() {
     exportCurrentProjectJson,
     importProjectFromFile,
     exportCurrentProjectMarkdown,
+    settings,
+    updateSettings,
   } = useAppStore();
 
   const [view, setView] = useState("list");
+  const [previousView, setPreviousView] = useState("list");
 
   function handleCreateProject() {
     createProject();
@@ -41,6 +45,15 @@ export default function App() {
     setView("list");
   }
 
+  function handleOpenSettings() {
+    setPreviousView(view);
+    setView("settings");
+  }
+
+  function handleBackFromSettings() {
+    setView(previousView || "list");
+  }
+
   const activeScreen =
     view === "list" ? (
       <ProjectListScreen
@@ -48,11 +61,13 @@ export default function App() {
         onCreateProject={handleCreateProject}
         onOpenProject={handleOpenProject}
         onDeleteProject={deleteProject}
+        onOpenSettings={handleOpenSettings}
       />
-    ) : (
+    ) : view === "project" ? (
       <ProjectScreen
         projectDoc={currentProject}
         onBack={handleBack}
+        onOpenSettings={handleOpenSettings}
         onUpdateProjectMeta={updateProjectMeta}
         onSetCurrentStage={setCurrentStage}
         onUpdateStageField={updateStageField}
@@ -64,6 +79,12 @@ export default function App() {
         onExportJson={exportCurrentProjectJson}
         onImportJson={importProjectFromFile}
         onExportMarkdown={exportCurrentProjectMarkdown}
+      />
+    ) : (
+      <SettingsScreen
+        settings={settings}
+        onBack={handleBackFromSettings}
+        onUpdateSettings={updateSettings}
       />
     );
 
