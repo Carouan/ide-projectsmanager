@@ -1,5 +1,10 @@
 ﻿import { useEffect, useState } from "react";
-import { loadProjects, saveProjects } from "../services/storage";
+import {
+  loadProjects,
+  saveProjects,
+  loadSettings,
+  saveSettings,
+} from "../services/storage";
 import { createEmptyProject } from "../services/projectFactory";
 import { downloadJsonFile, readJsonFile } from "../services/jsonTransfer";
 import {
@@ -61,12 +66,20 @@ function uniqueIds(list) {
 
 export function useAppStore() {
   const [projects, setProjects] = useState([]);
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [currentProjectId, setCurrentProjectId] = useState(null);
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
     const loaded = loadProjects().map(normalizeProject);
+    const storedSettings = loadSettings();
+    const initialSettings = {
+      ...DEFAULT_SETTINGS,
+      ...(storedSettings || loaded[0]?.settings || {}),
+    };
+
     setProjects(loaded);
+    setSettings(initialSettings);
 
     if (loaded.length > 0) {
       setCurrentProjectId(loaded[0].project.id);
@@ -79,6 +92,11 @@ export function useAppStore() {
     if (!isHydrated) return;
     saveProjects(projects);
   }, [projects, isHydrated]);
+
+  useEffect(() => {
+    if (!isHydrated) return;
+    saveSettings(settings);
+  }, [settings, isHydrated]);
 
   function createProject() {
     const newProject = normalizeProject(createEmptyProject());
@@ -356,6 +374,12 @@ export function useAppStore() {
   }
 
   function updateProjectSettings(projectId, patch) {
+    setSettings((prev) => ({
+      ...DEFAULT_SETTINGS,
+      ...prev,
+      ...patch,
+    }));
+
     setProjects((prev) =>
       prev.map((p) => {
         if (p.project.id !== projectId) return p;
@@ -564,6 +588,7 @@ export function useAppStore() {
 
   return {
     projects,
+    settings,
     currentProject,
     currentProjectId,
     createProject,
