@@ -4,7 +4,7 @@ import en from "./en.json";
 
 const I18nContext = createContext({
   locale: "fr",
-  t: (key) => key,
+  t: (key, params = {}) => key,
 });
 
 const TRANSLATIONS = {
@@ -17,10 +17,20 @@ function createTranslator(locale) {
   const dictionary = TRANSLATIONS[selectedLocale];
   const fallbackDictionary = TRANSLATIONS.fr;
 
-  return function translate(key) {
-    if (dictionary[key]) return dictionary[key];
-    if (fallbackDictionary[key]) return fallbackDictionary[key];
-    return key;
+  return function translate(key, params = {}) {
+    const resolvedValue = dictionary[key] ?? fallbackDictionary[key] ?? key;
+
+    if (typeof resolvedValue !== "string") {
+      return resolvedValue;
+    }
+
+    return resolvedValue.replace(/\{\{(\w+)\}\}/g, (token, paramName) => {
+      if (Object.prototype.hasOwnProperty.call(params, paramName)) {
+        return String(params[paramName]);
+      }
+
+      return token;
+    });
   };
 }
 
