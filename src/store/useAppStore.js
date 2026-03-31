@@ -8,6 +8,7 @@ import {
 } from "../services/markdownExport";
 import { ensureProjectStages } from "../constants/stages";
 import { BACKLOG_STATUS, normalizeBacklogStatus } from "../constants/backlog";
+import { DEFAULT_SETTINGS } from "../constants/settings";
 
 function newBacklogId() {
   return `b_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
@@ -48,9 +49,7 @@ function normalizeProject(projectDoc) {
     decisions: normalized.decisions || [],
     attachments: normalized.attachments || [],
     settings: {
-      theme: "dark",
-      autosave: true,
-      exportFormat: "markdown",
+      ...DEFAULT_SETTINGS,
       ...(normalized.settings || {}),
     },
   };
@@ -356,6 +355,27 @@ export function useAppStore() {
     );
   }
 
+  function updateProjectSettings(projectId, patch) {
+    setProjects((prev) =>
+      prev.map((p) => {
+        if (p.project.id !== projectId) return p;
+
+        return {
+          ...p,
+          project: {
+            ...p.project,
+            updatedAt: new Date().toISOString(),
+          },
+          settings: {
+            ...DEFAULT_SETTINGS,
+            ...(p.settings || {}),
+            ...patch,
+          },
+        };
+      })
+    );
+  }
+
   function updateBacklogItemStatus(projectId, itemId, status) {
     setProjects((prev) =>
       prev.map((p) => {
@@ -560,6 +580,7 @@ export function useAppStore() {
     linkBacklogItemToStage,
     linkJournalEntryToStage,
     handleDecisionTreeDestination,
+    updateProjectSettings,
     updateBacklogItemStatus,
     exportCurrentProjectJson,
     importProjectFromFile,
