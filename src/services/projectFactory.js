@@ -1,4 +1,5 @@
 import { buildDefaultStages } from "../constants/stages";
+import { DEFAULT_SETTINGS } from "../constants/settings";
 
 export function createEmptyProject() {
   const now = new Date().toISOString();
@@ -24,9 +25,7 @@ export function createEmptyProject() {
     decisions: [],
     attachments: [],
     settings: {
-      theme: "dark",
-      autosave: true,
-      exportFormat: "markdown",
+      ...DEFAULT_SETTINGS,
     },
   };
 }
