@@ -1,7 +1,7 @@
 ﻿import { useState } from "react";
 import { useAppStore } from "./store/useAppStore";
-import ProjectListScreen from "./screens/ProjectListScreen";
-import ProjectScreen from "./screens/ProjectScreen";
+import ProjectListScreen from "./features/projects/screens/ProjectListScreen";
+import ProjectScreen from "./features/projects/screens/ProjectScreen";
 import PwaPrompt from "./components/PwaPrompt";
 
 export default function App() {
