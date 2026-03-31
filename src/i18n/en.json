@@ -10,5 +10,16 @@
   "settings.language.fr": "Français",
   "settings.language.en": "English",
   "settings.theme.dark": "Dark",
-  "settings.theme.light": "Light"
+  "settings.theme.light": "Light",
+  "global.hero.eyebrow": "Local MVP - React + Vite",
+  "global.hero.title": "Personal project IDE",
+  "global.hero.description": "List of projects saved locally in the browser.",
+  "global.actions.settings": "Settings",
+  "global.actions.newProject": "+ New project",
+  "global.actions.open": "Open",
+  "global.actions.delete": "Delete",
+  "global.empty.title": "No projects yet",
+  "global.empty.description": "Create your first project to start structuring your ideas.",
+  "global.meta.status": "Status: {{status}}",
+  "global.meta.updated": "Updated: {{timestamp}}"
 }
