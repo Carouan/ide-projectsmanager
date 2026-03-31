@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { BACKLOG_STATUS } from "../constants/backlog";
 
 export default function BacklogPanel({
   projectId,
@@ -17,7 +18,7 @@ export default function BacklogPanel({
       description: description.trim(),
       type: "idea",
       priority: "medium",
-      status: "open",
+      status: BACKLOG_STATUS.OPEN,
       source: "manual",
       relatedStage: "v0_0",
     });
@@ -89,7 +90,7 @@ export default function BacklogPanel({
                 <button
                   className="btn btn-secondary"
                   onClick={() =>
-                    onUpdateBacklogItemStatus(projectId, item.id, "planned")
+                    onUpdateBacklogItemStatus(projectId, item.id, BACKLOG_STATUS.PLANNED)
                   }
                 >
                   Planned
@@ -97,7 +98,7 @@ export default function BacklogPanel({
                 <button
                   className="btn btn-secondary"
                   onClick={() =>
-                    onUpdateBacklogItemStatus(projectId, item.id, "done")
+                    onUpdateBacklogItemStatus(projectId, item.id, BACKLOG_STATUS.DONE)
                   }
                 >
                   Done
@@ -105,7 +106,7 @@ export default function BacklogPanel({
                 <button
                   className="btn btn-danger"
                   onClick={() =>
-                    onUpdateBacklogItemStatus(projectId, item.id, "dropped")
+                    onUpdateBacklogItemStatus(projectId, item.id, BACKLOG_STATUS.DROPPED)
                   }
                 >
                   Dropped

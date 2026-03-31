@@ -7,6 +7,7 @@ import {
   downloadMarkdownFile,
 } from "../services/markdownExport";
 import { ensureProjectStages } from "../constants/stages";
+import { BACKLOG_STATUS, normalizeBacklogStatus } from "../constants/backlog";
 
 function newBacklogId() {
   return `b_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
@@ -39,7 +40,10 @@ function normalizeProject(projectDoc) {
       ...normalized.project,
       currentStage: normalized.project?.currentStage || "v0_0",
     },
-    backlog: normalized.backlog || [],
+    backlog: (normalized.backlog || []).map((item) => ({
+      ...item,
+      status: normalizeBacklogStatus(item.status),
+    })),
     journal: normalized.journal || [],
     decisions: normalized.decisions || [],
     attachments: normalized.attachments || [],
@@ -197,6 +201,7 @@ export function useAppStore() {
       id: newBacklogId(),
       createdAt: new Date().toISOString(),
       ...item,
+      status: normalizeBacklogStatus(item.status),
     };
 
     setProjects((prev) =>
@@ -363,7 +368,9 @@ export function useAppStore() {
             updatedAt: new Date().toISOString(),
           },
           backlog: p.backlog.map((item) =>
-            item.id === itemId ? { ...item, status } : item
+            item.id === itemId
+              ? { ...item, status: normalizeBacklogStatus(status) }
+              : item
           ),
         };
       })
@@ -385,7 +392,7 @@ export function useAppStore() {
       const item = addBacklogItem(projectId, {
         title: ideaTitle,
         description: ideaContent,
-        status: "todo",
+        status: BACKLOG_STATUS.OPEN,
         type: "idea",
         relatedStage: sourceStageKey || null,
       });
@@ -400,7 +407,7 @@ export function useAppStore() {
       const item = addBacklogItem(projectId, {
         title: ideaTitle,
         description: ideaContent,
-        status: "todo",
+        status: BACKLOG_STATUS.OPEN,
         type: "tech",
         relatedStage: sourceStageKey || null,
       });
