@@ -1,3 +1,5 @@
+import { useI18n } from "../../../i18n/useI18n";
+
 export default function ProjectListScreen({
   projects,
   onCreateProject,
@@ -5,34 +7,32 @@ export default function ProjectListScreen({
   onDeleteProject,
   onOpenSettings,
 }) {
+  const { t } = useI18n();
+
   return (
     <div className="page-shell">
       <div className="page-container">
         <div className="hero">
           <div>
-            <div className="eyebrow">MVP local - React + Vite</div>
-            <h1>IDE de projet personnel</h1>
-            <p className="hero-text">
-              Liste des projets sauvegardés localement dans le navigateur.
-            </p>
+            <div className="eyebrow">{t("global.hero.eyebrow")}</div>
+            <h1>{t("global.hero.title")}</h1>
+            <p className="hero-text">{t("global.hero.description")}</p>
           </div>
 
           <div className="project-actions">
             <button className="btn btn-secondary" onClick={onOpenSettings}>
-              Paramètres
+              {t("global.actions.settings")}
             </button>
             <button className="btn btn-primary" onClick={onCreateProject}>
-              + Nouveau projet
+              {t("global.actions.newProject")}
             </button>
           </div>
         </div>
 
         {projects.length === 0 ? (
           <div className="empty-state">
-            <h2>Aucun projet pour le moment</h2>
-            <p>
-              Crée ton premier projet pour commencer à structurer tes idées.
-            </p>
+            <h2>{t("global.empty.title")}</h2>
+            <p>{t("global.empty.description")}</p>
           </div>
         ) : (
           <div className="card-grid">
@@ -47,9 +47,11 @@ export default function ProjectListScreen({
                 </div>
 
                 <div className="project-meta">
-                  <span>Statut : {p.project.status}</span>
+                  <span>{t("global.meta.status", { status: p.project.status })}</span>
                   <span>
-                    Modifié : {new Date(p.project.updatedAt).toLocaleString()}
+                    {t("global.meta.updated", {
+                      timestamp: new Date(p.project.updatedAt).toLocaleString(),
+                    })}
                   </span>
                 </div>
 
@@ -58,13 +60,13 @@ export default function ProjectListScreen({
                     className="btn btn-secondary"
                     onClick={() => onOpenProject(p.project.id)}
                   >
-                    Ouvrir
+                    {t("global.actions.open")}
                   </button>
                   <button
                     className="btn btn-danger"
                     onClick={() => onDeleteProject(p.project.id)}
                   >
-                    Supprimer
+                    {t("global.actions.delete")}
                   </button>
                 </div>
               </article>
