@@ -1,0 +1,14 @@
+{
+  "settings.title": "Application settings",
+  "settings.eyebrow": "Settings",
+  "settings.description": "Change language, theme, and markdown preview activation.",
+  "settings.preferences": "Preferences",
+  "settings.language": "Language",
+  "settings.theme": "Theme",
+  "settings.markdownPreview": "Markdown preview",
+  "settings.back": "← Back",
+  "settings.language.fr": "Français",
+  "settings.language.en": "English",
+  "settings.theme.dark": "Dark",
+  "settings.theme.light": "Light"
+}
