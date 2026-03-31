@@ -1,10 +1,10 @@
 import { useMemo, useRef, useState } from "react";
-import StageEditor from "../components/StageEditor";
-import BacklogPanel from "../components/BacklogPanel";
-import JournalPanel from "../components/JournalPanel";
-import DecisionsPanel from "../components/DecisionsPanel";
-import DecisionTreeModal from "../components/DecisionTreeModal";
-import { STAGE_DEFINITIONS, getStageDefinition } from "../constants/stages";
+import StageEditor from "../../../components/StageEditor";
+import BacklogPanel from "../../../components/BacklogPanel";
+import JournalPanel from "../../../components/JournalPanel";
+import DecisionsPanel from "../../../components/DecisionsPanel";
+import DecisionTreeModal from "../../../components/DecisionTreeModal";
+import { STAGE_DEFINITIONS, getStageDefinition } from "../../../constants/stages";
 
 export default function ProjectScreen({
   projectDoc,

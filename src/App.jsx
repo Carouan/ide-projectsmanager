@@ -1,8 +1,9 @@
 ﻿import { useState } from "react";
 import { useAppStore } from "./store/useAppStore";
-import ProjectListScreen from "./screens/ProjectListScreen";
-import ProjectScreen from "./screens/ProjectScreen";
+import ProjectListScreen from "./features/projects/screens/ProjectListScreen";
+import ProjectScreen from "./features/projects/screens/ProjectScreen";
 import PwaPrompt from "./components/PwaPrompt";
+import AppShell from "./app/AppShell";
 
 export default function App() {
   const {
@@ -40,33 +41,35 @@ export default function App() {
     setView("list");
   }
 
+  const activeScreen =
+    view === "list" ? (
+      <ProjectListScreen
+        projects={projects}
+        onCreateProject={handleCreateProject}
+        onOpenProject={handleOpenProject}
+        onDeleteProject={deleteProject}
+      />
+    ) : (
+      <ProjectScreen
+        projectDoc={currentProject}
+        onBack={handleBack}
+        onUpdateProjectMeta={updateProjectMeta}
+        onSetCurrentStage={setCurrentStage}
+        onUpdateStageField={updateStageField}
+        onAddBacklogItem={addBacklogItem}
+        onAddJournalEntry={addJournalEntry}
+        onHandleDecisionTreeDestination={handleDecisionTreeDestination}
+        onUpdateBacklogItemStatus={updateBacklogItemStatus}
+        onUpdateDecisionStatus={updateDecisionStatus}
+        onExportJson={exportCurrentProjectJson}
+        onImportJson={importProjectFromFile}
+        onExportMarkdown={exportCurrentProjectMarkdown}
+      />
+    );
+
   return (
     <>
-      {view === "list" ? (
-        <ProjectListScreen
-          projects={projects}
-          onCreateProject={handleCreateProject}
-          onOpenProject={handleOpenProject}
-          onDeleteProject={deleteProject}
-        />
-      ) : (
-        <ProjectScreen
-          projectDoc={currentProject}
-          onBack={handleBack}
-          onUpdateProjectMeta={updateProjectMeta}
-          onSetCurrentStage={setCurrentStage}
-          onUpdateStageField={updateStageField}
-          onAddBacklogItem={addBacklogItem}
-          onAddJournalEntry={addJournalEntry}
-          onHandleDecisionTreeDestination={handleDecisionTreeDestination}
-          onUpdateBacklogItemStatus={updateBacklogItemStatus}
-          onUpdateDecisionStatus={updateDecisionStatus}
-          onExportJson={exportCurrentProjectJson}
-          onImportJson={importProjectFromFile}
-          onExportMarkdown={exportCurrentProjectMarkdown}
-        />
-      )}
-
+      <AppShell main={activeScreen} rightPanel={null} />
       <PwaPrompt />
     </>
   );
