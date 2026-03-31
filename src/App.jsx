@@ -62,6 +62,7 @@ export default function App() {
         onOpenProject={handleOpenProject}
         onDeleteProject={deleteProject}
         onOpenSettings={handleOpenSettings}
+        language={settings.language}
       />
     ) : view === "project" ? (
       <ProjectScreen
@@ -79,6 +80,7 @@ export default function App() {
         onExportJson={exportCurrentProjectJson}
         onImportJson={importProjectFromFile}
         onExportMarkdown={exportCurrentProjectMarkdown}
+        language={settings.language}
       />
     ) : (
       <SettingsScreen
@@ -91,7 +93,7 @@ export default function App() {
   return (
     <>
       <AppShell main={activeScreen} rightPanel={null} />
-      <PwaPrompt />
+      <PwaPrompt language={settings.language} />
     </>
   );
 }

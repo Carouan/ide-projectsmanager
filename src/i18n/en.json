@@ -1,0 +1,45 @@
+{
+  "app": {
+    "eyebrow": "Local MVP - React + Vite",
+    "title": "Personal project IDE",
+    "savedProjects": "List of projects saved locally in your browser.",
+    "emptyProjectsTitle": "No projects yet",
+    "emptyProjectsDescription": "Create your first project to start structuring your ideas.",
+    "status": "Status",
+    "updated": "Updated",
+    "project": "Project"
+  },
+  "topbar": {
+    "back": "← Back",
+    "settings": "Settings",
+    "lastUpdate": "Last updated"
+  },
+  "buttons": {
+    "newProject": "+ New project",
+    "open": "Open",
+    "delete": "Delete",
+    "newIdea": "New idea",
+    "exportJson": "Export JSON",
+    "importJson": "Import JSON",
+    "exportMarkdown": "Export Markdown",
+    "update": "Update",
+    "close": "Close"
+  },
+  "tabs": {
+    "project": "Project",
+    "stage": "Stages",
+    "backlog": "Backlog",
+    "journal": "Journal",
+    "decisions": "Decisions"
+  },
+  "messages": {
+    "noProjectSelectedTitle": "No project selected",
+    "noProjectSelectedDescription": "Go back to the list and open a project."
+  },
+  "pwa": {
+    "offlineReadyTitle": "App ready for offline use.",
+    "offlineReadyBody": "The PWA cache is now active on this device.",
+    "newVersionTitle": "A new version is available.",
+    "newVersionBody": "Reload the app to use the latest version."
+  }
+}

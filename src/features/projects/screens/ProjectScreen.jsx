@@ -5,6 +5,7 @@ import JournalPanel from "../../../components/JournalPanel";
 import DecisionsPanel from "../../../components/DecisionsPanel";
 import DecisionTreeModal from "../../../components/DecisionTreeModal";
 import { STAGE_DEFINITIONS, getStageDefinition } from "../../../constants/stages";
+import { useI18n } from "../../../i18n/useI18n";
 
 export default function ProjectScreen({
   projectDoc,
@@ -21,7 +22,9 @@ export default function ProjectScreen({
   onExportJson,
   onImportJson,
   onExportMarkdown,
+  language,
 }) {
+  const { t } = useI18n(language);
   const [tab, setTab] = useState("project");
   const [isDecisionTreeOpen, setIsDecisionTreeOpen] = useState(false);
   const fileInputRef = useRef(null);
@@ -31,11 +34,11 @@ export default function ProjectScreen({
       <div className="page-shell">
         <div className="page-container">
           <button className="btn btn-secondary" onClick={onBack}>
-            ← Retour
+            {t("topbar.back")}
           </button>
           <div className="empty-state">
-            <h2>Aucun projet sélectionné</h2>
-            <p>Reviens à la liste puis ouvre un projet.</p>
+            <h2>{t("messages.noProjectSelectedTitle")}</h2>
+            <p>{t("messages.noProjectSelectedDescription")}</p>
           </div>
         </div>
       </div>
@@ -94,10 +97,10 @@ export default function ProjectScreen({
         <div className="topbar">
           <div className="project-actions">
             <button className="btn btn-secondary" onClick={onBack}>
-              ← Retour
+              {t("topbar.back")}
             </button>
             <button className="btn btn-secondary" onClick={onOpenSettings}>
-              Paramètres
+              {t("topbar.settings")}
             </button>
           </div>
 
@@ -106,7 +109,7 @@ export default function ProjectScreen({
               {currentStageDefinition?.version || project.currentStage}
             </span>
             <span className="muted">
-              Dernière mise à jour :{" "}
+              {t("topbar.lastUpdate")} :{" "}
               {new Date(project.updatedAt).toLocaleString()}
             </span>
           </div>
@@ -114,7 +117,7 @@ export default function ProjectScreen({
 
         <section className="hero hero-project">
           <div>
-            <div className="eyebrow">Projet</div>
+            <div className="eyebrow">{t("app.project")}</div>
             <h1>{project.title}</h1>
             <p className="hero-text">{project.summary}</p>
           </div>
@@ -124,22 +127,22 @@ export default function ProjectScreen({
               className="btn btn-primary"
               onClick={() => setIsDecisionTreeOpen(true)}
             >
-              Nouvelle idée
+              {t("buttons.newIdea")}
             </button>
 
             <button className="btn btn-secondary" onClick={onExportJson}>
-              Export JSON
+              {t("buttons.exportJson")}
             </button>
 
             <button
               className="btn btn-secondary"
               onClick={() => fileInputRef.current?.click()}
             >
-              Import JSON
+              {t("buttons.importJson")}
             </button>
 
             <button className="btn btn-secondary" onClick={onExportMarkdown}>
-              Export Markdown
+              {t("buttons.exportMarkdown")}
             </button>
 
             <input
@@ -157,31 +160,31 @@ export default function ProjectScreen({
             className={`tab ${tab === "project" ? "tab-active" : ""}`}
             onClick={() => setTab("project")}
           >
-            Projet
+            {t("tabs.project")}
           </button>
           <button
             className={`tab ${tab === "stage" ? "tab-active" : ""}`}
             onClick={() => setTab("stage")}
           >
-            Étapes
+            {t("tabs.stage")}
           </button>
           <button
             className={`tab ${tab === "backlog" ? "tab-active" : ""}`}
             onClick={() => setTab("backlog")}
           >
-            Backlog
+            {t("tabs.backlog")}
           </button>
           <button
             className={`tab ${tab === "journal" ? "tab-active" : ""}`}
             onClick={() => setTab("journal")}
           >
-            Journal
+            {t("tabs.journal")}
           </button>
           <button
             className={`tab ${tab === "decisions" ? "tab-active" : ""}`}
             onClick={() => setTab("decisions")}
           >
-            Décisions
+            {t("tabs.decisions")}
           </button>
         </div>
 
