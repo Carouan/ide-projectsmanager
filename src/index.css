@@ -633,3 +633,23 @@ select:focus {
     display: none;
   }
 }
+
+.markdown-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.markdown-preview :is(h1, h2, h3, p, ul) {
+  margin: 0;
+}
+
+.markdown-preview ul {
+  padding-left: 20px;
+}
+
+.markdown-preview code {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 1px 6px;
+}
