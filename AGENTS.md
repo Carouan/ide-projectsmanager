@@ -45,6 +45,25 @@ A PR must be refused if:
 - it is too large to review safely
 - it does not explain how to test
 
+## Pull Request Requirements
+
+After implementing an issue:
+
+- push the branch to the repository
+- create a pull request automatically
+- include a clear and concise title
+- include a structured description:
+  - objective
+  - changes made
+  - impacted files
+  - risks
+  - validation steps
+- ensure the PR is small and reviewable
+- do not batch multiple issues in a single PR
+
+- always create one branch per issue
+- name branches: feature/issue-<number>-<short-description>
+
 ## Scope discipline
 When working from an issue:
 - implement only that issue
