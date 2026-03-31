@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { STAGE_DEFINITIONS } from "../constants/stages";
+import { useI18n } from "../i18n/useI18n";
 
 export default function JournalPanel({
   projectId,
   journal,
   onAddJournalEntry,
 }) {
+  const { t } = useI18n();
   const [type, setType] = useState("note");
   const [title, setTitle] = useState("");
   const [stage, setStage] = useState("v0_0");
@@ -17,7 +19,7 @@ export default function JournalPanel({
 
     onAddJournalEntry(projectId, {
       type,
-      title: title.trim() || "Entrée sans titre",
+      title: title.trim() || t("journal.item.untitled"),
       stage,
       content: content.trim(),
       impact: impact.trim(),
@@ -40,17 +42,17 @@ export default function JournalPanel({
     <section className="panel">
       <div className="panel-header">
         <div>
-          <h2>Journal du projet</h2>
-          <p className="muted">
-            Notes, décisions, comptes-rendus et éléments de contexte.
-          </p>
+          <h2>{t("journal.title")}</h2>
+          <p className="muted">{t("journal.description")}</p>
         </div>
-        <span className="badge">{sortedJournal.length} entrée(s)</span>
+        <span className="badge">
+          {t("journal.count", { count: sortedJournal.length })}
+        </span>
       </div>
 
       <div className="form-grid">
         <label className="field">
-          <span>Type</span>
+          <span>{t("journal.form.type")}</span>
           <select value={type} onChange={(e) => setType(e.target.value)}>
             <option value="note">note</option>
             <option value="decision">decision</option>
@@ -62,7 +64,7 @@ export default function JournalPanel({
         </label>
 
         <label className="field">
-          <span>Étape</span>
+          <span>{t("journal.form.stage")}</span>
           <select value={stage} onChange={(e) => setStage(e.target.value)}>
             {STAGE_DEFINITIONS.map((stageDefinition) => (
               <option key={stageDefinition.key} value={stageDefinition.key}>
@@ -73,44 +75,44 @@ export default function JournalPanel({
         </label>
 
         <label className="field field-full">
-          <span>Titre</span>
+          <span>{t("journal.form.title")}</span>
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Ex. Décision sur le format JSON natif"
+            placeholder={t("journal.form.titlePlaceholder")}
           />
         </label>
 
         <label className="field field-full">
-          <span>Contenu</span>
+          <span>{t("journal.form.content")}</span>
           <textarea
             rows={5}
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="Décris la décision, la note ou le compte-rendu"
+            placeholder={t("journal.form.contentPlaceholder")}
           />
         </label>
 
         <label className="field field-full">
-          <span>Impact</span>
+          <span>{t("journal.form.impact")}</span>
           <textarea
             rows={3}
             value={impact}
             onChange={(e) => setImpact(e.target.value)}
-            placeholder="Ex. simplifie le MVP, reporte le backend, clarifie le schéma..."
+            placeholder={t("journal.form.impactPlaceholder")}
           />
         </label>
 
         <div className="field-actions">
           <button className="btn btn-primary" onClick={handleAdd}>
-            + Ajouter au journal
+            {t("journal.form.add")}
           </button>
         </div>
       </div>
 
       <div className="backlog-list">
         {sortedJournal.length === 0 ? (
-          <div className="empty-inline">Aucune entrée de journal pour le moment.</div>
+          <div className="empty-inline">{t("journal.empty")}</div>
         ) : (
           sortedJournal.map((entry) => (
             <article className="backlog-item" key={entry.id}>
@@ -121,20 +123,20 @@ export default function JournalPanel({
                     {entry.type} · {entry.stage} ·{" "}
                     {entry.createdAt
                       ? new Date(entry.createdAt).toLocaleString()
-                      : "date inconnue"}
+                      : t("journal.item.unknownDate")}
                   </p>
                 </div>
                 <span className="badge">{entry.type}</span>
               </div>
 
               <div className="journal-content-block">
-                <strong>Contenu</strong>
-                <p>{entry.content || "Sans contenu"}</p>
+                <strong>{t("journal.item.content")}</strong>
+                <p>{entry.content || t("journal.item.noContent")}</p>
               </div>
 
               {entry.impact ? (
                 <div className="journal-impact-block">
-                  <strong>Impact</strong>
+                  <strong>{t("journal.item.impact")}</strong>
                   <p>{entry.impact}</p>
                 </div>
               ) : null}
