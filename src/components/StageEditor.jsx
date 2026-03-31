@@ -1,4 +1,8 @@
-﻿export default function StageEditor({
+import { useI18n } from "../i18n/useI18n";
+
+const STAGE_STATUS_OPTIONS = ["todo", "in_progress", "blocked", "done"];
+
+export default function StageEditor({
   projectId,
   stageKey,
   stage,
@@ -6,10 +10,12 @@
   linkedJournalEntries = [],
   onUpdateStageField,
 }) {
+  const { t } = useI18n();
+
   if (!stage) {
     return (
       <section className="panel">
-        <h2>Étape introuvable</h2>
+        <h2>{t("project.stage.notFound")}</h2>
       </section>
     );
   }
@@ -21,28 +27,31 @@
           <h2>
             {stage.version} — {stage.title}
           </h2>
-          <p className="muted">Clé technique : {stageKey}</p>
+          <p className="muted">
+            {t("project.stage.technicalKey", { key: stageKey })}
+          </p>
         </div>
       </div>
 
       <div className="form-grid">
         <label className="field">
-          <span>Statut</span>
+          <span>{t("project.stage.fields.status")}</span>
           <select
             value={stage.status || "todo"}
             onChange={(e) =>
               onUpdateStageField(projectId, stageKey, "status", e.target.value)
             }
           >
-            <option value="todo">todo</option>
-            <option value="in_progress">in_progress</option>
-            <option value="blocked">blocked</option>
-            <option value="done">done</option>
+            {STAGE_STATUS_OPTIONS.map((statusKey) => (
+              <option key={statusKey} value={statusKey}>
+                {t(`project.stage.status.${statusKey}`)}
+              </option>
+            ))}
           </select>
         </label>
 
         <label className="field field-full">
-          <span>Objectif</span>
+          <span>{t("project.stage.fields.goal")}</span>
           <textarea
             rows={4}
             value={stage.goal || ""}
@@ -53,7 +62,7 @@
         </label>
 
         <label className="field field-full">
-          <span>Notes</span>
+          <span>{t("project.stage.fields.notes")}</span>
           <textarea
             rows={8}
             value={stage.notes || ""}
@@ -64,7 +73,7 @@
         </label>
 
         <label className="field field-full">
-          <span>Livrable attendu</span>
+          <span>{t("project.stage.fields.deliverable")}</span>
           <textarea
             rows={4}
             value={stage.deliverable || ""}
@@ -80,7 +89,7 @@
         </label>
 
         <label className="field field-full">
-          <span>Definition of Done</span>
+          <span>{t("project.stage.fields.definitionOfDone")}</span>
           <textarea
             rows={4}
             value={stage.definitionOfDone || ""}
@@ -99,14 +108,12 @@
       <div className="linked-grid">
         <section className="linked-panel">
           <div className="linked-panel-header">
-            <h3>Éléments backlog liés</h3>
+            <h3>{t("project.stage.linkedBacklog.title")}</h3>
             <span className="linked-count">{linkedBacklogItems.length}</span>
           </div>
 
           {linkedBacklogItems.length === 0 ? (
-            <p className="muted">
-              Aucun item backlog lié à cette étape pour le moment.
-            </p>
+            <p className="muted">{t("project.stage.linkedBacklog.empty")}</p>
           ) : (
             <div className="linked-list">
               {linkedBacklogItems.map((item) => (
@@ -115,7 +122,11 @@
                     <strong>{item.title}</strong>
                     <span className="badge">{item.status || "todo"}</span>
                   </div>
-                  {item.type && <p className="muted">Type : {item.type}</p>}
+                  {item.type && (
+                    <p className="muted">
+                      {t("project.stage.linkedBacklog.type", { type: item.type })}
+                    </p>
+                  )}
                   {item.description && <p>{item.description}</p>}
                 </article>
               ))}
@@ -125,14 +136,12 @@
 
         <section className="linked-panel">
           <div className="linked-panel-header">
-            <h3>Entrées journal liées</h3>
+            <h3>{t("project.stage.linkedJournal.title")}</h3>
             <span className="linked-count">{linkedJournalEntries.length}</span>
           </div>
 
           {linkedJournalEntries.length === 0 ? (
-            <p className="muted">
-              Aucune entrée journal liée à cette étape pour le moment.
-            </p>
+            <p className="muted">{t("project.stage.linkedJournal.empty")}</p>
           ) : (
             <div className="linked-list">
               {linkedJournalEntries.map((entry) => (
@@ -141,7 +150,13 @@
                     <strong>{entry.title}</strong>
                     <span className="badge">{entry.type || "note"}</span>
                   </div>
-                  {entry.impact && <p className="muted">Impact : {entry.impact}</p>}
+                  {entry.impact && (
+                    <p className="muted">
+                      {t("project.stage.linkedJournal.impact", {
+                        impact: entry.impact,
+                      })}
+                    </p>
+                  )}
                   {entry.content && <p>{entry.content}</p>}
                 </article>
               ))}

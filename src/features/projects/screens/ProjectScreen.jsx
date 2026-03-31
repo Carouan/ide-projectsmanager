@@ -5,6 +5,7 @@ import JournalPanel from "../../../components/JournalPanel";
 import DecisionsPanel from "../../../components/DecisionsPanel";
 import DecisionTreeModal from "../../../components/DecisionTreeModal";
 import { STAGE_DEFINITIONS, getStageDefinition } from "../../../constants/stages";
+import { useI18n } from "../../../i18n/useI18n";
 
 export default function ProjectScreen({
   projectDoc,
@@ -25,17 +26,18 @@ export default function ProjectScreen({
   const [tab, setTab] = useState("project");
   const [isDecisionTreeOpen, setIsDecisionTreeOpen] = useState(false);
   const fileInputRef = useRef(null);
+  const { t } = useI18n();
 
   if (!projectDoc) {
     return (
       <div className="page-shell">
         <div className="page-container">
           <button className="btn btn-secondary" onClick={onBack}>
-            ← Retour
+            {t("project.actions.back")}
           </button>
           <div className="empty-state">
-            <h2>Aucun projet sélectionné</h2>
-            <p>Reviens à la liste puis ouvre un projet.</p>
+            <h2>{t("project.empty.title")}</h2>
+            <p>{t("project.empty.description")}</p>
           </div>
         </div>
       </div>
@@ -94,10 +96,10 @@ export default function ProjectScreen({
         <div className="topbar">
           <div className="project-actions">
             <button className="btn btn-secondary" onClick={onBack}>
-              ← Retour
+              {t("project.actions.back")}
             </button>
             <button className="btn btn-secondary" onClick={onOpenSettings}>
-              Paramètres
+              {t("project.actions.settings")}
             </button>
           </div>
 
@@ -106,15 +108,16 @@ export default function ProjectScreen({
               {currentStageDefinition?.version || project.currentStage}
             </span>
             <span className="muted">
-              Dernière mise à jour :{" "}
-              {new Date(project.updatedAt).toLocaleString()}
+              {t("project.meta.lastUpdated", {
+                timestamp: new Date(project.updatedAt).toLocaleString(),
+              })}
             </span>
           </div>
         </div>
 
         <section className="hero hero-project">
           <div>
-            <div className="eyebrow">Projet</div>
+            <div className="eyebrow">{t("project.eyebrow")}</div>
             <h1>{project.title}</h1>
             <p className="hero-text">{project.summary}</p>
           </div>
@@ -124,22 +127,22 @@ export default function ProjectScreen({
               className="btn btn-primary"
               onClick={() => setIsDecisionTreeOpen(true)}
             >
-              Nouvelle idée
+              {t("project.actions.newIdea")}
             </button>
 
             <button className="btn btn-secondary" onClick={onExportJson}>
-              Export JSON
+              {t("project.actions.exportJson")}
             </button>
 
             <button
               className="btn btn-secondary"
               onClick={() => fileInputRef.current?.click()}
             >
-              Import JSON
+              {t("project.actions.importJson")}
             </button>
 
             <button className="btn btn-secondary" onClick={onExportMarkdown}>
-              Export Markdown
+              {t("project.actions.exportMarkdown")}
             </button>
 
             <input
@@ -157,41 +160,41 @@ export default function ProjectScreen({
             className={`tab ${tab === "project" ? "tab-active" : ""}`}
             onClick={() => setTab("project")}
           >
-            Projet
+            {t("project.tabs.project")}
           </button>
           <button
             className={`tab ${tab === "stage" ? "tab-active" : ""}`}
             onClick={() => setTab("stage")}
           >
-            Étapes
+            {t("project.tabs.stages")}
           </button>
           <button
             className={`tab ${tab === "backlog" ? "tab-active" : ""}`}
             onClick={() => setTab("backlog")}
           >
-            Backlog
+            {t("project.tabs.backlog")}
           </button>
           <button
             className={`tab ${tab === "journal" ? "tab-active" : ""}`}
             onClick={() => setTab("journal")}
           >
-            Journal
+            {t("project.tabs.journal")}
           </button>
           <button
             className={`tab ${tab === "decisions" ? "tab-active" : ""}`}
             onClick={() => setTab("decisions")}
           >
-            Décisions
+            {t("project.tabs.decisions")}
           </button>
         </div>
 
         {tab === "project" && (
           <section className="panel">
-            <h2>Métadonnées du projet</h2>
+            <h2>{t("project.meta.sectionTitle")}</h2>
 
             <div className="form-grid">
               <label className="field">
-                <span>Titre</span>
+                <span>{t("project.meta.title")}</span>
                 <input
                   value={project.title}
                   onChange={(e) =>
@@ -201,7 +204,7 @@ export default function ProjectScreen({
               </label>
 
               <label className="field field-full">
-                <span>Résumé</span>
+                <span>{t("project.meta.summary")}</span>
                 <textarea
                   rows={4}
                   value={project.summary}
@@ -212,7 +215,7 @@ export default function ProjectScreen({
               </label>
 
               <label className="field field-full">
-                <span>Description</span>
+                <span>{t("project.meta.description")}</span>
                 <textarea
                   rows={6}
                   value={project.description}
@@ -232,10 +235,12 @@ export default function ProjectScreen({
             <section className="panel">
               <div className="panel-header">
                 <div>
-                  <h2>Navigation des étapes</h2>
+                  <h2>{t("project.stage.navigation")}</h2>
                   <p className="muted">
-                    Étape active : {currentStageDefinition?.version} —{" "}
-                    {currentStageDefinition?.title}
+                    {t("project.stage.active", {
+                      version: currentStageDefinition?.version,
+                      title: currentStageDefinition?.title,
+                    })}
                   </p>
                 </div>
               </div>
