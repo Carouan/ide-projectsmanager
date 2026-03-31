@@ -245,6 +245,19 @@ h3 {
   justify-content: flex-start;
 }
 
+.field-toggle {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.field-toggle input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--primary);
+}
+
+
 input,
 textarea,
 select {

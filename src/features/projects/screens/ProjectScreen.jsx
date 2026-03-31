@@ -9,6 +9,7 @@ import { STAGE_DEFINITIONS, getStageDefinition } from "../../../constants/stages
 export default function ProjectScreen({
   projectDoc,
   onBack,
+  onOpenSettings,
   onUpdateProjectMeta,
   onSetCurrentStage,
   onUpdateStageField,
@@ -91,9 +92,14 @@ export default function ProjectScreen({
     <div className="page-shell">
       <div className="page-container">
         <div className="topbar">
-          <button className="btn btn-secondary" onClick={onBack}>
-            ← Retour
-          </button>
+          <div className="project-actions">
+            <button className="btn btn-secondary" onClick={onBack}>
+              ← Retour
+            </button>
+            <button className="btn btn-secondary" onClick={onOpenSettings}>
+              Paramètres
+            </button>
+          </div>
 
           <div className="topbar-meta">
             <span className="badge">

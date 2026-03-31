@@ -373,6 +373,15 @@ export function useAppStore() {
     );
   }
 
+
+  function updateSettings(patch) {
+    setSettings((prev) => ({
+      ...DEFAULT_SETTINGS,
+      ...prev,
+      ...patch,
+    }));
+  }
+
   function updateProjectSettings(projectId, patch) {
     setSettings((prev) => ({
       ...DEFAULT_SETTINGS,
@@ -605,6 +614,7 @@ export function useAppStore() {
     linkBacklogItemToStage,
     linkJournalEntryToStage,
     handleDecisionTreeDestination,
+    updateSettings,
     updateProjectSettings,
     updateBacklogItemStatus,
     exportCurrentProjectJson,
