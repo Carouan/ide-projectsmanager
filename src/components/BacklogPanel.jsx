@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BACKLOG_STATUS } from "../constants/backlog";
+import { useI18n } from "../i18n/useI18n";
 
 export default function BacklogPanel({
   projectId,
@@ -7,6 +8,7 @@ export default function BacklogPanel({
   onAddBacklogItem,
   onUpdateBacklogItemStatus,
 }) {
+  const { t } = useI18n();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
@@ -31,59 +33,59 @@ export default function BacklogPanel({
     <section className="panel">
       <div className="panel-header">
         <div>
-          <h2>Backlog</h2>
-          <p className="muted">
-            Idées, améliorations et éléments reportés pour plus tard.
-          </p>
+          <h2>{t("backlog.title")}</h2>
+          <p className="muted">{t("backlog.description")}</p>
         </div>
-        <span className="badge">{backlog.length} item(s)</span>
+        <span className="badge">{t("backlog.count", { count: backlog.length })}</span>
       </div>
 
       <div className="form-grid">
         <label className="field">
-          <span>Titre</span>
+          <span>{t("backlog.form.title")}</span>
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Ex. Ajouter export Markdown"
+            placeholder={t("backlog.form.titlePlaceholder")}
           />
         </label>
 
         <label className="field field-full">
-          <span>Description</span>
+          <span>{t("backlog.form.description")}</span>
           <textarea
             rows={3}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Décris brièvement l'idée"
+            placeholder={t("backlog.form.descriptionPlaceholder")}
           />
         </label>
 
         <div className="field-actions">
           <button className="btn btn-primary" onClick={handleAdd}>
-            + Ajouter au backlog
+            {t("backlog.form.add")}
           </button>
         </div>
       </div>
 
       <div className="backlog-list">
         {backlog.length === 0 ? (
-          <div className="empty-inline">Aucun item backlog pour le moment.</div>
+          <div className="empty-inline">{t("backlog.empty")}</div>
         ) : (
           backlog.map((item) => (
             <article className="backlog-item" key={item.id}>
               <div className="backlog-item-top">
                 <div>
                   <h3>{item.title}</h3>
-                  <p className="muted">{item.description || "Sans description"}</p>
+                  <p className="muted">
+                    {item.description || t("backlog.item.noDescription")}
+                  </p>
                 </div>
                 <span className="badge">{item.status}</span>
               </div>
 
               <div className="project-meta">
-                <span>Type : {item.type}</span>
-                <span>Priorité : {item.priority}</span>
-                <span>Source : {item.source}</span>
+                <span>{t("backlog.item.type", { type: item.type })}</span>
+                <span>{t("backlog.item.priority", { priority: item.priority })}</span>
+                <span>{t("backlog.item.source", { source: item.source })}</span>
               </div>
 
               <div className="project-actions">
@@ -93,7 +95,7 @@ export default function BacklogPanel({
                     onUpdateBacklogItemStatus(projectId, item.id, BACKLOG_STATUS.PLANNED)
                   }
                 >
-                  Planned
+                  {t("backlog.actions.planned")}
                 </button>
                 <button
                   className="btn btn-secondary"
@@ -101,7 +103,7 @@ export default function BacklogPanel({
                     onUpdateBacklogItemStatus(projectId, item.id, BACKLOG_STATUS.DONE)
                   }
                 >
-                  Done
+                  {t("backlog.actions.done")}
                 </button>
                 <button
                   className="btn btn-danger"
@@ -109,7 +111,7 @@ export default function BacklogPanel({
                     onUpdateBacklogItemStatus(projectId, item.id, BACKLOG_STATUS.DROPPED)
                   }
                 >
-                  Dropped
+                  {t("backlog.actions.dropped")}
                 </button>
               </div>
             </article>

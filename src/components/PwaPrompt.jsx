@@ -1,6 +1,8 @@
 import { useRegisterSW } from "virtual:pwa-register/react";
+import { useI18n } from "../i18n/useI18n";
 
 export default function PwaPrompt() {
+  const { t } = useI18n();
   const {
     offlineReady: [offlineReady, setOfflineReady],
     needRefresh: [needRefresh, setNeedRefresh],
@@ -22,15 +24,15 @@ export default function PwaPrompt() {
         <div className="pwa-toast-message">
           {offlineReady && (
             <>
-              <strong>Application prête hors ligne.</strong>
-              <p>Le cache PWA est maintenant actif sur cet appareil.</p>
+              <strong>{t("pwa.offlineReady.title")}</strong>
+              <p>{t("pwa.offlineReady.description")}</p>
             </>
           )}
 
           {needRefresh && (
             <>
-              <strong>Nouvelle version disponible.</strong>
-              <p>Recharge l’application pour utiliser la dernière version.</p>
+              <strong>{t("pwa.needRefresh.title")}</strong>
+              <p>{t("pwa.needRefresh.description")}</p>
             </>
           )}
         </div>
@@ -41,12 +43,12 @@ export default function PwaPrompt() {
               className="btn btn-primary"
               onClick={() => updateServiceWorker(true)}
             >
-              Mettre à jour
+              {t("pwa.actions.update")}
             </button>
           )}
 
           <button className="btn btn-secondary" onClick={closePrompt}>
-            Fermer
+            {t("pwa.actions.close")}
           </button>
         </div>
       </div>

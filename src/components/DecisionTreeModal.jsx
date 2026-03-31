@@ -1,82 +1,74 @@
 import { useMemo, useState } from "react";
+import { useI18n } from "../i18n/useI18n";
 
-const TREE = {
-  id: "q1",
-  question: "Est-ce que cette idée change ce que le projet doit faire ?",
-  clarification:
-    "Elle modifie les objectifs, le périmètre ou le besoin de départ, pas juste la façon de l'implémenter.",
-  yes: {
-    id: "q2",
-    question:
-      "Si tu ignores cette idée, la v.1.0 prévue résout-elle quand même le problème de départ ?",
-    clarification:
-      "Ce n'est pas : “serait-ce moins bien ?” mais bien : “est-ce que le projet reste utile et fonctionnel ?”",
-    yes: "backlog",
-    no: {
-      id: "q3",
-      question:
-        "Cette idée reste-t-elle dans le même domaine ou problème que ta v.0.0 ?",
-      clarification:
-        "Même utilisateur, même contexte d'usage, même problématique centrale.",
-      yes: "reframe",
-      no: "newproject",
-    },
-  },
-  no: {
-    id: "q4",
-    question:
-      "Est-ce que cette idée remet en question des choix technologiques ou d'architecture ?",
-    clarification:
-      "Bibliothèque, protocole, structure de données, service tiers, architecture générale, etc.",
+function buildTree(t) {
+  return {
+    id: "q1",
+    question: t("decisionTree.questions.q1.question"),
+    clarification: t("decisionTree.questions.q1.clarification"),
     yes: {
-      id: "q5",
-      question: "Es-tu encore avant la phase d'assemblage (avant v.0.4) ?",
-      clarification:
-        "Les composants principaux ne sont pas encore intégrés entre eux.",
-      yes: "archi",
-      no: "technote",
+      id: "q2",
+      question: t("decisionTree.questions.q2.question"),
+      clarification: t("decisionTree.questions.q2.clarification"),
+      yes: "backlog",
+      no: {
+        id: "q3",
+        question: t("decisionTree.questions.q3.question"),
+        clarification: t("decisionTree.questions.q3.clarification"),
+        yes: "reframe",
+        no: "newproject",
+      },
     },
-    no: "backlog",
-  },
-};
+    no: {
+      id: "q4",
+      question: t("decisionTree.questions.q4.question"),
+      clarification: t("decisionTree.questions.q4.clarification"),
+      yes: {
+        id: "q5",
+        question: t("decisionTree.questions.q5.question"),
+        clarification: t("decisionTree.questions.q5.clarification"),
+        yes: "archi",
+        no: "technote",
+      },
+      no: "backlog",
+    },
+  };
+}
 
-const DESTINATIONS = {
-  backlog: {
-    label: "Backlog v.1.x",
-    headline: "C'est une fonctionnalité additionnelle.",
-    description:
-      "Cette idée enrichit le projet mais n'est pas nécessaire pour que la v.1.0 réponde au besoin initial.",
-    actionLabel: "Ajouter au backlog",
-  },
-  archi: {
-    label: "Évaluation architecturale",
-    headline: "C'est un pivot potentiel à évaluer consciemment.",
-    description:
-      "Tu es encore assez tôt pour remettre en question les fondations. Il faut en garder une trace explicite.",
-    actionLabel: "Créer une entrée journal",
-  },
-  technote: {
-    label: "Note technique post-v1.0",
-    headline: "L'idée est valide, mais trop tardive pour changer les fondations maintenant.",
-    description:
-      "Note-la comme amélioration technique future et continue vers la v.1.0.",
-    actionLabel: "Ajouter au backlog technique",
-  },
-  reframe: {
-    label: "Retour en v.0.0",
-    headline: "Le besoin initial doit être recadré.",
-    description:
-      "Cette idée montre que le projet ne répond plus correctement au vrai problème. Il faut revenir à la base.",
-    actionLabel: "Créer la trace et revenir à v0.0",
-  },
-  newproject: {
-    label: "Nouveau projet",
-    headline: "Cette idée appartient à un autre projet.",
-    description:
-      "Elle est intéressante, mais elle ne doit pas contaminer le projet courant.",
-    actionLabel: "Créer un nouveau projet",
-  },
-};
+function buildDestinations(t) {
+  return {
+    backlog: {
+      label: t("decisionTree.destinations.backlog.label"),
+      headline: t("decisionTree.destinations.backlog.headline"),
+      description: t("decisionTree.destinations.backlog.description"),
+      actionLabel: t("decisionTree.destinations.backlog.action"),
+    },
+    archi: {
+      label: t("decisionTree.destinations.archi.label"),
+      headline: t("decisionTree.destinations.archi.headline"),
+      description: t("decisionTree.destinations.archi.description"),
+      actionLabel: t("decisionTree.destinations.archi.action"),
+    },
+    technote: {
+      label: t("decisionTree.destinations.technote.label"),
+      headline: t("decisionTree.destinations.technote.headline"),
+      description: t("decisionTree.destinations.technote.description"),
+      actionLabel: t("decisionTree.destinations.technote.action"),
+    },
+    reframe: {
+      label: t("decisionTree.destinations.reframe.label"),
+      headline: t("decisionTree.destinations.reframe.headline"),
+      description: t("decisionTree.destinations.reframe.description"),
+      actionLabel: t("decisionTree.destinations.reframe.action"),
+    },
+    newproject: {
+      label: t("decisionTree.destinations.newproject.label"),
+      headline: t("decisionTree.destinations.newproject.headline"),
+      description: t("decisionTree.destinations.newproject.description"),
+      actionLabel: t("decisionTree.destinations.newproject.action"),
+    },
+  };
+}
 
 function getNextNode(node, answer) {
   return answer === "yes" ? node.yes : node.no;
@@ -91,22 +83,26 @@ export default function DecisionTreeModal({
   onClose,
   onSubmitDestination,
 }) {
+  const { t } = useI18n();
+  const tree = useMemo(() => buildTree(t), [t]);
+  const destinations = useMemo(() => buildDestinations(t), [t]);
+
   const [ideaTitle, setIdeaTitle] = useState("");
   const [ideaContent, setIdeaContent] = useState("");
   const [history, setHistory] = useState([]);
-  const [currentNode, setCurrentNode] = useState(TREE);
+  const [currentNode, setCurrentNode] = useState(tree);
   const [destinationKey, setDestinationKey] = useState(null);
 
   const destination = useMemo(() => {
     if (!destinationKey) return null;
-    return DESTINATIONS[destinationKey] ?? null;
-  }, [destinationKey]);
+    return destinations[destinationKey] ?? null;
+  }, [destinationKey, destinations]);
 
   function resetState() {
     setIdeaTitle("");
     setIdeaContent("");
     setHistory([]);
-    setCurrentNode(TREE);
+    setCurrentNode(tree);
     setDestinationKey(null);
   }
 
@@ -133,7 +129,7 @@ export default function DecisionTreeModal({
 
     const newHistory = history.slice(0, -1);
 
-    let node = TREE;
+    let node = tree;
     for (const step of newHistory) {
       const next = getNextNode(node, step.answer);
       if (isDestination(next)) break;
@@ -147,7 +143,7 @@ export default function DecisionTreeModal({
 
   function handleConfirm() {
     if (!ideaTitle.trim()) {
-      alert("Merci de donner au moins un titre à l'idée.");
+      alert(t("decisionTree.alert.titleRequired"));
       return;
     }
 
@@ -171,31 +167,31 @@ export default function DecisionTreeModal({
       <div className="modal-card modal-card-lg" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <div>
-            <div className="eyebrow">Capture guidée</div>
-            <h2>Nouvelle idée</h2>
+            <div className="eyebrow">{t("decisionTree.eyebrow")}</div>
+            <h2>{t("decisionTree.title")}</h2>
           </div>
           <button className="btn btn-secondary" onClick={handleClose}>
-            Fermer
+            {t("decisionTree.actions.close")}
           </button>
         </div>
 
         <div className="form-grid">
           <label className="field field-full">
-            <span>Titre de l'idée</span>
+            <span>{t("decisionTree.form.ideaTitle")}</span>
             <input
               value={ideaTitle}
               onChange={(e) => setIdeaTitle(e.target.value)}
-              placeholder="Ex. intégrer un système de modèles de projet"
+              placeholder={t("decisionTree.form.ideaTitlePlaceholder")}
             />
           </label>
 
           <label className="field field-full">
-            <span>Description / contexte</span>
+            <span>{t("decisionTree.form.ideaDescription")}</span>
             <textarea
               rows={5}
               value={ideaContent}
               onChange={(e) => setIdeaContent(e.target.value)}
-              placeholder="Décris l'idée, le contexte, ce qui l'a déclenchée, ce que tu imagines..."
+              placeholder={t("decisionTree.form.ideaDescriptionPlaceholder")}
             />
           </label>
         </div>
@@ -213,7 +209,7 @@ export default function DecisionTreeModal({
               <div className="decision-breadcrumbs">
                 {history.map((item, index) => (
                   <span key={`${item.nodeId}-${index}`} className="decision-badge">
-                    {item.nodeId} → {item.answer === "yes" ? "oui" : "non"}
+                    {item.nodeId} → {item.answer === "yes" ? t("decisionTree.answers.yes") : t("decisionTree.answers.no")}
                   </span>
                 ))}
               </div>
@@ -221,14 +217,14 @@ export default function DecisionTreeModal({
 
             <div className="decision-actions">
               <button className="btn btn-primary" onClick={() => handleAnswer("yes")}>
-                Oui
+                {t("decisionTree.answers.yes")}
               </button>
               <button className="btn btn-secondary" onClick={() => handleAnswer("no")}>
-                Non
+                {t("decisionTree.answers.no")}
               </button>
               {history.length > 0 && (
                 <button className="btn btn-secondary" onClick={handleBack}>
-                  Retour
+                  {t("decisionTree.actions.back")}
                 </button>
               )}
             </div>
@@ -237,7 +233,7 @@ export default function DecisionTreeModal({
 
         {destination && (
           <section className="panel panel-compact">
-            <div className="eyebrow">Destination</div>
+            <div className="eyebrow">{t("decisionTree.destination")}</div>
             <h3>{destination.label}</h3>
             <p><strong>{destination.headline}</strong></p>
             <p className="muted">{destination.description}</p>
@@ -247,7 +243,7 @@ export default function DecisionTreeModal({
                 {destination.actionLabel}
               </button>
               <button className="btn btn-secondary" onClick={handleBack}>
-                Revenir au questionnaire
+                {t("decisionTree.actions.backToQuestions")}
               </button>
             </div>
           </section>
