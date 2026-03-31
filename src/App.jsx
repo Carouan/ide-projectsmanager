@@ -7,26 +7,7 @@ import MarkdownPreview from "./features/markdown/components/MarkdownPreview";
 import PwaPrompt from "./components/PwaPrompt";
 import AppShell from "./app/AppShell";
 import { I18nProvider } from "./i18n/useI18n";
-
-function buildStagePreviewContent(projectDoc) {
-  if (!projectDoc?.stages || !projectDoc?.project?.currentStage) {
-    return "";
-  }
-
-  const activeStage = projectDoc.stages[projectDoc.project.currentStage];
-  if (!activeStage) {
-    return "";
-  }
-
-  const sections = [
-    { title: "Objective", value: activeStage.goal },
-    { title: "Notes", value: activeStage.notes },
-    { title: "Deliverable", value: activeStage.deliverable },
-    { title: "Definition of done", value: activeStage.definitionOfDone },
-  ].filter((section) => String(section.value || "").trim());
-
-  return sections.map((section) => `## ${section.title}\n${section.value}`).join("\n\n");
-}
+import { projectToMarkdown } from "./services/markdownExport";
 
 export default function App() {
   const {
@@ -112,7 +93,7 @@ export default function App() {
 
   const rightPanel =
     view === "project" && settings?.markdownPreviewEnabled ? (
-      <MarkdownPreview content={buildStagePreviewContent(currentProject)} />
+      <MarkdownPreview content={projectToMarkdown(currentProject)} />
     ) : null;
 
   return (
