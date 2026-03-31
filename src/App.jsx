@@ -5,6 +5,7 @@ import ProjectScreen from "./features/projects/screens/ProjectScreen";
 import SettingsScreen from "./features/projects/screens/SettingsScreen";
 import PwaPrompt from "./components/PwaPrompt";
 import AppShell from "./app/AppShell";
+import { I18nProvider } from "./i18n/useI18n";
 
 export default function App() {
   const {
@@ -89,9 +90,9 @@ export default function App() {
     );
 
   return (
-    <>
+    <I18nProvider locale={settings?.language}>
       <AppShell main={activeScreen} rightPanel={null} />
       <PwaPrompt />
-    </>
+    </I18nProvider>
   );
 }
