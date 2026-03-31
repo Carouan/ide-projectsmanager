@@ -3,6 +3,7 @@ import { useAppStore } from "./store/useAppStore";
 import ProjectListScreen from "./features/projects/screens/ProjectListScreen";
 import ProjectScreen from "./features/projects/screens/ProjectScreen";
 import SettingsScreen from "./features/projects/screens/SettingsScreen";
+import MarkdownPreview from "./features/markdown/components/MarkdownPreview";
 import PwaPrompt from "./components/PwaPrompt";
 import AppShell from "./app/AppShell";
 import { I18nProvider } from "./i18n/useI18n";
@@ -89,9 +90,14 @@ export default function App() {
       />
     );
 
+  const rightPanel =
+    view === "project" && settings?.markdownPreviewEnabled ? (
+      <MarkdownPreview />
+    ) : null;
+
   return (
     <I18nProvider locale={settings?.language}>
-      <AppShell main={activeScreen} rightPanel={null} />
+      <AppShell main={activeScreen} rightPanel={rightPanel} />
       <PwaPrompt />
     </I18nProvider>
   );
