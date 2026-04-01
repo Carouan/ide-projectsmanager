@@ -3,6 +3,7 @@ import StageEditor from "../../../components/StageEditor";
 import BacklogPanel from "../../../components/BacklogPanel";
 import JournalPanel from "../../../components/JournalPanel";
 import DecisionsPanel from "../../../components/DecisionsPanel";
+import AttachmentsPanel from "../../../components/AttachmentsPanel";
 import DecisionTreeModal from "../../../components/DecisionTreeModal";
 import { STAGE_DEFINITIONS, getStageDefinition } from "../../../constants/stages";
 import { useI18n } from "../../../i18n/useI18n";
@@ -19,6 +20,9 @@ export default function ProjectScreen({
   onAddJournalEntry,
   onHandleDecisionTreeDestination,
   onUpdateDecisionStatus,
+  onAddAttachment,
+  onUpdateAttachment,
+  onRemoveAttachment,
   onExportJson,
   onImportJson,
   onExportMarkdown,
@@ -44,7 +48,7 @@ export default function ProjectScreen({
     );
   }
 
-  const { project, stages, backlog, journal, decisions } = projectDoc;
+  const { project, stages, backlog, journal, decisions, attachments } = projectDoc;
   const currentStageKey = project.currentStage || "v0_0";
   const currentStage = stages[currentStageKey];
   const currentStageDefinition = getStageDefinition(currentStageKey);
@@ -186,6 +190,12 @@ export default function ProjectScreen({
           >
             {t("project.tabs.decisions")}
           </button>
+          <button
+            className={`tab ${tab === "attachments" ? "tab-active" : ""}`}
+            onClick={() => setTab("attachments")}
+          >
+            {t("project.tabs.attachments")}
+          </button>
         </div>
 
         {tab === "project" && (
@@ -305,6 +315,16 @@ export default function ProjectScreen({
             projectId={project.id}
             decisions={decisions}
             onUpdateDecisionStatus={onUpdateDecisionStatus}
+          />
+        )}
+
+        {tab === "attachments" && (
+          <AttachmentsPanel
+            projectId={project.id}
+            attachments={attachments}
+            onAddAttachment={onAddAttachment}
+            onUpdateAttachment={onUpdateAttachment}
+            onRemoveAttachment={onRemoveAttachment}
           />
         )}
 

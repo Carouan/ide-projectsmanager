@@ -24,6 +24,9 @@ export default function App() {
     handleDecisionTreeDestination,
     updateBacklogItemStatus,
     updateDecisionStatus,
+    addAttachment,
+    updateAttachment,
+    removeAttachment,
     exportCurrentProjectJson,
     importProjectFromFile,
     exportCurrentProjectMarkdown,
@@ -79,6 +82,9 @@ export default function App() {
         onHandleDecisionTreeDestination={handleDecisionTreeDestination}
         onUpdateBacklogItemStatus={updateBacklogItemStatus}
         onUpdateDecisionStatus={updateDecisionStatus}
+        onAddAttachment={addAttachment}
+        onUpdateAttachment={updateAttachment}
+        onRemoveAttachment={removeAttachment}
         onExportJson={exportCurrentProjectJson}
         onImportJson={importProjectFromFile}
         onExportMarkdown={exportCurrentProjectMarkdown}
