@@ -45,13 +45,17 @@ function slugify(value) {
     .replace(/^-+|-+$/g, "");
 }
 
-function normalizeProject(projectDoc) {
+function normalizeProject(projectDoc, ownerProfile) {
   const normalized = ensureProjectStages(projectDoc);
+  const fallbackOwnerId = ownerProfile?.id || null;
+  const fallbackOwnerName = ownerProfile?.displayName || "Local User";
 
   return {
     ...normalized,
     project: {
       ...normalized.project,
+      owner: normalized.project?.owner || fallbackOwnerName,
+      ownerId: normalized.project?.ownerId || fallbackOwnerId,
       currentStage: normalized.project?.currentStage || "v0_0",
     },
     backlog: (normalized.backlog || []).map((item) => ({
@@ -80,14 +84,16 @@ export function useAppStore() {
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    const loaded = loadProjects().map(normalizeProject);
     const storedSettings = loadSettings();
     const storedUserProfile = loadUserProfile();
+    const initialUserProfile = normalizeUserProfile(storedUserProfile);
+    const loaded = loadProjects().map((projectDoc) =>
+      normalizeProject(projectDoc, initialUserProfile)
+    );
     const initialSettings = {
       ...DEFAULT_SETTINGS,
       ...(storedSettings || loaded[0]?.settings || {}),
     };
-    const initialUserProfile = normalizeUserProfile(storedUserProfile);
 
     setProjects(loaded);
     setSettings(initialSettings);
@@ -116,13 +122,25 @@ export function useAppStore() {
   }, [userProfile, isHydrated]);
 
   function createProject() {
-    const newProject = normalizeProject(createEmptyProject());
+    const newProject = normalizeProject(
+      createEmptyProject({
+        ownerId: userProfile?.id,
+        ownerName: userProfile?.displayName,
+      }),
+      userProfile
+    );
     setProjects((prev) => [newProject, ...prev]);
     setCurrentProjectId(newProject.project.id);
   }
 
   function createProjectFromIdea({ title, content }) {
-    const newProject = normalizeProject(createEmptyProject());
+    const newProject = normalizeProject(
+      createEmptyProject({
+        ownerId: userProfile?.id,
+        ownerName: userProfile?.displayName,
+      }),
+      userProfile
+    );
 
     const preparedProject = {
       ...newProject,
@@ -210,7 +228,7 @@ export function useAppStore() {
       prev.map((p) => {
         if (p.project.id !== projectId) return p;
 
-        const safeProject = normalizeProject(p);
+        const safeProject = normalizeProject(p, userProfile);
 
         return {
           ...safeProject,
@@ -396,7 +414,7 @@ export function useAppStore() {
       prev.map((p) => {
         if (p.project.id !== projectId) return p;
 
-        const safeProject = normalizeProject(p);
+        const safeProject = normalizeProject(p, userProfile);
         const stage = safeProject.stages[stageKey];
         if (!stage) return safeProject;
 
@@ -428,7 +446,7 @@ export function useAppStore() {
       prev.map((p) => {
         if (p.project.id !== projectId) return p;
 
-        const safeProject = normalizeProject(p);
+        const safeProject = normalizeProject(p, userProfile);
         const stage = safeProject.stages[stageKey];
         if (!stage) return safeProject;
 
@@ -635,7 +653,7 @@ export function useAppStore() {
   }
 
   async function importProjectFromFile(file) {
-    const importedProject = normalizeProject(await readJsonFile(file));
+    const importedProject = normalizeProject(await readJsonFile(file), userProfile);
 
     if (!importedProject?.project?.id) {
       throw new Error("Le fichier importé ne contient pas de projet valide.");
