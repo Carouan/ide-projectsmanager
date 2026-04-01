@@ -4,6 +4,8 @@ import {
   saveProjects,
   loadSettings,
   saveSettings,
+  loadUserProfile,
+  saveUserProfile,
 } from "../services/storage";
 import { createEmptyProject } from "../services/projectFactory";
 import { downloadJsonFile, readJsonFile } from "../services/jsonTransfer";
@@ -19,6 +21,7 @@ import {
   normalizeAttachments,
   patchAttachment,
 } from "../services/attachments";
+import { normalizeUserProfile } from "../services/userProfile";
 
 function newBacklogId() {
   return `b_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
@@ -72,19 +75,23 @@ function uniqueIds(list) {
 export function useAppStore() {
   const [projects, setProjects] = useState([]);
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+  const [userProfile, setUserProfile] = useState(null);
   const [currentProjectId, setCurrentProjectId] = useState(null);
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
     const loaded = loadProjects().map(normalizeProject);
     const storedSettings = loadSettings();
+    const storedUserProfile = loadUserProfile();
     const initialSettings = {
       ...DEFAULT_SETTINGS,
       ...(storedSettings || loaded[0]?.settings || {}),
     };
+    const initialUserProfile = normalizeUserProfile(storedUserProfile);
 
     setProjects(loaded);
     setSettings(initialSettings);
+    setUserProfile(initialUserProfile);
 
     if (loaded.length > 0) {
       setCurrentProjectId(loaded[0].project.id);
@@ -102,6 +109,11 @@ export function useAppStore() {
     if (!isHydrated) return;
     saveSettings(settings);
   }, [settings, isHydrated]);
+
+  useEffect(() => {
+    if (!isHydrated || !userProfile) return;
+    saveUserProfile(userProfile);
+  }, [userProfile, isHydrated]);
 
   function createProject() {
     const newProject = normalizeProject(createEmptyProject());
@@ -666,6 +678,7 @@ export function useAppStore() {
   return {
     projects,
     settings,
+    userProfile,
     currentProject,
     currentProjectId,
     createProject,
