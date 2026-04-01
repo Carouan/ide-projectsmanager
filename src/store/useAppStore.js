@@ -68,6 +68,31 @@ function normalizeProject(projectDoc) {
   };
 }
 
+
+function withProjectOwnerId(projectDoc, ownerId) {
+  const normalizedProject = normalizeProject(projectDoc);
+  const resolvedOwnerId = normalizedProject.project?.ownerId || ownerId || null;
+
+  return {
+    ...normalizedProject,
+    project: {
+      ...normalizedProject.project,
+      ownerId: resolvedOwnerId,
+    },
+  };
+}
+
+function stripLegacyProjectOwner(projectDoc) {
+  if (!projectDoc?.project) return projectDoc;
+
+  const { owner, ...projectWithoutLegacyOwner } = projectDoc.project;
+
+  return {
+    ...projectDoc,
+    project: projectWithoutLegacyOwner,
+  };
+}
+
 function uniqueIds(list) {
   return [...new Set(list.filter(Boolean))];
 }
@@ -80,14 +105,17 @@ export function useAppStore() {
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    const loaded = loadProjects().map(normalizeProject);
+    const storedProjects = loadProjects();
     const storedSettings = loadSettings();
     const storedUserProfile = loadUserProfile();
+    const initialUserProfile = normalizeUserProfile(storedUserProfile);
+    const loaded = storedProjects.map((projectDoc) =>
+      stripLegacyProjectOwner(withProjectOwnerId(projectDoc, initialUserProfile.id))
+    );
     const initialSettings = {
       ...DEFAULT_SETTINGS,
       ...(storedSettings || loaded[0]?.settings || {}),
     };
-    const initialUserProfile = normalizeUserProfile(storedUserProfile);
 
     setProjects(loaded);
     setSettings(initialSettings);
@@ -116,13 +144,17 @@ export function useAppStore() {
   }, [userProfile, isHydrated]);
 
   function createProject() {
-    const newProject = normalizeProject(createEmptyProject());
+    const newProject = stripLegacyProjectOwner(
+      withProjectOwnerId(createEmptyProject(userProfile?.id), userProfile?.id)
+    );
     setProjects((prev) => [newProject, ...prev]);
     setCurrentProjectId(newProject.project.id);
   }
 
   function createProjectFromIdea({ title, content }) {
-    const newProject = normalizeProject(createEmptyProject());
+    const newProject = stripLegacyProjectOwner(
+      withProjectOwnerId(createEmptyProject(userProfile?.id), userProfile?.id)
+    );
 
     const preparedProject = {
       ...newProject,
@@ -635,7 +667,9 @@ export function useAppStore() {
   }
 
   async function importProjectFromFile(file) {
-    const importedProject = normalizeProject(await readJsonFile(file));
+    const importedProject = stripLegacyProjectOwner(
+      withProjectOwnerId(await readJsonFile(file), userProfile?.id)
+    );
 
     if (!importedProject?.project?.id) {
       throw new Error("Le fichier importé ne contient pas de projet valide.");

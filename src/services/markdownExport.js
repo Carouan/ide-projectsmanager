@@ -20,7 +20,7 @@ export function projectToMarkdown(projectDoc) {
   lines.push("");
   lines.push(`- Statut : ${escapeLine(project.status)}`);
   lines.push(`- Étape actuelle : ${escapeLine(project.currentStage)}`);
-  lines.push(`- Propriétaire : ${escapeLine(project.owner)}`);
+  lines.push(`- Propriétaire : ${escapeLine(project.ownerId || "-")}`);
   lines.push(`- Créé le : ${escapeLine(project.createdAt)}`);
   lines.push(`- Dernière mise à jour : ${escapeLine(project.updatedAt)}`);
   lines.push("");

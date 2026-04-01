@@ -1,7 +1,7 @@
 import { buildDefaultStages } from "../constants/stages";
 import { DEFAULT_SETTINGS } from "../constants/settings";
 
-export function createEmptyProject() {
+export function createEmptyProject(ownerId = null) {
   const now = new Date().toISOString();
 
   return {
@@ -16,7 +16,7 @@ export function createEmptyProject() {
       createdAt: now,
       updatedAt: now,
       tags: [],
-      owner: "Sébastien",
+      ownerId,
       currentStage: "v0_0",
     },
     stages: buildDefaultStages(),
