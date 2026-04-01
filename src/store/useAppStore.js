@@ -14,6 +14,11 @@ import {
 import { ensureProjectStages } from "../constants/stages";
 import { BACKLOG_STATUS, normalizeBacklogStatus } from "../constants/backlog";
 import { DEFAULT_SETTINGS } from "../constants/settings";
+import {
+  createAttachment,
+  normalizeAttachments,
+  patchAttachment,
+} from "../services/attachments";
 
 function newBacklogId() {
   return `b_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
@@ -52,7 +57,7 @@ function normalizeProject(projectDoc) {
     })),
     journal: normalized.journal || [],
     decisions: normalized.decisions || [],
-    attachments: normalized.attachments || [],
+    attachments: normalizeAttachments(normalized.attachments),
     settings: {
       ...DEFAULT_SETTINGS,
       ...(normalized.settings || {}),
@@ -288,6 +293,69 @@ export function useAppStore() {
     );
 
     return decisionItem;
+  }
+
+  function addAttachment(projectId, attachment) {
+    const nextAttachment = createAttachment(attachment);
+
+    setProjects((prev) =>
+      prev.map((p) => {
+        if (p.project.id !== projectId) return p;
+
+        return {
+          ...p,
+          project: {
+            ...p.project,
+            updatedAt: new Date().toISOString(),
+          },
+          attachments: [nextAttachment, ...(p.attachments || [])],
+        };
+      })
+    );
+
+    return nextAttachment;
+  }
+
+  function updateAttachment(projectId, attachmentId, patch) {
+    setProjects((prev) =>
+      prev.map((p) => {
+        if (p.project.id !== projectId) return p;
+
+        const updatedAttachments = (p.attachments || []).map((attachment) =>
+          attachment.id === attachmentId
+            ? patchAttachment(attachment, patch)
+            : attachment
+        );
+
+        return {
+          ...p,
+          project: {
+            ...p.project,
+            updatedAt: new Date().toISOString(),
+          },
+          attachments: updatedAttachments,
+        };
+      })
+    );
+  }
+
+  function removeAttachment(projectId, attachmentId) {
+    setProjects((prev) =>
+      prev.map((p) => {
+        if (p.project.id !== projectId) return p;
+
+        return {
+          ...p,
+          project: {
+            ...p.project,
+            updatedAt: new Date().toISOString(),
+          },
+          attachments: (p.attachments || []).filter(
+            (attachment) => attachment.id !== attachmentId
+          ),
+        };
+      })
+    );
   }
 
   function updateDecisionStatus(projectId, decisionId, status) {
@@ -610,6 +678,9 @@ export function useAppStore() {
     addBacklogItem,
     addJournalEntry,
     addDecision,
+    addAttachment,
+    updateAttachment,
+    removeAttachment,
     updateDecisionStatus,
     linkBacklogItemToStage,
     linkJournalEntryToStage,
