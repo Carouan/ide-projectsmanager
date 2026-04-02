@@ -97,6 +97,10 @@ function uniqueIds(list) {
   return [...new Set(list.filter(Boolean))];
 }
 
+function handleProjectSaveError(error) {
+  console.error("Failed to persist projects.", error);
+}
+
 export function useAppStore() {
   const [projects, setProjects] = useState([]);
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
@@ -105,32 +109,69 @@ export function useAppStore() {
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    const storedProjects = loadPersistedProjects();
-    const storedSettings = loadPersistedSettings();
-    const storedUserProfile = loadPersistedUserProfile();
-    const initialUserProfile = normalizeUserProfile(storedUserProfile);
-    const loaded = storedProjects.map((projectDoc) =>
-      stripLegacyProjectOwner(withProjectOwnerId(projectDoc, initialUserProfile.id))
-    );
-    const initialSettings = {
-      ...DEFAULT_SETTINGS,
-      ...(storedSettings || loaded[0]?.settings || {}),
-    };
+    let isActive = true;
 
-    setProjects(loaded);
-    setSettings(initialSettings);
-    setUserProfile(initialUserProfile);
+    async function hydrateStore() {
+      let storedSettings = null;
+      let storedUserProfile = null;
 
-    if (loaded.length > 0) {
-      setCurrentProjectId(loaded[0].project.id);
+      try {
+        storedSettings = await loadPersistedSettings();
+        storedUserProfile = await loadPersistedUserProfile();
+        const storedProjects = await loadPersistedProjects();
+        const initialUserProfile = normalizeUserProfile(storedUserProfile);
+        const loaded = storedProjects.map((projectDoc) =>
+          stripLegacyProjectOwner(
+            withProjectOwnerId(projectDoc, initialUserProfile.id)
+          )
+        );
+        const initialSettings = {
+          ...DEFAULT_SETTINGS,
+          ...(storedSettings || loaded[0]?.settings || {}),
+        };
+
+        if (!isActive) return;
+
+        setProjects(loaded);
+        setSettings(initialSettings);
+        setUserProfile(initialUserProfile);
+
+        if (loaded.length > 0) {
+          setCurrentProjectId(loaded[0].project.id);
+        }
+      } catch (error) {
+        console.error("Failed to hydrate app store.", error);
+
+        const fallbackUserProfile = normalizeUserProfile(storedUserProfile);
+        const fallbackSettings = {
+          ...DEFAULT_SETTINGS,
+          ...(storedSettings || {}),
+        };
+
+        if (!isActive) return;
+
+        setProjects([]);
+        setSettings(fallbackSettings);
+        setUserProfile(fallbackUserProfile);
+        setCurrentProjectId(null);
+      } finally {
+        if (isActive) {
+          setIsHydrated(true);
+        }
+      }
     }
 
-    setIsHydrated(true);
+    hydrateStore();
+
+    return () => {
+      isActive = false;
+    };
   }, []);
 
   useEffect(() => {
     if (!isHydrated) return;
-    savePersistedProjects(projects);
+
+    Promise.resolve(savePersistedProjects(projects)).catch(handleProjectSaveError);
   }, [projects, isHydrated]);
 
   useEffect(() => {
