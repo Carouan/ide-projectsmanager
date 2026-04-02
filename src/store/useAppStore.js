@@ -110,8 +110,8 @@ export function useAppStore() {
 async function hydrateStore() {
   try {
     const storedProjects = await loadPersistedProjects();
-    const storedSettings = loadPersistedSettings();
-    const storedUserProfile = loadPersistedUserProfile();
+    const storedSettings = await loadPersistedSettings();
+    const storedUserProfile = await loadPersistedUserProfile();
 
     const initialUserProfile = normalizeUserProfile(storedUserProfile);
 
@@ -140,12 +140,12 @@ if (loaded.length > 0) {
     console.error("Failed to hydrate store", error);
 
     const fallbackUserProfile = normalizeUserProfile(
-      loadPersistedUserProfile()
+      await loadPersistedUserProfile()
     );
 
     const fallbackSettings = {
       ...DEFAULT_SETTINGS,
-      ...(loadPersistedSettings() || {}),
+      ...((await loadPersistedSettings()) || {}),
     };
 
     if (isCancelled) return;
@@ -174,12 +174,16 @@ if (loaded.length > 0) {
 
   useEffect(() => {
     if (!isHydrated) return;
-    savePersistedSettings(settings);
+    savePersistedSettings(settings).catch((error) => {
+      console.error("Failed to persist settings", error);
+    });
   }, [settings, isHydrated]);
 
   useEffect(() => {
     if (!isHydrated || !userProfile) return;
-    savePersistedUserProfile(userProfile);
+    savePersistedUserProfile(userProfile).catch((error) => {
+      console.error("Failed to persist user profile", error);
+    });
   }, [userProfile, isHydrated]);
 
   function createProject() {
