@@ -15,18 +15,18 @@ export async function savePersistedProjects(projects) {
   await saveProjects(projects);
 }
 
-export function loadPersistedSettings() {
+export async function loadPersistedSettings() {
   return loadSettings();
 }
 
-export function savePersistedSettings(settings) {
-  saveSettings(settings);
+export async function savePersistedSettings(settings) {
+  await saveSettings(settings);
 }
 
-export function loadPersistedUserProfile() {
+export async function loadPersistedUserProfile() {
   return loadUserProfile();
 }
 
-export function savePersistedUserProfile(profile) {
-  saveUserProfile(profile);
+export async function savePersistedUserProfile(profile) {
+  await saveUserProfile(profile);
 }
