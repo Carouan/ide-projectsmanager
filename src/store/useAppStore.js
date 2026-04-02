@@ -1,12 +1,12 @@
 ﻿import { useEffect, useState } from "react";
 import {
-  loadProjects,
-  saveProjects,
-  loadSettings,
-  saveSettings,
-  loadUserProfile,
-  saveUserProfile,
-} from "../services/storage";
+  loadPersistedProjects,
+  savePersistedProjects,
+  loadPersistedSettings,
+  savePersistedSettings,
+  loadPersistedUserProfile,
+  savePersistedUserProfile,
+} from "../repositories/storageRepository";
 import { createEmptyProject } from "../services/projectFactory";
 import { downloadJsonFile, readJsonFile } from "../services/jsonTransfer";
 import {
@@ -105,9 +105,9 @@ export function useAppStore() {
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    const storedProjects = loadProjects();
-    const storedSettings = loadSettings();
-    const storedUserProfile = loadUserProfile();
+    const storedProjects = loadPersistedProjects();
+    const storedSettings = loadPersistedSettings();
+    const storedUserProfile = loadPersistedUserProfile();
     const initialUserProfile = normalizeUserProfile(storedUserProfile);
     const loaded = storedProjects.map((projectDoc) =>
       stripLegacyProjectOwner(withProjectOwnerId(projectDoc, initialUserProfile.id))
@@ -130,17 +130,17 @@ export function useAppStore() {
 
   useEffect(() => {
     if (!isHydrated) return;
-    saveProjects(projects);
+    savePersistedProjects(projects);
   }, [projects, isHydrated]);
 
   useEffect(() => {
     if (!isHydrated) return;
-    saveSettings(settings);
+    savePersistedSettings(settings);
   }, [settings, isHydrated]);
 
   useEffect(() => {
     if (!isHydrated || !userProfile) return;
-    saveUserProfile(userProfile);
+    savePersistedUserProfile(userProfile);
   }, [userProfile, isHydrated]);
 
   function createProject() {
