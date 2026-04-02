@@ -5,6 +5,7 @@ import JournalPanel from "../../../components/JournalPanel";
 import DecisionsPanel from "../../../components/DecisionsPanel";
 import AttachmentsPanel from "../../../components/AttachmentsPanel";
 import DecisionTreeModal from "../../../components/DecisionTreeModal";
+import SyncStatusBadge from "../components/SyncStatusBadge";
 import { STAGE_DEFINITIONS, getStageDefinition } from "../../../constants/stages";
 import { useI18n } from "../../../i18n/useI18n";
 
@@ -111,6 +112,7 @@ export default function ProjectScreen({
             <span className="badge">
               {currentStageDefinition?.version || project.currentStage}
             </span>
+            <SyncStatusBadge projectDoc={projectDoc} />
             <span className="muted">
               {t("project.meta.lastUpdated", {
                 timestamp: new Date(project.updatedAt).toLocaleString(),

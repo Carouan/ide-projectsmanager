@@ -182,5 +182,11 @@
   "pwa.needRefresh.title": "Nouvelle version disponible.",
   "pwa.needRefresh.description": "Recharge l’application pour utiliser la dernière version.",
   "pwa.actions.update": "Mettre à jour",
-  "pwa.actions.close": "Fermer"
+  "pwa.actions.close": "Fermer",
+  "project.sync.label": "Sync",
+  "project.sync.state.local_only": "local uniquement",
+  "project.sync.state.dirty": "modifications locales",
+  "project.sync.state.synced": "synchronisé",
+  "project.sync.state.conflict": "conflit",
+  "project.sync.state.error": "erreur"
 }

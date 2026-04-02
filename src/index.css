@@ -653,3 +653,23 @@ select:focus {
   border-radius: 6px;
   padding: 1px 6px;
 }
+
+.sync-badge-local_only {
+  border-color: #475569;
+}
+
+.sync-badge-dirty {
+  border-color: #f59e0b;
+}
+
+.sync-badge-synced {
+  border-color: #22c55e;
+}
+
+.sync-badge-conflict {
+  border-color: #ef4444;
+}
+
+.sync-badge-error {
+  border-color: #f97316;
+}
