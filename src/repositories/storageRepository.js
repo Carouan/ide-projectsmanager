@@ -7,12 +7,12 @@ import {
   saveUserProfile,
 } from "../services/storage";
 
-export function loadPersistedProjects() {
+export async function loadPersistedProjects() {
   return loadProjects();
 }
 
-export function savePersistedProjects(projects) {
-  saveProjects(projects);
+export async function savePersistedProjects(projects) {
+  await saveProjects(projects);
 }
 
 export function loadPersistedSettings() {
