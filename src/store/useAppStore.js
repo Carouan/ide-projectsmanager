@@ -105,32 +105,44 @@ export function useAppStore() {
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    const storedProjects = loadPersistedProjects();
-    const storedSettings = loadPersistedSettings();
-    const storedUserProfile = loadPersistedUserProfile();
-    const initialUserProfile = normalizeUserProfile(storedUserProfile);
-    const loaded = storedProjects.map((projectDoc) =>
-      stripLegacyProjectOwner(withProjectOwnerId(projectDoc, initialUserProfile.id))
-    );
-    const initialSettings = {
-      ...DEFAULT_SETTINGS,
-      ...(storedSettings || loaded[0]?.settings || {}),
-    };
+    let isCancelled = false;
 
-    setProjects(loaded);
-    setSettings(initialSettings);
-    setUserProfile(initialUserProfile);
+    async function hydrateStore() {
+      const storedProjects = await loadPersistedProjects();
+      const storedSettings = loadPersistedSettings();
+      const storedUserProfile = loadPersistedUserProfile();
+      const initialUserProfile = normalizeUserProfile(storedUserProfile);
+      const loaded = storedProjects.map((projectDoc) =>
+        stripLegacyProjectOwner(withProjectOwnerId(projectDoc, initialUserProfile.id))
+      );
+      const initialSettings = {
+        ...DEFAULT_SETTINGS,
+        ...(storedSettings || loaded[0]?.settings || {}),
+      };
 
-    if (loaded.length > 0) {
-      setCurrentProjectId(loaded[0].project.id);
+      if (isCancelled) return;
+
+      setProjects(loaded);
+      setSettings(initialSettings);
+      setUserProfile(initialUserProfile);
+
+      if (loaded.length > 0) {
+        setCurrentProjectId(loaded[0].project.id);
+      }
+
+      setIsHydrated(true);
     }
 
-    setIsHydrated(true);
+    hydrateStore();
+
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
   useEffect(() => {
     if (!isHydrated) return;
-    savePersistedProjects(projects);
+    void savePersistedProjects(projects);
   }, [projects, isHydrated]);
 
   useEffect(() => {
