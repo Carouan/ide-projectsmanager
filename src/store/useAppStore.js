@@ -156,7 +156,7 @@ if (loaded.length > 0) {
     setCurrentProjectId(null);
 
   } finally {
-    setIsHydrated(true);
+    if (!isCancelled) {   setIsHydrated(true); }
   }
 }
 
