@@ -107,31 +107,54 @@ export function useAppStore() {
   useEffect(() => {
     let isCancelled = false;
 
-    async function hydrateStore() {
-      const storedProjects = await loadPersistedProjects();
-      const storedSettings = loadPersistedSettings();
-      const storedUserProfile = loadPersistedUserProfile();
-      const initialUserProfile = normalizeUserProfile(storedUserProfile);
-      const loaded = storedProjects.map((projectDoc) =>
-        stripLegacyProjectOwner(withProjectOwnerId(projectDoc, initialUserProfile.id))
-      );
-      const initialSettings = {
-        ...DEFAULT_SETTINGS,
-        ...(storedSettings || loaded[0]?.settings || {}),
-      };
+async function hydrateStore() {
+  try {
+    const storedProjects = await loadPersistedProjects();
+    const storedSettings = loadPersistedSettings();
+    const storedUserProfile = loadPersistedUserProfile();
 
-      if (isCancelled) return;
+    const initialUserProfile = normalizeUserProfile(storedUserProfile);
 
-      setProjects(loaded);
-      setSettings(initialSettings);
-      setUserProfile(initialUserProfile);
+    const loaded = storedProjects.map((projectDoc) =>
+      stripLegacyProjectOwner(
+        withProjectOwnerId(projectDoc, initialUserProfile.id)
+      )
+    );
 
-      if (loaded.length > 0) {
-        setCurrentProjectId(loaded[0].project.id);
-      }
+    const initialSettings = {
+      ...DEFAULT_SETTINGS,
+      ...(storedSettings || loaded[0]?.settings || {}),
+    };
 
-      setIsHydrated(true);
+    setProjects(loaded);
+    setSettings(initialSettings);
+    setUserProfile(initialUserProfile);
+
+    if (loaded.length > 0) {
+      setCurrentProjectId(loaded[0].project.id);
     }
+
+  } catch (error) {
+    console.error("Failed to hydrate store", error);
+
+    const fallbackUserProfile = normalizeUserProfile(
+      loadPersistedUserProfile()
+    );
+
+    const fallbackSettings = {
+      ...DEFAULT_SETTINGS,
+      ...(loadPersistedSettings() || {}),
+    };
+
+    setProjects([]);
+    setSettings(fallbackSettings);
+    setUserProfile(fallbackUserProfile);
+    setCurrentProjectId(null);
+
+  } finally {
+    setIsHydrated(true);
+  }
+}
 
     hydrateStore();
 
@@ -142,7 +165,7 @@ export function useAppStore() {
 
   useEffect(() => {
     if (!isHydrated) return;
-    void savePersistedProjects(projects);
+    savePersistedProjects(projects).catch((error) => {   console.error("Failed to persist projects", error); });
   }, [projects, isHydrated]);
 
   useEffect(() => {
