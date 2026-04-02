@@ -22,6 +22,7 @@ import {
   patchAttachment,
 } from "../services/attachments";
 import { normalizeUserProfile } from "../services/userProfile";
+import { normalizeSyncMetadata } from "../services/syncMetadata";
 
 function newBacklogId() {
   return `b_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
@@ -65,6 +66,7 @@ function normalizeProject(projectDoc) {
       ...DEFAULT_SETTINGS,
       ...(normalized.settings || {}),
     },
+    sync: normalizeSyncMetadata(normalized.sync),
   };
 }
 

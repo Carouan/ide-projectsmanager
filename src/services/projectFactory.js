@@ -1,5 +1,6 @@
 import { buildDefaultStages } from "../constants/stages";
 import { DEFAULT_SETTINGS } from "../constants/settings";
+import { buildDefaultSyncMetadata } from "./syncMetadata";
 
 export function createEmptyProject(ownerId = null) {
   const now = new Date().toISOString();
@@ -27,5 +28,6 @@ export function createEmptyProject(ownerId = null) {
     settings: {
       ...DEFAULT_SETTINGS,
     },
+    sync: buildDefaultSyncMetadata(),
   };
 }
