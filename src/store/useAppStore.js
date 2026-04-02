@@ -126,13 +126,15 @@ async function hydrateStore() {
       ...(storedSettings || loaded[0]?.settings || {}),
     };
 
-    setProjects(loaded);
-    setSettings(initialSettings);
-    setUserProfile(initialUserProfile);
+if (isCancelled) return;
 
-    if (loaded.length > 0) {
-      setCurrentProjectId(loaded[0].project.id);
-    }
+setProjects(loaded);
+setSettings(initialSettings);
+setUserProfile(initialUserProfile);
+
+if (loaded.length > 0) {
+  setCurrentProjectId(loaded[0].project.id);
+}
 
   } catch (error) {
     console.error("Failed to hydrate store", error);
@@ -146,6 +148,8 @@ async function hydrateStore() {
       ...(loadPersistedSettings() || {}),
     };
 
+    if (isCancelled) return;
+    
     setProjects([]);
     setSettings(fallbackSettings);
     setUserProfile(fallbackUserProfile);
