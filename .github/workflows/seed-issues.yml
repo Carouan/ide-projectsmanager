@@ -1,0 +1,40 @@
+name: Seed GitHub Issues
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo:
+        description: "Target repository (owner/name)"
+        required: false
+        default: "Carouan/ide-projectsmanager"
+      json_path:
+        description: "Path to the JSON source of issues"
+        required: false
+        default: "scripts/github/issues.ide-projectsmanager.json"
+      dry_run:
+        description: "Run without creating issues"
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Seed issues
+        shell: pwsh
+        env:
+          # Uses the built-in token; if needed, replace with a PAT secret.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Usage: run manually from Actions > "Seed GitHub Issues", then adjust inputs as needed.
+          $dryRunArg = if (${{ inputs.dry_run }}) { '-DryRun' } else { '' }
+          ./scripts/github/create_github_issues.ps1 -Repo "${{ inputs.repo }}" -JsonPath "${{ inputs.json_path }}" $dryRunArg
