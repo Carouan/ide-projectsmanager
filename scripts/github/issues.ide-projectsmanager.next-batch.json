@@ -1,0 +1,30 @@
+[
+  {
+    "title": "R1.1 - Add Markdown preview mode switch",
+    "body": "## Objective\nLet users switch the right-panel Markdown preview between:\n- active stage preview\n- full project export preview\n\n## Tasks\n- add a small preview mode setting\n- keep the existing full-project preview as one mode\n- restore a stage-scoped preview builder for the active stage\n- wire the preview panel to the selected mode\n\n## Constraints\n- preserve the current Markdown export format\n- do not redesign the Markdown renderer\n- do not add section navigation or collapsible blocks yet\n\n## Validation\n- users can switch between stage and full preview\n- the full preview still matches the Markdown export\n- the stage preview follows the active stage\n- build passes\n\n## Rollback\n- revert preview mode setting and panel wiring"
+  },
+  {
+    "title": "R1.2 - Add nominal workspace path settings",
+    "body": "## Objective\nAdd a lightweight way for users to define their preferred workspace conventions for:\n- JSON imports\n- JSON exports\n- Markdown exports\n- attachments\n\n## Tasks\n- add settings fields for nominal/preferred paths or folder labels\n- surface these values in the Settings screen\n- show them in export/import related UI where helpful\n- keep values local-only\n\n## Constraints\n- do not promise true filesystem write access\n- do not introduce browser-specific file APIs beyond current behavior\n- keep the feature informational/configurational for now\n\n## Validation\n- settings persist across reloads\n- preferred workspace values are visible in the UI\n- no regression in current import/export flows\n- build passes\n\n## Rollback\n- revert nominal workspace settings and related UI hints"
+  },
+  {
+    "title": "R1.3 - Clarify decision tree destinations and handoff actions",
+    "body": "## Objective\nMake the decision tree outcomes clearer and more actionable inside the app.\n\n## Tasks\n- review existing destination outcomes\n- make destination labels and explanations explicit in the UI\n- clarify the handoff action for each destination (backlog, reframe, new project, architectural note, technical note)\n- keep the current routing minimal and deterministic\n\n## Constraints\n- do not redesign the whole modal\n- do not change project data structures unless strictly necessary\n- preserve current decision-tree logic unless a small fix is required for consistency\n\n## Validation\n- each destination has a clear in-app explanation\n- each destination has a clear next action\n- no regression in existing decision-tree flow\n- build passes\n\n## Rollback\n- revert decision-tree wording and handoff changes"
+  },
+  {
+    "title": "R1.4 - Apply theme setting across the app shell",
+    "body": "## Objective\nMake the existing `theme` setting actually affect the application consistently.\n\n## Tasks\n- define the minimal supported themes (for example dark / light, or current / light)\n- connect the stored setting to top-level CSS or document attributes\n- ensure major layout areas follow the selected theme\n- keep the implementation small and reversible\n\n## Constraints\n- do not redesign the product UI\n- do not introduce a large theming framework\n- keep existing settings compatibility\n\n## Validation\n- changing the theme updates the application visibly\n- theme choice persists after refresh\n- app remains readable in supported themes\n- build passes\n\n## Rollback\n- revert theme wiring while preserving stored settings"
+  },
+  {
+    "title": "R1.5 - Clarify PWA identity and update behavior",
+    "body": "## Objective\nReduce ambiguity around install/update behavior for the PWA, especially on mobile.\n\n## Tasks\n- review manifest identity fields (`name`, `short_name`, `id`, `start_url`, `scope`)\n- document the intended update flow in the repo\n- make the in-app update prompt wording explicit if needed\n- keep runtime changes minimal and focused\n\n## Constraints\n- do not introduce a backend\n- do not change unrelated app behavior\n- avoid broad PWA refactors unless required by the identity fix\n\n## Validation\n- manifest identity is coherent\n- update behavior is documented clearly\n- prompt/update UX remains functional\n- build passes\n\n## Rollback\n- revert manifest and prompt wording changes"
+  },
+  {
+    "title": "R1.6 - Add export for all projects as one JSON bundle",
+    "body": "## Objective\nAllow users to export all stored projects in one JSON bundle for backup or transfer.\n\n## Tasks\n- add an export-all action in Settings or another appropriate global location\n- serialize all projects with a small bundle wrapper or a clearly documented array format\n- keep per-project export untouched\n\n## Constraints\n- preserve existing single-project export behavior\n- keep the format simple and documented\n- avoid changing project schema unnecessarily\n\n## Validation\n- all current projects can be exported in one file\n- single-project export still works\n- bundle content is valid JSON\n- build passes\n\n## Rollback\n- revert the export-all action and serializer"
+  },
+  {
+    "title": "R1.7 - Add import for project bundle restore",
+    "body": "## Objective\nAllow users to restore a previously exported multi-project JSON bundle.\n\n## Tasks\n- add an import path for the global project bundle\n- validate imported structure safely\n- merge or insert imported projects with predictable behavior\n- surface simple import errors to the user\n\n## Constraints\n- do not silently overwrite projects\n- preserve existing single-project import behavior where possible\n- keep validation minimal but explicit\n\n## Validation\n- a valid bundle restores multiple projects\n- invalid bundle structure fails safely\n- no silent overwrite occurs\n- build passes\n\n## Rollback\n- revert bundle import handling"
+  }
+]
