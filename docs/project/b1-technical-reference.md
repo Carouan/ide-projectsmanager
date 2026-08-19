@@ -61,6 +61,7 @@ Structure logique :
 - `journal`
 - `decisions`
 - `attachments`
+- `repository` (facultatif)
 - `settings`
 - `sync`
 
@@ -98,6 +99,25 @@ Types prévus :
 - `note`
 - `snippet`
 - `file_ref`
+
+### `repository`
+Lien facultatif vers le dépôt canonique du projet :
+
+- `provider` (par défaut `github`)
+- `fullName` (`organisation/depot`)
+- `url`
+- `defaultBranch`
+- `visibility` (`public`, `private` ou `internal`)
+- `governance`
+
+Des propriétés supplémentaires, comme un futur identifiant externe stable, sont
+préservées par la normalisation. Un projet sans dépôt lié conserve
+`repository: null`. Lors de l’hydratation ou de l’import, un document ancien qui
+ne contient pas cette propriété est normalisé de la même manière.
+
+Cet ajout reste compatible avec le schéma `1.0` : il est facultatif, n’entraîne
+aucune migration destructive et l’export JSON le préserve. L’export Markdown
+reste inchangé.
 
 ### `sync`
 Métadonnées préparatoires à la synchronisation :

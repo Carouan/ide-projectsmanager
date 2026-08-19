@@ -33,10 +33,21 @@ Structure typique :
   "journal": [],
   "decisions": [],
   "attachments": [],
+  "repository": null,
   "settings": {},
   "sync": {}
 }
 ```
+
+## Repository lié
+
+Le bloc facultatif **repository** relie un projet à son dépôt canonique sans
+modifier le fonctionnement local-first de l’application.
+
+Il peut mémoriser le fournisseur, le nom complet du dépôt, son URL, sa branche
+par défaut, sa visibilité, sa convention de gouvernance et de futures
+métadonnées d’intégration. Quand aucun dépôt n’est lié — notamment pour les
+anciens fichiers JSON — sa valeur normalisée est `null`.
 
 ## MVP
 
