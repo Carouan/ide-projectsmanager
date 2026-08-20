@@ -39,6 +39,7 @@ Le dépôt a déjà dépassé le MVP initial.
 - décisions
 - import / export JSON du projet courant
 - sauvegarde globale de tous les projets dans un bundle JSON versionné
+- restauration globale avec aperçu et import sûr des conflits
 - export Markdown
 - preview Markdown du projet complet
 - écran paramètres
@@ -61,7 +62,6 @@ Le dépôt a déjà dépassé le MVP initial.
 
 ### Encore manquant à court terme
 
-- restauration/import du bundle global
 - fournisseur de sauvegarde portable
 - accès facultatif à un dossier choisi par l'utilisateur
 - instantanés propres à chaque appareil

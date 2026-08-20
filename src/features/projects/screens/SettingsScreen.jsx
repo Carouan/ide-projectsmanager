@@ -1,10 +1,14 @@
 import { useI18n } from "../../../i18n/useI18n";
+import ProjectBundleRestorePanel from "../components/ProjectBundleRestorePanel";
+
 export default function SettingsScreen({
   settings,
   projectCount = 0,
   onBack,
   onUpdateSettings,
   onExportAllProjects,
+  onInspectProjectBundle,
+  onRestoreProjectBundle,
 }) {
   const safeSettings = settings || {};
   const { t } = useI18n();
@@ -83,6 +87,11 @@ export default function SettingsScreen({
             {t("settings.backup.exportAll")}
           </button>
         </section>
+
+        <ProjectBundleRestorePanel
+          onInspectProjectBundle={onInspectProjectBundle}
+          onRestoreProjectBundle={onRestoreProjectBundle}
+        />
       </div>
     </div>
   );

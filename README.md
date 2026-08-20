@@ -12,6 +12,7 @@ Outil local et PWA pour cadrer, suivre, enrichir et réouvrir des projets de man
 - arbre de décision pour trier les nouvelles idées
 - export JSON
 - sauvegarde globale de tous les projets en JSON
+- restauration globale avec aperçu et gestion explicite des conflits
 - import JSON
 - export Markdown
 - PWA installable
@@ -20,7 +21,8 @@ Outil local et PWA pour cadrer, suivre, enrichir et réouvrir des projets de man
 
 - IndexedDB reste le stockage de travail local de chaque appareil.
 - L'export global produit un bundle JSON portable de tous les projets.
-- La prochaine étape est la restauration sûre de ce bundle.
+- La restauration analyse le bundle avant application et ne remplace jamais
+  silencieusement un projet existant.
 - La synchronisation personnelle visera ensuite un dossier facultatif contenant
   des instantanés propres à chaque appareil, synchronisable par Syncthing.
 - L'import/export manuel restera disponible comme solution universelle.

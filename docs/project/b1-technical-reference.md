@@ -187,6 +187,7 @@ Implémenté :
 - arbre de décision / capture d’idée
 - export JSON
 - export global de tous les projets dans un bundle JSON versionné
+- restauration du bundle global avec aperçu nouveaux/conflits
 - import JSON
 - export Markdown
 - preview Markdown intégré
@@ -206,8 +207,12 @@ schéma de chaque projet :
 }
 ```
 
-La restauration d’un bundle complet est traitée séparément afin de préserver
-le comportement de l’import unitaire existant.
+La restauration d’un bundle complet préserve le comportement de l’import
+unitaire existant. Elle valide le wrapper et sa version, rejette les identifiants
+dupliqués dans le fichier, affiche le nombre de projets nouveaux et déjà
+présents, puis demande une stratégie explicite : ignorer les conflits ou les
+importer comme copies avec de nouveaux identifiants. Aucun remplacement
+silencieux n'est proposé.
 
 ### Paramètres / UX
 Implémenté :
@@ -258,19 +263,17 @@ Non fait :
 - settings présents dans le modèle mais encore partiellement branchés
 - accès au dossier sélectionné et persistance des permissions à valider sur les
   navigateurs cibles
-- restauration du bundle global non encore implémentée
 - transport Syncthing non encore validé sous Windows et Android
 - gestion de vrais fichiers binaires pour attachments non encore traitée
 
 ## Roadmap technique courte recommandée
 
-1. ajouter la restauration sûre du bundle global (`R1.7`)
-2. introduire le fournisseur de sauvegarde portable (`S1.1`)
-3. ajouter l'adaptateur de dossier sélectionné (`S1.2`)
-4. écrire les instantanés propres à chaque appareil (`S1.3`)
-5. détecter restauration et divergence (`S1.4`)
-6. valider et documenter Windows/Android (`S1.5`)
-7. traiter `.ipm` et les pièces jointes binaires plus tard (`S2.1`)
+1. introduire le fournisseur de sauvegarde portable (`S1.1`)
+2. ajouter l'adaptateur de dossier sélectionné (`S1.2`)
+3. écrire les instantanés propres à chaque appareil (`S1.3`)
+4. détecter restauration et divergence (`S1.4`)
+5. valider et documenter Windows/Android (`S1.5`)
+6. traiter `.ipm` et les pièces jointes binaires plus tard (`S2.1`)
 
 Les améliorations UX restantes — thème, preview et PWA — peuvent être
 intercalées uniquement si elles ne retardent pas le socle de restauration.
