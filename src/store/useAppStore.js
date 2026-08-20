@@ -23,6 +23,7 @@ import {
 } from "../services/attachments";
 import { normalizeUserProfile } from "../services/userProfile";
 import { normalizeSyncMetadata } from "../services/syncMetadata";
+import { normalizeRepositoryLink } from "../services/repositoryLink";
 
 function newBacklogId() {
   return `b_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
@@ -62,6 +63,7 @@ function normalizeProject(projectDoc) {
     journal: normalized.journal || [],
     decisions: normalized.decisions || [],
     attachments: normalizeAttachments(normalized.attachments),
+    repository: normalizeRepositoryLink(normalized.repository),
     settings: {
       ...DEFAULT_SETTINGS,
       ...(normalized.settings || {}),

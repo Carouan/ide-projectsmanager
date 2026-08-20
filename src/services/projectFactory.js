@@ -25,6 +25,7 @@ export function createEmptyProject(ownerId = null) {
     journal: [],
     decisions: [],
     attachments: [],
+    repository: null,
     settings: {
       ...DEFAULT_SETTINGS,
     },
