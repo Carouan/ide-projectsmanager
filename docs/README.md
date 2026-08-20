@@ -16,6 +16,7 @@ La wiki GitHub pourra éventuellement servir plus tard comme **miroir simplifié
 ## Structure
 
 - `project/` : documentation structurante du produit et du workflow
+- `contracts/` : contrats d'interopérabilité versionnés et exemples associés
 - `history/` : archives utiles pour comprendre le cheminement du dépôt
 
 ## Entrées principales
@@ -26,6 +27,8 @@ La wiki GitHub pourra éventuellement servir plus tard comme **miroir simplifié
 - [B2 — Guide d’automatisation Codex–GitHub](project/b2-codex-github-automation-guide.md)
 - [C — Glossaire et explications](project/c-glossary.md)
 - [Releases, Deployments, Packages — différences exactes](project/github-release-deployment-package-differences.md)
+- [Contrat Dashboard–Project Steward v1](contracts/project-steward-dashboard-contract-v1.md)
+- [Exemple `.project-steward.yml` compatible v1](contracts/examples/project-steward-dashboard-v1.yml)
 
 ## Issues GitHub seedées par workflow
 
