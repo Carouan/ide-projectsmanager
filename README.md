@@ -16,6 +16,19 @@ Outil local et PWA pour cadrer, suivre, enrichir et réouvrir des projets de man
 - export Markdown
 - PWA installable
 
+## Données et sauvegarde
+
+- IndexedDB reste le stockage de travail local de chaque appareil.
+- L'export global produit un bundle JSON portable de tous les projets.
+- La prochaine étape est la restauration sûre de ce bundle.
+- La synchronisation personnelle visera ensuite un dossier facultatif contenant
+  des instantanés propres à chaque appareil, synchronisable par Syncthing.
+- L'import/export manuel restera disponible comme solution universelle.
+
+La décision complète et l'ordre d'implémentation sont documentés dans
+[DR-002](docs/decisions/DR-002-local-first-syncthing-backup-architecture.md) et
+la [roadmap Syncthing](docs/roadmaps/local-first-syncthing-roadmap.md).
+
 ## Stack
 
 - React

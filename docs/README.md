@@ -16,6 +16,8 @@ La wiki GitHub pourra éventuellement servir plus tard comme **miroir simplifié
 ## Structure
 
 - `project/` : documentation structurante du produit et du workflow
+- `decisions/` : décisions d'architecture acceptées
+- `roadmaps/` : séquences d'implémentation actives
 - `contracts/` : contrats d'interopérabilité versionnés et exemples associés
 - `history/` : archives utiles pour comprendre le cheminement du dépôt
 
@@ -26,6 +28,8 @@ La wiki GitHub pourra éventuellement servir plus tard comme **miroir simplifié
 - [B1 — Référence technique](project/b1-technical-reference.md)
 - [B2 — Guide d’automatisation Codex–GitHub](project/b2-codex-github-automation-guide.md)
 - [C — Glossaire et explications](project/c-glossary.md)
+- [DR-002 — Stockage local-first et sauvegardes synchronisées](decisions/DR-002-local-first-syncthing-backup-architecture.md)
+- [Roadmap — Sauvegarde local-first et dossier Syncthing](roadmaps/local-first-syncthing-roadmap.md)
 - [Releases, Deployments, Packages — différences exactes](project/github-release-deployment-package-differences.md)
 - [Contrat Dashboard–Project Steward v1](contracts/project-steward-dashboard-contract-v1.md)
 - [Exemple `.project-steward.yml` compatible v1](contracts/examples/project-steward-dashboard-v1.yml)

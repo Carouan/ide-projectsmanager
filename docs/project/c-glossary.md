@@ -189,7 +189,10 @@ Il sert à :
 
 - identifier le propriétaire logique local
 - préparer `ownerId`
-- préparer la suite sync / multi-user
+- fournir une identité locale stable pour les sauvegardes et migrations
+
+Il ne représente pas un compte cloud et ne prépare plus une architecture
+multi-utilisateur dans la roadmap actuelle.
 
 ## ownerId
 
@@ -207,6 +210,34 @@ Le bloc `sync` contient des informations minimales comme :
 - `dirty`
 
 Il prépare une synchronisation future sans signifier qu’elle est déjà pleinement active.
+
+## Instantané portable
+
+Un **instantané portable** est une sauvegarde versionnée de l'ensemble du
+portefeuille, écrite hors du stockage privé du navigateur. Chaque appareil écrit
+son propre fichier afin d'éviter que plusieurs appareils modifient simultanément
+le même document.
+
+Un instantané n'est pas automatiquement appliqué : l'IDE doit identifier sa
+source, sa date et sa relation avec l'état local avant de proposer une
+restauration.
+
+## Syncthing
+
+**Syncthing** est un outil externe qui synchronise des dossiers entre appareils.
+Dans cette architecture, il ne lit pas IndexedDB et ne remplace pas le stockage
+de l'IDE. Il transporte seulement les instantanés écrits dans un dossier choisi
+par l'utilisateur.
+
+La logique applicative doit rester compatible avec un autre synchroniseur de
+dossier : « Syncthing » est la recommandation initiale, pas un verrou technique.
+
+## Format `.ipm`
+
+`.ipm` est le nom réservé à un futur paquet portable d'IDE Project Manager. Il
+pourra regrouper un manifeste, des projets et de vraies pièces jointes binaires.
+Le format n'est pas encore spécifié et ne doit pas bloquer la première
+synchronisation basée sur le bundle JSON global.
 
 ## Readiness ops
 
