@@ -24,19 +24,32 @@ The agent must behave like a disciplined implementation agent, not like a broad 
 13. Preserve current UX unless the issue explicitly requires change.
 
 ## Mandatory order of work
-1. UI architecture
-2. settings
-3. i18n
-4. markdown preview
-5. attachments
-6. local user
-7. storage abstraction
-8. indexeddb migration
-9. sync metadata
-10. remote abstraction
-11. sync engine
-12. conflict handling
-13. sync status UI
+
+The original front, storage and sync-foundation sequence is complete. The current
+implementation order is:
+
+1. global project-bundle restore (`R1.7`)
+2. portable backup-provider abstraction (`S1.1`)
+3. user-selected folder adapter as progressive enhancement (`S1.2`)
+4. per-device portable snapshots (`S1.3`)
+5. restore and divergence detection UI (`S1.4`)
+6. Windows/Android guide and validation matrix (`S1.5`)
+7. versioned `.ipm` package with binary attachments, later (`S2.1`)
+
+Follow `docs/roadmaps/local-first-syncthing-roadmap.md`. Do not revive the old
+generic remote-backend sequence as the current product roadmap.
+
+## Product scope boundaries
+
+- IndexedDB remains the authoritative working storage on each device.
+- A selected filesystem folder is an optional portable backup mirror.
+- Syncthing is an external folder synchronizer, not the application database.
+- Manual global JSON export/import remains the universal fallback.
+- Multi-user accounts, invitations, roles, phase permissions and real-time
+  collaboration are out of foreseeable scope.
+- Never silently overwrite local data during restore or synchronization.
+- GitHub repository monitoring and Project Steward integration are independent
+  from personal portfolio synchronization.
 
 ## Issue execution rules
 When an issue is explicitly requested:
@@ -150,7 +163,9 @@ If a data model change is necessary:
 ## Current project priorities
 This repository is being upgraded in a controlled way.
 The immediate priority is not random cleanup.
-The immediate priority is to follow the planned roadmap issue by issue.
+The immediate priority is `R1.7`, followed by the `S1` roadmap documented in
+`docs/roadmaps/local-first-syncthing-roadmap.md` and accepted in
+`docs/decisions/DR-002-local-first-syncthing-backup-architecture.md`.
 
 ## If no issue is specified
 Do not perform broad refactors.

@@ -14,7 +14,8 @@ Principes structurants :
 - JSON comme support d’échange principal
 - export Markdown comme sortie documentaire lisible
 - persistance locale robuste
-- architecture prête à accueillir sync future, profils utilisateurs plus poussés et extensions métier
+- architecture prête à accueillir des sauvegardes portables, une synchronisation
+  personnelle par dossier et des extensions métier
 
 ## Stack actuelle
 
@@ -150,6 +151,27 @@ Métadonnées préparatoires à la synchronisation :
 - `lastSyncedAt`
 - `dirty`
 
+Ces métadonnées ne désignent ni un compte distant ni un utilisateur
+collaboratif. Elles restent des signaux locaux pour préparer la détection de
+restauration et de divergence.
+
+### Direction de sauvegarde acceptée
+
+[DR-002](../decisions/DR-002-local-first-syncthing-backup-architecture.md)
+fixe les responsabilités suivantes :
+
+- IndexedDB est le stockage de travail de l'application ;
+- le bundle JSON global est le format portable immédiat ;
+- un fournisseur facultatif peut recopier des instantanés dans un dossier choisi ;
+- chaque appareil écrit son propre instantané ;
+- Syncthing transporte les fichiers sans être intégré comme base de données ;
+- l'application relit les instantanés à l'ouverture et n'écrase jamais
+  silencieusement un état divergent ;
+- le téléchargement et l'import manuels restent disponibles partout.
+
+L'accès direct au dossier doit être détecté au runtime. Un navigateur qui ne
+propose pas l'API requise continue à utiliser le flux manuel existant.
+
 ## État réel d’implémentation
 
 ### Noyau produit
@@ -234,14 +256,21 @@ Non fait :
 - comportement de mise à jour / réinstallation PWA à clarifier sur Android
 - besoin d’un switch `stage preview` ↔ `full export`
 - settings présents dans le modèle mais encore partiellement branchés
-- convention de dossier de travail utilisateur encore à formaliser
+- accès au dossier sélectionné et persistance des permissions à valider sur les
+  navigateurs cibles
+- restauration du bundle global non encore implémentée
+- transport Syncthing non encore validé sous Windows et Android
 - gestion de vrais fichiers binaires pour attachments non encore traitée
 
 ## Roadmap technique courte recommandée
 
-1. stabiliser la v1.0 réellement livrée
-2. auditer modèle ↔ UI ↔ exports
-3. finaliser les settings réellement branchés
-4. clarifier identité / update PWA
-5. ajouter l’import global de tous les projets
-6. ajouter preview `étape active` vs `export complet`
+1. ajouter la restauration sûre du bundle global (`R1.7`)
+2. introduire le fournisseur de sauvegarde portable (`S1.1`)
+3. ajouter l'adaptateur de dossier sélectionné (`S1.2`)
+4. écrire les instantanés propres à chaque appareil (`S1.3`)
+5. détecter restauration et divergence (`S1.4`)
+6. valider et documenter Windows/Android (`S1.5`)
+7. traiter `.ipm` et les pièces jointes binaires plus tard (`S2.1`)
+
+Les améliorations UX restantes — thème, preview et PWA — peuvent être
+intercalées uniquement si elles ne retardent pas le socle de restauration.

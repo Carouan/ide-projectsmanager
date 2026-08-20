@@ -33,6 +33,20 @@ Non-goal for this phase:
 - no real authentication
 - no real-time collaboration
 - no heavy architectural rewrite without a staged migration path
+- no multi-user accounts, invitations, roles or phase-level permissions
+
+### Current product direction — 2026-08-20
+
+The original front and sync-foundation roadmaps below are retained as design
+history. Their foundations are now implemented. The active sequence is defined
+by:
+
+- [DR-002 — local-first storage and synchronized-folder backups](decisions/DR-002-local-first-syncthing-backup-architecture.md)
+- [Local-first and Syncthing roadmap](roadmaps/local-first-syncthing-roadmap.md)
+
+In short: IndexedDB remains the local working store, an optional selected folder
+contains portable per-device snapshots, Syncthing may synchronize that folder,
+and manual global JSON import/export remains the universal fallback.
 
 ---
 
@@ -125,23 +139,18 @@ A PR should be rejected if:
 
 ## 4. Global execution order
 
-Codex must work in this order and not skip ahead.
+The historical foundations are complete. Codex must now follow this order:
 
-1. Front architecture foundations
-2. Settings foundations
-3. i18n foundations and migration
-4. Markdown preview panel
-5. Attachments v1
-6. Local user profile
-7. Storage abstraction
-8. IndexedDB migration
-9. Sync metadata
-10. Remote repository abstraction
-11. Sync engine skeleton
-12. Conflict handling strategy
-13. Sync status UI
+1. restore the versioned global project bundle (`R1.7`)
+2. introduce a portable backup-provider boundary (`S1.1`)
+3. add a selected-folder adapter with capability detection and fallback (`S1.2`)
+4. write per-device snapshots (`S1.3`)
+5. detect newer snapshots and divergence without silent overwrite (`S1.4`)
+6. document and validate Windows and Android flows (`S1.5`)
+7. design `.ipm` binary attachments only after S1 is stable (`S2.1`)
 
-Do not start sync work before front foundations are stable.
+GitHub/Project Steward features may continue independently when explicitly
+prioritized, but they must not introduce an application multi-user model.
 
 ---
 
@@ -681,6 +690,11 @@ Make attachments usable from the main project workflow.
 ---
 
 ## 7. Roadmap B — User + Sync Foundations
+
+> **Historical foundation — implemented.** This roadmap produced the local user,
+> storage abstraction, IndexedDB migration, sync metadata, conflict model and
+> status UI. It does not define the active transport/provider direction. Use the
+> current Syncthing roadmap linked in section 0 for new work.
 
 ### Definition of done for Roadmap B
 
@@ -1226,18 +1240,14 @@ Do not perform a big-bang rewrite.
 
 If Codex needs the immediate next sequence, use exactly this order:
 
-1. `F0.1` Add governance docs
-2. `F1.1` Introduce `AppShell`
-3. `F1.2` Restructure screens into feature folders
-4. `F1.3` Introduce right panel layout slot
-5. `F2.1` Add settings defaults and slice
-6. `F2.2` Persist settings cleanly
-7. `F2.3` Add `SettingsScreen`
-8. `F3.1` Add i18n core
-9. `F3.2` Migrate global app strings
-10. `F3.3` Migrate project and stage strings
+1. `R1.7` restore the global project bundle
+2. `S1.1` add the portable backup-provider boundary
+3. `S1.2` add the selected-folder adapter
+4. `S1.3` write per-device snapshots
+5. `S1.4` detect restore candidates and divergence
+6. `S1.5` document and validate Windows/Android use
 
-No sync work before these are stable.
+Do not start `.ipm` binary attachments before this sequence is stable.
 
 ---
 
@@ -1251,4 +1261,3 @@ When in doubt:
 - preserve local-first behavior
 - prefer explicit migration over hidden mutation
 - prefer reversible change over clever change
-

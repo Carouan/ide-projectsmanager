@@ -38,6 +38,7 @@ Le dépôt a déjà dépassé le MVP initial.
 - journal
 - décisions
 - import / export JSON du projet courant
+- sauvegarde globale de tous les projets dans un bundle JSON versionné
 - export Markdown
 - preview Markdown du projet complet
 - écran paramètres
@@ -54,12 +55,18 @@ Le dépôt a déjà dépassé le MVP initial.
 
 - thème personnalisable présent mais incomplètement branché
 - arbre de décision présent mais encore à mieux cadrer fonctionnellement
-- synchronisation réelle non encore active
+- synchronisation personnelle réelle non encore active ; le transport par
+  instantanés de dossier est décidé mais pas implémenté
 - comportement PWA sur Android à clarifier
 
-### Encore manquant
+### Encore manquant à court terme
 
-- export / import de tous les projets
+- restauration/import du bundle global
+- fournisseur de sauvegarde portable
+- accès facultatif à un dossier choisi par l'utilisateur
+- instantanés propres à chaque appareil
+- détection d'une sauvegarde plus récente et des divergences
+- guide et tests Syncthing sous Windows et Android
 - chemin de travail par défaut / nominal
 - switch preview étape vs export complet
 - désactivation par défaut de la preview sur mobile
@@ -72,6 +79,13 @@ Le dépôt a déjà dépassé le MVP initial.
 - adaptation hors ICT
 - widgets spécialisés par étape
 
+### Explicitement hors roadmap prévisible
+
+- comptes applicatifs distants
+- invitations et collaboration multi-utilisateur
+- rôles et permissions par projet ou par phase
+- édition collaborative temps réel
+
 ## Repères historiques récents
 
 Merges récents confirmés dans le dépôt :
@@ -79,6 +93,9 @@ Merges récents confirmés dans le dépôt :
 - 2026-03-31 : refactor écrans, settings, i18n, preview Markdown
 - 2026-04-01 : attachments, profil utilisateur local
 - 2026-04-02 : repository layer, IndexedDB, sync metadata, sync engine skeleton, conflict detection, sync status badge, workflow de seed d’issues GitHub
+- 2026-08-20 : dashboard et suivi GitHub/Project Steward intégrés, export global
+  livré, choix d'IndexedDB comme stockage de travail et de Syncthing comme
+  synchroniseur externe d'un miroir d'instantanés portable
 
 ## Arborescence de travail locale recommandée
 
@@ -94,9 +111,17 @@ Structure recommandée côté utilisateur :
 
 ## Direction recommandée
 
-La suite logique du projet consiste à :
+La suite logique du produit est définie par
+[DR-002](../decisions/DR-002-local-first-syncthing-backup-architecture.md)
+et la [roadmap Syncthing](../roadmaps/local-first-syncthing-roadmap.md) :
 
-1. stabiliser la documentation dans le dépôt
-2. seed de petits lots d’issues versionnés
-3. continuer à travailler par PR atomiques
-4. réserver la wiki GitHub comme miroir éventuel, pas comme source principale
+1. ajouter la restauration du bundle global
+2. conserver IndexedDB comme stockage de travail local
+3. ajouter un fournisseur de sauvegarde portable interchangeable
+4. utiliser facultativement un dossier sélectionné comme miroir
+5. laisser Syncthing synchroniser ce dossier hors de l'application
+6. détecter explicitement les restaurations et divergences
+7. reporter le format `.ipm` et les binaires après validation du flux JSON
+
+Le travail continue par petites issues et PR atomiques. La documentation du
+dépôt reste la source maîtresse ; la wiki GitHub demeure un miroir éventuel.
