@@ -28,6 +28,7 @@ export default function App() {
     updateAttachment,
     removeAttachment,
     exportCurrentProjectJson,
+    exportAllProjectsJson,
     importProjectFromFile,
     exportCurrentProjectMarkdown,
     settings,
@@ -92,8 +93,10 @@ export default function App() {
     ) : (
       <SettingsScreen
         settings={settings}
+        projectCount={projects.length}
         onBack={handleBackFromSettings}
         onUpdateSettings={updateSettings}
+        onExportAllProjects={exportAllProjectsJson}
       />
     );
 

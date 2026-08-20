@@ -8,7 +8,11 @@ import {
   savePersistedUserProfile,
 } from "../repositories/storageRepository";
 import { createEmptyProject } from "../services/projectFactory";
-import { downloadJsonFile, readJsonFile } from "../services/jsonTransfer";
+import {
+  createProjectBundle,
+  downloadJsonFile,
+  readJsonFile,
+} from "../services/jsonTransfer";
 import {
   projectToMarkdown,
   downloadMarkdownFile,
@@ -713,6 +717,16 @@ if (loaded.length > 0) {
     downloadJsonFile(`${safeSlug}.json`, project);
   }
 
+  function exportAllProjectsJson() {
+    if (projects.length === 0) return;
+
+    const exportedAt = new Date().toISOString();
+    const date = exportedAt.slice(0, 10);
+    const bundle = createProjectBundle(projects, { exportedAt });
+
+    downloadJsonFile(`ide-projectsmanager-backup-${date}.json`, bundle);
+  }
+
   async function importProjectFromFile(file) {
     const importedProject = stripLegacyProjectOwner(
       withProjectOwnerId(await readJsonFile(file), userProfile?.id)
@@ -783,6 +797,7 @@ if (loaded.length > 0) {
     updateProjectSettings,
     updateBacklogItemStatus,
     exportCurrentProjectJson,
+    exportAllProjectsJson,
     importProjectFromFile,
     exportCurrentProjectMarkdown,
   };

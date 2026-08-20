@@ -207,6 +207,21 @@ h3 {
   padding: 24px;
 }
 
+.settings-backup-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.settings-backup-panel .hero-text {
+  margin-bottom: 0;
+}
+
+.settings-backup-panel .btn {
+  flex: 0 0 auto;
+}
+
 .empty-state {
   padding: 36px 24px;
   text-align: center;
@@ -293,6 +308,12 @@ select:focus {
   opacity: 0.96;
 }
 
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: none;
+}
+
 .btn-primary {
   background: linear-gradient(135deg, var(--primary), var(--primary-2));
 }
@@ -333,7 +354,8 @@ select:focus {
   .topbar,
   .project-card-header,
   .panel-header,
-  .backlog-item-top {
+  .backlog-item-top,
+  .settings-backup-panel {
     flex-direction: column;
     align-items: stretch;
   }

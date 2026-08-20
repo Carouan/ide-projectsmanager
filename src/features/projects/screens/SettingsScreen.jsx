@@ -1,5 +1,11 @@
 import { useI18n } from "../../../i18n/useI18n";
-export default function SettingsScreen({ settings, onBack, onUpdateSettings }) {
+export default function SettingsScreen({
+  settings,
+  projectCount = 0,
+  onBack,
+  onUpdateSettings,
+  onExportAllProjects,
+}) {
   const safeSettings = settings || {};
   const { t } = useI18n();
 
@@ -58,6 +64,24 @@ export default function SettingsScreen({ settings, onBack, onUpdateSettings }) {
               />
             </label>
           </div>
+        </section>
+
+        <section className="panel settings-backup-panel">
+          <div>
+            <div className="eyebrow">{t("settings.backup.eyebrow")}</div>
+            <h2>{t("settings.backup.title")}</h2>
+            <p className="hero-text">
+              {t("settings.backup.description", { count: projectCount })}
+            </p>
+          </div>
+          <button
+            className="btn btn-primary"
+            type="button"
+            disabled={projectCount === 0}
+            onClick={onExportAllProjects}
+          >
+            {t("settings.backup.exportAll")}
+          </button>
         </section>
       </div>
     </div>
