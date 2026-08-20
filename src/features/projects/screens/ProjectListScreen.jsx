@@ -1,4 +1,5 @@
 import { useI18n } from "../../../i18n/useI18n";
+import AttentionInbox from "../components/AttentionInbox";
 
 export default function ProjectListScreen({
   projects,
@@ -28,6 +29,13 @@ export default function ProjectListScreen({
             </button>
           </div>
         </div>
+
+        {projects.length > 0 && (
+          <AttentionInbox
+            projects={projects}
+            onOpenProject={onOpenProject}
+          />
+        )}
 
         {projects.length === 0 ? (
           <div className="empty-state">
