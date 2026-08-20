@@ -5,7 +5,9 @@ import {
   saveSettings,
   loadUserProfile,
   saveUserProfile,
-} from "../services/storage";
+  loadRepositorySnapshots,
+  saveRepositorySnapshots,
+} from "../services/storage.js";
 
 export async function loadPersistedProjects() {
   return loadProjects();
@@ -29,4 +31,12 @@ export async function loadPersistedUserProfile() {
 
 export async function savePersistedUserProfile(profile) {
   await saveUserProfile(profile);
+}
+
+export async function loadPersistedRepositorySnapshots() {
+  return loadRepositorySnapshots();
+}
+
+export async function savePersistedRepositorySnapshots(snapshots) {
+  await saveRepositorySnapshots(snapshots);
 }
