@@ -29,6 +29,10 @@ La wiki GitHub pourra éventuellement servir plus tard comme **miroir simplifié
 - [Releases, Deployments, Packages — différences exactes](project/github-release-deployment-package-differences.md)
 - [Contrat Dashboard–Project Steward v1](contracts/project-steward-dashboard-contract-v1.md)
 - [Exemple `.project-steward.yml` compatible v1](contracts/examples/project-steward-dashboard-v1.yml)
+- [Conventions v1 — origine des contributions et attention humaine](contracts/ai-origin-human-attention-conventions-v1.md)
+- [Exemples machine-lisibles des conventions v1](contracts/examples/ai-origin-human-attention-v1.json)
+- [Issue compagnon pour `ai-project-template`](contracts/companion-issues/ai-project-template-attention-conventions.md)
+- [Issue compagnon pour `ai-project-steward`](contracts/companion-issues/ai-project-steward-attention-conventions.md)
 
 ## Issues GitHub seedées par workflow
 
