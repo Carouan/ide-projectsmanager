@@ -6,6 +6,7 @@ import DecisionsPanel from "../../../components/DecisionsPanel";
 import AttachmentsPanel from "../../../components/AttachmentsPanel";
 import DecisionTreeModal from "../../../components/DecisionTreeModal";
 import SyncStatusBadge from "../components/SyncStatusBadge";
+import RepositoryPanel from "../components/RepositoryPanel";
 import { STAGE_DEFINITIONS, getStageDefinition } from "../../../constants/stages";
 import { useI18n } from "../../../i18n/useI18n";
 
@@ -198,6 +199,12 @@ export default function ProjectScreen({
           >
             {t("project.tabs.attachments")}
           </button>
+          <button
+            className={`tab ${tab === "repository" ? "tab-active" : ""}`}
+            onClick={() => setTab("repository")}
+          >
+            {t("project.tabs.repository")}
+          </button>
         </div>
 
         {tab === "project" && (
@@ -329,6 +336,8 @@ export default function ProjectScreen({
             onRemoveAttachment={onRemoveAttachment}
           />
         )}
+
+        {tab === "repository" && <RepositoryPanel projectDoc={projectDoc} />}
 
         <DecisionTreeModal
           isOpen={isDecisionTreeOpen}
