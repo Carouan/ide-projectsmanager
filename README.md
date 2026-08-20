@@ -16,6 +16,7 @@ Outil local et PWA pour cadrer, suivre, enrichir et réouvrir des projets de man
 - import JSON
 - export Markdown
 - PWA installable
+- projet de démonstration facultatif relié au dépôt GitHub public de l'application
 
 ## Données et sauvegarde
 

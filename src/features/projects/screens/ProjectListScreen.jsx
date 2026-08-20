@@ -4,6 +4,7 @@ import AttentionInbox from "../components/AttentionInbox";
 export default function ProjectListScreen({
   projects,
   onCreateProject,
+  onInstallDemoProject,
   onOpenProject,
   onDeleteProject,
   onOpenSettings,
@@ -41,6 +42,18 @@ export default function ProjectListScreen({
           <div className="empty-state">
             <h2>{t("global.empty.title")}</h2>
             <p>{t("global.empty.description")}</p>
+            <p className="muted">{t("global.empty.demoDescription")}</p>
+            <div className="project-actions empty-state-actions">
+              <button
+                className="btn btn-secondary"
+                onClick={onInstallDemoProject}
+              >
+                {t("global.actions.installDemo")}
+              </button>
+              <button className="btn btn-primary" onClick={onCreateProject}>
+                {t("global.actions.newProject")}
+              </button>
+            </div>
           </div>
         ) : (
           <div className="card-grid">

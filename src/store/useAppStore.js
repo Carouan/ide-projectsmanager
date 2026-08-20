@@ -31,6 +31,10 @@ import {
 import { normalizeUserProfile } from "../services/userProfile";
 import { normalizeSyncMetadata } from "../services/syncMetadata";
 import { normalizeRepositoryLink } from "../services/repositoryLink";
+import {
+  IDE_DEMO_PROJECT_ID,
+  installIdeDemoProject as prepareIdeDemoProjectInstall,
+} from "../services/demoProject";
 
 function newBacklogId() {
   return `b_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
@@ -204,6 +208,17 @@ if (loaded.length > 0) {
     );
     setProjects((prev) => [newProject, ...prev]);
     setCurrentProjectId(newProject.project.id);
+  }
+
+  function installIdeDemoProject() {
+    setProjects((previousProjects) =>
+      prepareIdeDemoProjectInstall(previousProjects, {
+        ownerId: userProfile?.id || null,
+      }).projects
+    );
+    setCurrentProjectId(IDE_DEMO_PROJECT_ID);
+
+    return IDE_DEMO_PROJECT_ID;
   }
 
   function createProjectFromIdea({ title, content }) {
@@ -813,6 +828,7 @@ if (loaded.length > 0) {
     currentProject,
     currentProjectId,
     createProject,
+    installIdeDemoProject,
     createProjectFromIdea,
     openProject,
     deleteProject,
