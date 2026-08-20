@@ -9,9 +9,12 @@ import {
 } from "../repositories/storageRepository";
 import { createEmptyProject } from "../services/projectFactory";
 import {
+  analyzeProjectBundle,
   createProjectBundle,
   downloadJsonFile,
   readJsonFile,
+  restoreProjectBundle as applyProjectBundleRestore,
+  validateProjectBundle,
 } from "../services/jsonTransfer";
 import {
   projectToMarkdown,
@@ -93,7 +96,8 @@ function withProjectOwnerId(projectDoc, ownerId) {
 function stripLegacyProjectOwner(projectDoc) {
   if (!projectDoc?.project) return projectDoc;
 
-  const { owner, ...projectWithoutLegacyOwner } = projectDoc.project;
+  const projectWithoutLegacyOwner = { ...projectDoc.project };
+  delete projectWithoutLegacyOwner.owner;
 
   return {
     ...projectDoc,
@@ -727,6 +731,38 @@ if (loaded.length > 0) {
     downloadJsonFile(`ide-projectsmanager-backup-${date}.json`, bundle);
   }
 
+  async function inspectProjectBundleFile(file) {
+    const rawBundle = validateProjectBundle(await readJsonFile(file));
+    const normalizedBundle = {
+      ...rawBundle,
+      projects: rawBundle.projects.map((projectDoc) =>
+        stripLegacyProjectOwner(
+          withProjectOwnerId(projectDoc, userProfile?.id)
+        )
+      ),
+    };
+
+    return analyzeProjectBundle(normalizedBundle, projects);
+  }
+
+  function restoreProjectsFromBundle(inspection, conflictStrategy) {
+    if (!inspection?.bundle) {
+      validateProjectBundle(null);
+    }
+
+    const result = applyProjectBundleRestore(inspection.bundle, projects, {
+      conflictStrategy,
+    });
+
+    setProjects(result.projects);
+
+    if (!currentProjectId && result.importedProjectIds.length > 0) {
+      setCurrentProjectId(result.importedProjectIds[0]);
+    }
+
+    return result.summary;
+  }
+
   async function importProjectFromFile(file) {
     const importedProject = stripLegacyProjectOwner(
       withProjectOwnerId(await readJsonFile(file), userProfile?.id)
@@ -798,6 +834,8 @@ if (loaded.length > 0) {
     updateBacklogItemStatus,
     exportCurrentProjectJson,
     exportAllProjectsJson,
+    inspectProjectBundleFile,
+    restoreProjectsFromBundle,
     importProjectFromFile,
     exportCurrentProjectMarkdown,
   };

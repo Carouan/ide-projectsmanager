@@ -163,8 +163,10 @@ If a data model change is necessary:
 ## Current project priorities
 This repository is being upgraded in a controlled way.
 The immediate priority is not random cleanup.
-The immediate priority is `R1.7`, followed by the `S1` roadmap documented in
-`docs/roadmaps/local-first-syncthing-roadmap.md` and accepted in
+The global bundle restore is implemented by issue `#81` / `R1.7`. Once that PR
+is merged, the immediate priority is `S1.1` (`#82`), followed by the remaining
+`S1` roadmap documented in `docs/roadmaps/local-first-syncthing-roadmap.md` and
+accepted in
 `docs/decisions/DR-002-local-first-syncthing-backup-architecture.md`.
 
 ## If no issue is specified

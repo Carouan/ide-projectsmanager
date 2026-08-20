@@ -29,6 +29,8 @@ export default function App() {
     removeAttachment,
     exportCurrentProjectJson,
     exportAllProjectsJson,
+    inspectProjectBundleFile,
+    restoreProjectsFromBundle,
     importProjectFromFile,
     exportCurrentProjectMarkdown,
     settings,
@@ -97,6 +99,8 @@ export default function App() {
         onBack={handleBackFromSettings}
         onUpdateSettings={updateSettings}
         onExportAllProjects={exportAllProjectsJson}
+        onInspectProjectBundle={inspectProjectBundleFile}
+        onRestoreProjectBundle={restoreProjectsFromBundle}
       />
     );
 
