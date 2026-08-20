@@ -1,0 +1,128 @@
+{
+  "contractVersion": 1,
+  "cases": [
+    {
+      "id": "work-validation",
+      "input": {
+        "labels": ["agent:work", "attention:validation"],
+        "draft": false,
+        "readyForReview": true,
+        "structuredLevel": "validation"
+      },
+      "expected": {
+        "origin": "work",
+        "attention": "validation",
+        "conflict": false,
+        "mergeSafety": "not_assessed"
+      }
+    },
+    {
+      "id": "codex-decision",
+      "input": {
+        "labels": ["agent:codex", "attention:decision"],
+        "draft": false,
+        "readyForReview": true,
+        "structuredLevel": "decision",
+        "checks": "success"
+      },
+      "expected": {
+        "origin": "codex",
+        "attention": "decision",
+        "conflict": false,
+        "mergeSafety": "not_assessed"
+      }
+    },
+    {
+      "id": "human-information",
+      "input": {
+        "labels": ["origin:human", "attention:information"],
+        "draft": true,
+        "readyForReview": false,
+        "structuredLevel": "information"
+      },
+      "expected": {
+        "origin": "human",
+        "attention": "information",
+        "conflict": false,
+        "mergeSafety": "not_assessed"
+      }
+    },
+    {
+      "id": "other-automation-validation",
+      "input": {
+        "labels": ["agent:other", "attention:validation"],
+        "draft": false,
+        "readyForReview": true
+      },
+      "expected": {
+        "origin": "other_automation",
+        "attention": "validation",
+        "conflict": false,
+        "mergeSafety": "not_assessed"
+      }
+    },
+    {
+      "id": "unknown-origin-ready-fallback",
+      "input": {
+        "labels": [],
+        "authorType": "User",
+        "branch": "codex/fix-cache",
+        "draft": false,
+        "readyForReview": true
+      },
+      "expected": {
+        "origin": "unknown",
+        "attention": "validation",
+        "attentionSource": "fallback",
+        "conflict": false,
+        "mergeSafety": "not_assessed"
+      }
+    },
+    {
+      "id": "origin-conflict",
+      "input": {
+        "labels": ["agent:work", "origin:human", "attention:validation"],
+        "draft": false,
+        "readyForReview": true
+      },
+      "expected": {
+        "origin": "unknown",
+        "attention": "validation",
+        "originConflict": true,
+        "mergeSafety": "not_assessed"
+      }
+    },
+    {
+      "id": "attention-conflict-safe-precedence",
+      "input": {
+        "labels": ["agent:codex", "attention:information"],
+        "structuredLevel": "blocking",
+        "draft": false,
+        "readyForReview": true
+      },
+      "expected": {
+        "origin": "codex",
+        "attention": "blocking",
+        "attentionConflict": true,
+        "mergeSafety": "not_assessed"
+      }
+    },
+    {
+      "id": "healthy-draft-fallback",
+      "input": {
+        "labels": [],
+        "authorType": "Bot",
+        "draft": true,
+        "readyForReview": false,
+        "checks": "success"
+      },
+      "expected": {
+        "origin": "unknown",
+        "attention": "information",
+        "attentionSource": "fallback",
+        "conflict": false,
+        "mergeSafety": "not_assessed"
+      }
+    }
+  ]
+}
