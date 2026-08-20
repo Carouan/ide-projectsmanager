@@ -164,11 +164,28 @@ Implémenté :
 - décisions
 - arbre de décision / capture d’idée
 - export JSON
+- export global de tous les projets dans un bundle JSON versionné
 - import JSON
 - export Markdown
 - preview Markdown intégré
 - attachments
 - base PWA
+
+Le bundle de sauvegarde globale utilise le format suivant sans modifier le
+schéma de chaque projet :
+
+```json
+{
+  "format": "ide-projectsmanager.project-bundle",
+  "version": 1,
+  "exportedAt": "2026-08-20T10:00:00.000Z",
+  "projectCount": 2,
+  "projects": []
+}
+```
+
+La restauration d’un bundle complet est traitée séparément afin de préserver
+le comportement de l’import unitaire existant.
 
 ### Paramètres / UX
 Implémenté :
@@ -226,5 +243,5 @@ Non fait :
 2. auditer modèle ↔ UI ↔ exports
 3. finaliser les settings réellement branchés
 4. clarifier identité / update PWA
-5. ajouter export / import global de tous les projets
+5. ajouter l’import global de tous les projets
 6. ajouter preview `étape active` vs `export complet`

@@ -11,6 +11,7 @@ Outil local et PWA pour cadrer, suivre, enrichir et réouvrir des projets de man
 - bloc décisions
 - arbre de décision pour trier les nouvelles idées
 - export JSON
+- sauvegarde globale de tous les projets en JSON
 - import JSON
 - export Markdown
 - PWA installable

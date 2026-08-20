@@ -1,3 +1,19 @@
+export const PROJECT_BUNDLE_FORMAT = "ide-projectsmanager.project-bundle";
+export const PROJECT_BUNDLE_VERSION = 1;
+
+export function createProjectBundle(projects, options = {}) {
+  const safeProjects = Array.isArray(projects) ? projects : [];
+  const exportedAt = options.exportedAt || new Date().toISOString();
+
+  return {
+    format: PROJECT_BUNDLE_FORMAT,
+    version: PROJECT_BUNDLE_VERSION,
+    exportedAt,
+    projectCount: safeProjects.length,
+    projects: safeProjects,
+  };
+}
+
 export function downloadJsonFile(filename, data) {
   const json = JSON.stringify(data, null, 2);
   const blob = new Blob([json], { type: "application/json;charset=utf-8" });
