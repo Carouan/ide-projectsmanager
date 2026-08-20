@@ -1,6 +1,8 @@
 const STORAGE_KEY = "ide-projet-personnel.projects";
 const SETTINGS_STORAGE_KEY = "ide-projet-personnel.settings";
 const USER_PROFILE_STORAGE_KEY = "ide-projet-personnel.user-profile";
+const REPOSITORY_SNAPSHOTS_STORAGE_KEY =
+  "ide-projet-personnel.repository-snapshots";
 
 const PROJECTS_DB_NAME = "ide-projet-personnel";
 const PROJECTS_DB_VERSION = 2;
@@ -9,6 +11,7 @@ const PROJECTS_RECORD_KEY = "projects";
 const APP_STORE_NAME = "app_storage";
 const SETTINGS_RECORD_KEY = "settings";
 const USER_PROFILE_RECORD_KEY = "user-profile";
+const REPOSITORY_SNAPSHOTS_RECORD_KEY = "repository-snapshots";
 
 let projectsDbPromise = null;
 
@@ -234,5 +237,46 @@ export async function saveUserProfile(profile) {
     await writeAppValueToIndexedDb(USER_PROFILE_RECORD_KEY, profile);
   } catch {
     localStorage.setItem(USER_PROFILE_STORAGE_KEY, JSON.stringify(profile));
+  }
+}
+
+export async function loadRepositorySnapshots() {
+  try {
+    const snapshots = await readAppValueFromIndexedDb(
+      REPOSITORY_SNAPSHOTS_RECORD_KEY
+    );
+
+    if (snapshots && typeof snapshots === "object" && !Array.isArray(snapshots)) {
+      return snapshots;
+    }
+
+    return (
+      parseJsonObject(localStorage.getItem(REPOSITORY_SNAPSHOTS_STORAGE_KEY)) ||
+      {}
+    );
+  } catch {
+    return (
+      parseJsonObject(localStorage.getItem(REPOSITORY_SNAPSHOTS_STORAGE_KEY)) ||
+      {}
+    );
+  }
+}
+
+export async function saveRepositorySnapshots(snapshots) {
+  const safeSnapshots =
+    snapshots && typeof snapshots === "object" && !Array.isArray(snapshots)
+      ? snapshots
+      : {};
+
+  try {
+    await writeAppValueToIndexedDb(
+      REPOSITORY_SNAPSHOTS_RECORD_KEY,
+      safeSnapshots
+    );
+  } catch {
+    localStorage.setItem(
+      REPOSITORY_SNAPSHOTS_STORAGE_KEY,
+      JSON.stringify(safeSnapshots)
+    );
   }
 }

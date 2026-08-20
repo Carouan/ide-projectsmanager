@@ -119,6 +119,29 @@ Cet ajout reste compatible avec le schéma `1.0` : il est facultatif, n’entra�
 aucune migration destructive et l’export JSON le préserve. L’export Markdown
 reste inchangé.
 
+### Adaptateur de dépôt en lecture seule
+
+La couche fournisseur est isolée dans `src/repositories/providers/`. Une
+implémentation expose un identifiant `id` et une fonction asynchrone
+`readRepository(repository)`. Le premier adaptateur interroge uniquement l’API
+publique GitHub, sans token ni opération d’écriture, et normalise :
+
+- identité, visibilité, branche par défaut et dernière activité du dépôt ;
+- pull requests ouvertes, état brouillon/prête et liens GitHub ;
+- fusion possible/conflits et statuts de commit lorsqu’ils sont disponibles.
+
+`repositorySnapshotService` orchestre le fournisseur et un cache séparé du
+`ProjectDocument`. Chaque résultat expose un état explicite (`fresh`, `stale`,
+`offline`, `error`, `unsupported` ou `unlinked`), sa source (`network` ou
+`cache`), un `fetchedAt`, l’âge du cache et une erreur normalisée éventuelle.
+Une erreur réseau ou une limite d’API ne remplace jamais un ancien snapshot par
+un faux état sain. Hors ligne, le dernier snapshot reste lisible mais est
+toujours signalé comme périmé.
+
+Le cache est conservé dans l’espace applicatif IndexedDB, avec le même repli
+`localStorage` que les autres préférences. Il n’est pas exporté avec le projet
+et ne devient donc jamais une source de vérité concurrente.
+
 ### `sync`
 Métadonnées préparatoires à la synchronisation :
 
