@@ -23,13 +23,17 @@ Outil local et PWA pour cadrer, suivre, enrichir et réouvrir des projets de man
 - L'export global produit un bundle JSON portable de tous les projets.
 - La restauration analyse le bundle avant application et ne remplace jamais
   silencieusement un projet existant.
-- La synchronisation personnelle visera ensuite un dossier facultatif contenant
-  des instantanés propres à chaque appareil, synchronisable par Syncthing.
-- L'import/export manuel restera disponible comme solution universelle.
+- L'import/export manuel reste le parcours universel, autonome et sans
+  installation supplémentaire.
+- Un dossier choisi pourra servir de miroir facultatif lorsque le navigateur le
+  permet ; il ne se synchronise pas à lui seul.
+- Syncthing ou un autre transport pourra synchroniser ce dossier, sans devenir
+  une dépendance de l'application.
 
 La décision complète et l'ordre d'implémentation sont documentés dans
-[DR-002](docs/decisions/DR-002-local-first-syncthing-backup-architecture.md) et
-la [roadmap Syncthing](docs/roadmaps/local-first-syncthing-roadmap.md).
+[DR-002](docs/decisions/DR-002-local-first-syncthing-backup-architecture.md),
+[DR-003](docs/decisions/DR-003-stages-workstreams-project-model.md) et la
+[roadmap de sauvegarde portable](docs/roadmaps/local-first-syncthing-roadmap.md).
 
 ## Stack
 

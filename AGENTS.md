@@ -25,26 +25,33 @@ The agent must behave like a disciplined implementation agent, not like a broad 
 
 ## Mandatory order of work
 
-The original front, storage and sync-foundation sequence is complete. The current
-implementation order is:
+The original front, storage and sync-foundation sequence is complete. The
+accepted UX and project-model sequence now precedes optional folder transport:
 
-1. global project-bundle restore (`R1.7`)
-2. portable backup-provider abstraction (`S1.1`)
-3. user-selected folder adapter as progressive enhancement (`S1.2`)
-4. per-device portable snapshots (`S1.3`)
-5. restore and divergence detection UI (`S1.4`)
-6. Windows/Android guide and validation matrix (`S1.5`)
-7. versioned `.ipm` package with binary attachments, later (`S2.1`)
+1. repository-backed demonstration project (`#88`)
+2. focused stage navigation and contextual guidance (`#90`, `#91`)
+3. declared progress and dashboard controls (`#92`, `#93`)
+4. generic workstream model and UI (`#94`, `#95`)
+5. portable backup-provider abstraction (`S1.1`)
+6. selected-folder adapter, snapshots and divergence handling (`S1.2`–`S1.4`)
+7. standalone and optional-transport validation matrix (`S1.5`)
+8. versioned `.ipm` package with binary attachments, later (`S2.1`)
 
-Follow `docs/roadmaps/local-first-syncthing-roadmap.md`. Do not revive the old
-generic remote-backend sequence as the current product roadmap.
+Follow DR-003 for stages and workstreams, plus
+`docs/roadmaps/local-first-syncthing-roadmap.md` for portable backups. Do not
+revive the old generic remote-backend sequence as the current product roadmap.
 
 ## Product scope boundaries
 
 - IndexedDB remains the authoritative working storage on each device.
-- A selected filesystem folder is an optional portable backup mirror.
-- Syncthing is an external folder synchronizer, not the application database.
-- Manual global JSON export/import remains the universal fallback.
+- Manual global JSON export/import is the standalone universal baseline.
+- A selected filesystem folder is an optional portable backup mirror, not
+  cross-device synchronization by itself.
+- Syncthing and other transports remain optional and external.
+- Stages describe temporal maturity; optional workstreams describe parallel
+  project fronts and must remain suitable for non-IT projects.
+- Declared business progress, repository health and human attention remain
+  separate signals.
 - Multi-user accounts, invitations, roles, phase permissions and real-time
   collaboration are out of foreseeable scope.
 - Never silently overwrite local data during restore or synchronization.
@@ -163,11 +170,10 @@ If a data model change is necessary:
 ## Current project priorities
 This repository is being upgraded in a controlled way.
 The immediate priority is not random cleanup.
-The global bundle restore is implemented by issue `#81` / `R1.7`. Once that PR
-is merged, the immediate priority is `S1.1` (`#82`), followed by the remaining
-`S1` roadmap documented in `docs/roadmaps/local-first-syncthing-roadmap.md` and
-accepted in
-`docs/decisions/DR-002-local-first-syncthing-backup-architecture.md`.
+The global bundle restore is implemented by issue `#81` / `R1.7`. Finish the
+repository-backed demo, then execute `#90` through `#95` in dependency order.
+Resume `S1.1` through `S1.5` afterward. The active decisions are DR-002 for
+portable backup and DR-003 for the professional stages × workstreams model.
 
 ## If no issue is specified
 Do not perform broad refactors.

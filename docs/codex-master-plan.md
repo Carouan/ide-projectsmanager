@@ -35,18 +35,20 @@ Non-goal for this phase:
 - no heavy architectural rewrite without a staged migration path
 - no multi-user accounts, invitations, roles or phase-level permissions
 
-### Current product direction — 2026-08-20
+### Current product direction — amended 2026-08-21
 
 The original front and sync-foundation roadmaps below are retained as design
 history. Their foundations are now implemented. The active sequence is defined
 by:
 
-- [DR-002 — local-first storage and synchronized-folder backups](decisions/DR-002-local-first-syncthing-backup-architecture.md)
-- [Local-first and Syncthing roadmap](roadmaps/local-first-syncthing-roadmap.md)
+- [DR-002 — local-first storage and portable backups](decisions/DR-002-local-first-syncthing-backup-architecture.md)
+- [DR-003 — stages × workstreams professional model](decisions/DR-003-stages-workstreams-project-model.md)
+- [Standalone backup and optional transports roadmap](roadmaps/local-first-syncthing-roadmap.md)
 
-In short: IndexedDB remains the local working store, an optional selected folder
-contains portable per-device snapshots, Syncthing may synchronize that folder,
-and manual global JSON import/export remains the universal fallback.
+In short: IndexedDB remains the local working store and manual global JSON is
+the standalone baseline. A selected folder and transports such as Syncthing are
+optional. Stages describe temporal maturity; optional workstreams describe
+parallel professional project fronts.
 
 ---
 
@@ -141,13 +143,14 @@ A PR should be rejected if:
 
 The historical foundations are complete. Codex must now follow this order:
 
-1. restore the versioned global project bundle (`R1.7`)
-2. introduce a portable backup-provider boundary (`S1.1`)
-3. add a selected-folder adapter with capability detection and fallback (`S1.2`)
-4. write per-device snapshots (`S1.3`)
-5. detect newer snapshots and divergence without silent overwrite (`S1.4`)
-6. document and validate Windows and Android flows (`S1.5`)
-7. design `.ipm` binary attachments only after S1 is stable (`S2.1`)
+1. finish the repository-backed demonstration project (`#88`)
+2. focus stage navigation and integrate contextual guidance (`#90`, `#91`)
+3. add declared progress and dashboard controls (`#92`, `#93`)
+4. add the workstream model and stage matrix (`#94`, `#95`)
+5. introduce the portable provider and selected-folder adapter (`S1.1`, `S1.2`)
+6. write snapshots and detect divergence (`S1.3`, `S1.4`)
+7. validate standalone and optional-transport flows (`S1.5`)
+8. design `.ipm` binary attachments only after S1 is stable (`S2.1`)
 
 GitHub/Project Steward features may continue independently when explicitly
 prioritized, but they must not introduce an application multi-user model.
@@ -694,7 +697,7 @@ Make attachments usable from the main project workflow.
 > **Historical foundation — implemented.** This roadmap produced the local user,
 > storage abstraction, IndexedDB migration, sync metadata, conflict model and
 > status UI. It does not define the active transport/provider direction. Use the
-> current Syncthing roadmap linked in section 0 for new work.
+> current portable-backup roadmap linked in section 0 for new work.
 
 ### Definition of done for Roadmap B
 
@@ -1240,12 +1243,14 @@ Do not perform a big-bang rewrite.
 
 If Codex needs the immediate next sequence, use exactly this order:
 
-1. `R1.7` restore the global project bundle
-2. `S1.1` add the portable backup-provider boundary
-3. `S1.2` add the selected-folder adapter
-4. `S1.3` write per-device snapshots
-5. `S1.4` detect restore candidates and divergence
-6. `S1.5` document and validate Windows/Android use
+1. `#88` finish the repository-backed demo
+2. `#90` add focused stage navigation
+3. `#91` add contextual guidance
+4. `#92` add declared progress
+5. `#93` add dashboard controls
+6. `#94` add the workstream model
+7. `#95` add workstream planning and the stage matrix
+8. `S1.1`–`S1.5` implement and validate portable backup modes
 
 Do not start `.ipm` binary attachments before this sequence is stable.
 
