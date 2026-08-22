@@ -62,6 +62,7 @@ Structure logique :
 - `journal`
 - `decisions`
 - `attachments`
+- `workstreams` (facultatif, planifié par #94)
 - `repository` (facultatif)
 - `settings`
 - `sync`
@@ -79,6 +80,7 @@ Champs importants :
 - `updatedAt`
 - `ownerId`
 - `currentStage`
+- `progressPercent` (facultatif, planifié par #92)
 
 ### `stages`
 Chaque étape versionnée peut porter :
@@ -92,6 +94,18 @@ Chaque étape versionnée peut porter :
 - `definitionOfDone`
 - `linkedBacklogIds`
 - `linkedJournalIds`
+
+### `workstreams` — direction acceptée
+
+Les étapes décrivent la maturité temporelle. Les futurs chantiers décriront les
+fronts parallèles du projet. Ils resteront facultatifs et génériques : UI/UX et
+backend ne sont que des exemples logiciels parmi des chantiers de recherche,
+juridiques, financiers, opérationnels ou de communication.
+
+[DR-003](../decisions/DR-003-stages-workstreams-project-model.md) fixe le modèle
+conceptuel. #94 doit définir sa normalisation compatible, puis #95 son
+interface et sa matrice étapes × chantiers. Aucune propriété décrite ici comme
+planifiée ne doit être considérée comme déjà disponible dans les exports.
 
 ### `attachments`
 Types prévus :
@@ -164,7 +178,8 @@ fixe les responsabilités suivantes :
 - le bundle JSON global est le format portable immédiat ;
 - un fournisseur facultatif peut recopier des instantanés dans un dossier choisi ;
 - chaque appareil écrit son propre instantané ;
-- Syncthing transporte les fichiers sans être intégré comme base de données ;
+- Syncthing ou un autre outil peut transporter les fichiers sans être intégré
+  comme base de données ;
 - l'application relit les instantanés à l'ouverture et n'écrase jamais
   silencieusement un état divergent ;
 - le téléchargement et l'import manuels restent disponibles partout.
@@ -263,17 +278,24 @@ Non fait :
 - settings présents dans le modèle mais encore partiellement branchés
 - accès au dossier sélectionné et persistance des permissions à valider sur les
   navigateurs cibles
-- transport Syncthing non encore validé sous Windows et Android
+- transports facultatifs non encore comparés sous Windows et Android
 - gestion de vrais fichiers binaires pour attachments non encore traitée
+- navigation des étapes trop dense pour un nouveau projet
+- guide contextuel de remplissage absent de l'interface
+- progression déclarée non structurée
+- dashboard limité à une grille fixe
+- chantiers parallèles non représentés
 
 ## Roadmap technique courte recommandée
 
-1. introduire le fournisseur de sauvegarde portable (`S1.1`)
-2. ajouter l'adaptateur de dossier sélectionné (`S1.2`)
-3. écrire les instantanés propres à chaque appareil (`S1.3`)
-4. détecter restauration et divergence (`S1.4`)
-5. valider et documenter Windows/Android (`S1.5`)
-6. traiter `.ipm` et les pièces jointes binaires plus tard (`S2.1`)
+1. finaliser le projet de démonstration relié au dépôt
+2. focaliser la navigation des étapes et ajouter l'aide (`#90`, `#91`)
+3. structurer la progression et enrichir le dashboard (`#92`, `#93`)
+4. ajouter le modèle puis l'interface des chantiers (`#94`, `#95`)
+5. introduire le fournisseur et le miroir de sauvegarde (`S1.1`, `S1.2`)
+6. écrire les instantanés et détecter les divergences (`S1.3`, `S1.4`)
+7. comparer les modes autonomes et transports facultatifs (`S1.5`)
+8. traiter `.ipm` et les pièces jointes binaires plus tard (`S2.1`)
 
-Les améliorations UX restantes — thème, preview et PWA — peuvent être
-intercalées uniquement si elles ne retardent pas le socle de restauration.
+Les migrations de modèle restent séparées des PR d'interface. Chaque incrément
+doit préserver les projets et bundles existants.

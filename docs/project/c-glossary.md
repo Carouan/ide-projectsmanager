@@ -78,6 +78,37 @@ Exemples :
 - `v0.4` = assemblage
 - `v1.0` = première release fonctionnelle
 
+Une étape répond à la question : **où en est le projet dans son cycle ?** Elle
+ne décrit pas à elle seule tous les domaines qui avancent en parallèle.
+
+## Chantiers / workstreams
+
+Un **chantier** est un front de travail parallèle qui traverse plusieurs
+étapes. Le terme professionnel anglais est *workstream*.
+
+Exemples :
+
+- logiciel : produit, UI/UX, frontend, backend, données, qualité ;
+- recherche : état de l'art, méthode, collecte, analyse, éthique ;
+- association : juridique, finances, opérations, communication ;
+- projet personnel : planification, achats, production, documentation.
+
+Un chantier répond à la question : **sur quel domaine travaille-t-on ?** Il est
+facultatif et personnalisable. Le modèle détaillé est défini dans DR-003 et son
+implémentation est planifiée par #94 et #95.
+
+## Jalon
+
+Un **jalon** est un point de convergence vérifiable. Plusieurs chantiers doivent
+par exemple fournir leurs livrables avant de déclarer un prototype validé ou un
+lancement public. Un jalon n'est ni une tâche ni un chantier supplémentaire.
+
+## Progression déclarée
+
+La **progression déclarée** est une estimation métier facultative comprise entre
+0 et 100 %. Elle doit être renseignée consciemment et ne sera pas déduite du
+numéro d'étape, du nombre de tâches, des commits ou des pull requests.
+
 ## Backlog
 
 Le **backlog** contient ce qui doit être capturé sans interrompre le flux principal :
@@ -222,6 +253,16 @@ Un instantané n'est pas automatiquement appliqué : l'IDE doit identifier sa
 source, sa date et sa relation avec l'état local avant de proposer une
 restauration.
 
+## Transport de sauvegarde
+
+Un **transport de sauvegarde** déplace un bundle ou un instantané entre
+emplacements ou appareils. Il ne devient ni le stockage de travail de l'IDE ni
+la source de vérité du projet. Le parcours manuel fonctionne sans transport
+configuré.
+
+Exemples futurs ou facultatifs : synchroniseur de dossier, fournisseur de
+fichier cloud, WebDAV ou transfert direct entre appareils.
+
 ## Syncthing
 
 **Syncthing** est un outil externe qui synchronise des dossiers entre appareils.
@@ -229,8 +270,9 @@ Dans cette architecture, il ne lit pas IndexedDB et ne remplace pas le stockage
 de l'IDE. Il transporte seulement les instantanés écrits dans un dossier choisi
 par l'utilisateur.
 
-La logique applicative doit rester compatible avec un autre synchroniseur de
-dossier : « Syncthing » est la recommandation initiale, pas un verrou technique.
+La logique applicative doit rester compatible avec un autre transport.
+Syncthing est une option utile pour les personnes qui l'utilisent déjà, mais il
+n'est ni la recommandation par défaut ni une dépendance de l'IDE.
 
 ## Format `.ipm`
 
