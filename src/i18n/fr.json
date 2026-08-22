@@ -123,6 +123,108 @@
   "project.stage.showJourney": "Afficher tout le parcours",
   "project.stage.hideFuture": "Masquer les étapes futures vides",
   "project.stage.next": "Étape suivante : {{version}}",
+  "guidance.actions.fullGuide": "Consulter le guide utilisateur complet ↗",
+  "guidance.project.title": "Bien démarrer ce projet",
+  "guidance.project.summary": "Un repère court pour savoir quoi remplir et où conserver l’information.",
+  "guidance.project.intro": "L’IDE sépare la maturité du projet, son travail à venir et la trace de ce qui s’est passé.",
+  "guidance.project.steps": [
+    "Décris ici le projet, son besoin et le résultat recherché.",
+    "Utilise les étapes pour faire évoluer progressivement le projet de v0.0 à v1.0 ; leur numéro n’est pas un pourcentage d’avancement.",
+    "Place les actions futures dans le backlog, le contexte dans le journal et les arbitrages dans les décisions.",
+    "Utilise l’export JSON pour sauvegarder les données et l’export Markdown pour les lire ou les partager."
+  ],
+  "guidance.project.ideaCapture": "Le bouton « Nouvelle idée » ouvre un outil de classement pour une idée apparue en cours de projet. Il ne remplace pas ce guide ni la création d’un nouveau projet.",
+  "guidance.stage.title": "Guide pour {{version}}",
+  "guidance.stage.summary": "Pourquoi cette étape existe, quelles questions poser et comment savoir qu’elle est terminée.",
+  "guidance.stage.why": "Rôle de cette étape",
+  "guidance.stage.questions": "Questions utiles",
+  "guidance.stage.fields": "Comment remplir les champs",
+  "guidance.stage.example": "Exemple générique",
+  "guidance.fields.goal.label": "Objectif",
+  "guidance.fields.goal.description": "Le résultat précis recherché pendant cette étape.",
+  "guidance.fields.notes.label": "Notes",
+  "guidance.fields.notes.description": "Les faits, idées, contraintes et éléments de réflexion utiles.",
+  "guidance.fields.deliverable.label": "Livrable attendu",
+  "guidance.fields.deliverable.description": "La preuve observable produite : document, décision, prototype, résultat ou action réalisée.",
+  "guidance.fields.definitionOfDone.label": "Terminé quand",
+  "guidance.fields.definitionOfDone.description": "Des critères vérifiables permettant de quitter l’étape sans se fier à une simple impression.",
+  "guidance.stage.v0_0.why": "Clarifier le besoin réel avant de chercher trop vite une solution.",
+  "guidance.stage.v0_0.questions": [
+    "Quel problème, besoin ou désir déclenche ce projet ?",
+    "Qui est concerné et dans quel contexte ?",
+    "Quel changement concret indiquerait que le projet est utile ?"
+  ],
+  "guidance.stage.v0_0.example": "Réduire le temps consacré chaque semaine à rassembler manuellement des informations dispersées.",
+  "guidance.stage.v0_1.why": "Comprendre le contexte, les solutions existantes et les inconnues avant de choisir une direction.",
+  "guidance.stage.v0_1.questions": [
+    "Qu’existe-t-il déjà et que peut-on réutiliser ?",
+    "Quelles personnes, sources ou expériences peuvent éclairer le besoin ?",
+    "Quelles hypothèses restent à vérifier ?"
+  ],
+  "guidance.stage.v0_1.example": "Comparer trois méthodes existantes et interroger deux personnes qui réalisent actuellement la tâche.",
+  "guidance.stage.v0_2.why": "Définir un résultat utile et un périmètre initial assez petit pour pouvoir avancer.",
+  "guidance.stage.v0_2.questions": [
+    "Quel est le résultat minimal réellement utile ?",
+    "Qu’est-ce qui est inclus, exclu ou reporté ?",
+    "Quels besoins et contraintes sont prioritaires ?"
+  ],
+  "guidance.stage.v0_2.example": "Une première version traite un seul type de dossier, sans automatiser les cas exceptionnels.",
+  "guidance.stage.v0_3.why": "Choisir l’approche et préparer le travail avant d’assembler les éléments.",
+  "guidance.stage.v0_3.questions": [
+    "Quelles étapes, ressources et compétences sont nécessaires ?",
+    "Quelles dépendances ou décisions doivent être résolues d’abord ?",
+    "Quels risques méritent une mesure préventive ?"
+  ],
+  "guidance.stage.v0_3.example": "Établir un plan en quatre lots, identifier les responsables et prévoir une solution de repli.",
+  "guidance.stage.v0_4.why": "Assembler les éléments essentiels en un premier ensemble cohérent.",
+  "guidance.stage.v0_4.questions": [
+    "Les principales pièces fonctionnent-elles ensemble ?",
+    "Quel chemin complet peut déjà être parcouru ?",
+    "Que manque-t-il pour obtenir une première version testable ?"
+  ],
+  "guidance.stage.v0_4.example": "Réunir le formulaire, la procédure et le tableau de suivi dans un parcours complet encore imparfait.",
+  "guidance.stage.v0_5.why": "Produire une première version utilisable pour vérifier les hypothèses importantes.",
+  "guidance.stage.v0_5.questions": [
+    "Qui peut essayer cette première version en sécurité ?",
+    "Quelles hypothèses doit-elle permettre de vérifier ?",
+    "Quelles observations ou mesures faut-il recueillir ?"
+  ],
+  "guidance.stage.v0_5.example": "Faire tester le parcours complet par deux personnes et noter les blocages sans chercher encore la finition.",
+  "guidance.stage.v0_6.why": "Corriger les défauts qui empêchent un usage fiable du prototype.",
+  "guidance.stage.v0_6.questions": [
+    "Quels problèmes empêchent ou dégradent réellement l’usage ?",
+    "Quels défauts sont prioritaires et reproductibles ?",
+    "Comment vérifier qu’une correction ne crée pas une régression ?"
+  ],
+  "guidance.stage.v0_6.example": "Corriger les trois blocages observés et rejouer le scénario de test après chaque modification.",
+  "guidance.stage.v0_7.why": "Confronter la solution à des conditions plus réalistes avec un public encore limité.",
+  "guidance.stage.v0_7.questions": [
+    "Qui participe à la bêta et avec quelles consignes ?",
+    "Quels retours, incidents et résultats doit-on suivre ?",
+    "Quels risques justifient encore une limitation d’accès ?"
+  ],
+  "guidance.stage.v0_7.example": "Ouvrir la solution pendant deux semaines à une petite équipe et centraliser tous les retours.",
+  "guidance.stage.v0_8.why": "Stabiliser le projet à partir des retours réels et préparer sa finalisation.",
+  "guidance.stage.v0_8.questions": [
+    "Quels retours doivent être corrigés avant la sortie ?",
+    "Quelles améliorations peuvent attendre une version ultérieure ?",
+    "La documentation et les procédures correspondent-elles à la réalité ?"
+  ],
+  "guidance.stage.v0_8.example": "Traiter les défauts confirmés, reporter les demandes secondaires et mettre le guide à jour.",
+  "guidance.stage.v0_9.why": "Vérifier que le résultat est prêt à être livré, publié ou adopté.",
+  "guidance.stage.v0_9.questions": [
+    "Les critères de réussite et obligations sont-ils satisfaits ?",
+    "La validation finale a-t-elle été réalisée par les bonnes personnes ?",
+    "Le déploiement, la communication et le retour arrière sont-ils préparés ?"
+  ],
+  "guidance.stage.v0_9.example": "Exécuter la recette finale, faire valider le résultat et préparer la checklist de lancement.",
+  "guidance.stage.v1_0.why": "Livrer un résultat utilisable et organiser sa continuité après le lancement.",
+  "guidance.stage.v1_0.questions": [
+    "Le résultat est-il accessible aux personnes concernées ?",
+    "Qui assure le suivi, la maintenance ou l’évaluation ?",
+    "Comment les incidents et évolutions futures seront-ils enregistrés ?"
+  ],
+  "guidance.stage.v1_0.example": "Publier la version validée, transmettre le guide et fixer un premier point d’évaluation.",
   "project.stage.notFound": "Étape introuvable",
   "project.stage.technicalKey": "Clé technique : {{key}}",
   "project.stage.fields.status": "Statut",

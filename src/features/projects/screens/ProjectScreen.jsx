@@ -7,6 +7,7 @@ import AttachmentsPanel from "../../../components/AttachmentsPanel";
 import DecisionTreeModal from "../../../components/DecisionTreeModal";
 import SyncStatusBadge from "../components/SyncStatusBadge";
 import RepositoryPanel from "../components/RepositoryPanel";
+import { ProjectStartGuide } from "../components/ProjectGuidance";
 import { getStageDefinition } from "../../../constants/stages";
 import { useI18n } from "../../../i18n/useI18n";
 import {
@@ -222,6 +223,8 @@ export default function ProjectScreen({
         {tab === "project" && (
           <section className="panel">
             <h2>{t("project.meta.sectionTitle")}</h2>
+
+            <ProjectStartGuide />
 
             <div className="form-grid">
               <label className="field">

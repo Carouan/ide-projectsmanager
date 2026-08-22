@@ -1,4 +1,5 @@
 import { useI18n } from "../i18n/useI18n";
+import { StageGuidance } from "../features/projects/components/ProjectGuidance";
 
 const STAGE_STATUS_OPTIONS = ["todo", "in_progress", "blocked", "done"];
 
@@ -32,6 +33,8 @@ export default function StageEditor({
           </p>
         </div>
       </div>
+
+      <StageGuidance stageKey={stageKey} />
 
       <div className="form-grid">
         <label className="field">

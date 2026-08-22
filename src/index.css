@@ -824,6 +824,87 @@ select:focus {
   gap: 0.75rem;
 }
 
+.guidance-card {
+  margin: 1.25rem 0;
+  border: 1px solid rgba(110, 168, 254, 0.35);
+  border-radius: 14px;
+  background: rgba(110, 168, 254, 0.06);
+}
+
+.guidance-card summary {
+  padding: 1rem;
+  cursor: pointer;
+}
+
+.guidance-card summary::marker {
+  color: var(--accent-color, #6ea8fe);
+}
+
+.guidance-card summary strong,
+.guidance-card summary span {
+  display: block;
+}
+
+.guidance-card summary span {
+  margin-top: 0.3rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.guidance-card[open] summary {
+  border-bottom: 1px solid rgba(110, 168, 254, 0.25);
+}
+
+.guidance-content {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.guidance-content section,
+.guidance-content p,
+.guidance-content ol,
+.guidance-content ul {
+  margin: 0;
+}
+
+.guidance-content h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.guidance-field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.guidance-field-grid article,
+.guidance-example,
+.guidance-note {
+  padding: 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.guidance-field-grid p,
+.guidance-example p {
+  margin-top: 0.35rem;
+  color: var(--muted);
+}
+
+.guidance-link {
+  justify-self: start;
+  color: var(--accent-color, #8ab4f8);
+}
+
+@media (max-width: 760px) {
+  .guidance-field-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .stage-nav {
   display: flex;
   flex-wrap: wrap;
