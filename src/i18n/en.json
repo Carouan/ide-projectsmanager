@@ -123,6 +123,108 @@
   "project.stage.showJourney": "Show full journey",
   "project.stage.hideFuture": "Hide empty future stages",
   "project.stage.next": "Next stage: {{version}}",
+  "guidance.actions.fullGuide": "Read the full user guide ↗",
+  "guidance.project.title": "Get this project started",
+  "guidance.project.summary": "A short guide to what belongs where and what to fill in first.",
+  "guidance.project.intro": "The IDE separates project maturity, future work, and the record of what happened.",
+  "guidance.project.steps": [
+    "Describe the project, its need, and the intended outcome here.",
+    "Use stages to move the project gradually from v0.0 to v1.0; a stage number is not a progress percentage.",
+    "Put future actions in the backlog, context in the journal, and choices in decisions.",
+    "Use JSON export for backup and Markdown export for reading or sharing."
+  ],
+  "guidance.project.ideaCapture": "The “New idea” button opens a classification tool for an idea that appears during a project. It does not replace this guide or create a separate project.",
+  "guidance.stage.title": "Guide for {{version}}",
+  "guidance.stage.summary": "Why this stage exists, which questions to ask, and how to know it is complete.",
+  "guidance.stage.why": "Purpose of this stage",
+  "guidance.stage.questions": "Useful questions",
+  "guidance.stage.fields": "How to fill in the fields",
+  "guidance.stage.example": "Generic example",
+  "guidance.fields.goal.label": "Goal",
+  "guidance.fields.goal.description": "The precise outcome sought during this stage.",
+  "guidance.fields.notes.label": "Notes",
+  "guidance.fields.notes.description": "Useful facts, ideas, constraints, and reasoning.",
+  "guidance.fields.deliverable.label": "Expected deliverable",
+  "guidance.fields.deliverable.description": "The observable evidence produced: a document, decision, prototype, result, or completed action.",
+  "guidance.fields.definitionOfDone.label": "Done when",
+  "guidance.fields.definitionOfDone.description": "Verifiable exit criteria, rather than a general feeling that the stage is finished.",
+  "guidance.stage.v0_0.why": "Clarify the real need before jumping too quickly to a solution.",
+  "guidance.stage.v0_0.questions": [
+    "What problem, need, or intention started this project?",
+    "Who is affected and in what context?",
+    "What concrete change would show that the project is useful?"
+  ],
+  "guidance.stage.v0_0.example": "Reduce the time spent each week manually gathering information from several places.",
+  "guidance.stage.v0_1.why": "Understand the context, existing options, and unknowns before choosing a direction.",
+  "guidance.stage.v0_1.questions": [
+    "What already exists and what can be reused?",
+    "Which people, sources, or experiences can clarify the need?",
+    "Which assumptions still need evidence?"
+  ],
+  "guidance.stage.v0_1.example": "Compare three existing approaches and interview two people who currently perform the task.",
+  "guidance.stage.v0_2.why": "Define a useful outcome and an initial scope small enough to move forward.",
+  "guidance.stage.v0_2.questions": [
+    "What is the smallest genuinely useful outcome?",
+    "What is included, excluded, or postponed?",
+    "Which needs and constraints have priority?"
+  ],
+  "guidance.stage.v0_2.example": "The first version handles one type of case without automating exceptions.",
+  "guidance.stage.v0_3.why": "Choose an approach and prepare the work before assembling its parts.",
+  "guidance.stage.v0_3.questions": [
+    "Which steps, resources, and skills are needed?",
+    "Which dependencies or decisions must be resolved first?",
+    "Which risks deserve a preventive measure?"
+  ],
+  "guidance.stage.v0_3.example": "Create a four-part plan, identify responsibilities, and prepare a fallback option.",
+  "guidance.stage.v0_4.why": "Assemble the essential parts into a first coherent whole.",
+  "guidance.stage.v0_4.questions": [
+    "Do the main parts work together?",
+    "Which complete path can already be followed?",
+    "What is missing for a first testable version?"
+  ],
+  "guidance.stage.v0_4.example": "Combine the form, procedure, and tracking table into a complete but still imperfect workflow.",
+  "guidance.stage.v0_5.why": "Produce a first usable version that can test the important assumptions.",
+  "guidance.stage.v0_5.questions": [
+    "Who can safely try this first version?",
+    "Which assumptions should it test?",
+    "Which observations or measures should be collected?"
+  ],
+  "guidance.stage.v0_5.example": "Ask two people to try the whole workflow and record blockers without polishing everything yet.",
+  "guidance.stage.v0_6.why": "Correct the defects that prevent reliable use of the prototype.",
+  "guidance.stage.v0_6.questions": [
+    "Which problems genuinely block or degrade use?",
+    "Which defects are reproducible and have priority?",
+    "How will a correction be checked for regressions?"
+  ],
+  "guidance.stage.v0_6.example": "Fix the three observed blockers and replay the test scenario after each change.",
+  "guidance.stage.v0_7.why": "Try the solution in more realistic conditions with a still-limited audience.",
+  "guidance.stage.v0_7.questions": [
+    "Who takes part in the beta and with which instructions?",
+    "Which feedback, incidents, and results should be tracked?",
+    "Which risks still justify limited access?"
+  ],
+  "guidance.stage.v0_7.example": "Open the solution to a small team for two weeks and collect all feedback in one place.",
+  "guidance.stage.v0_8.why": "Stabilize the project using real feedback and prepare its finalization.",
+  "guidance.stage.v0_8.questions": [
+    "Which feedback must be addressed before release?",
+    "Which improvements can wait for a later version?",
+    "Do the documentation and procedures reflect reality?"
+  ],
+  "guidance.stage.v0_8.example": "Address confirmed defects, postpone secondary requests, and update the guide.",
+  "guidance.stage.v0_9.why": "Verify that the result is ready to be delivered, published, or adopted.",
+  "guidance.stage.v0_9.questions": [
+    "Are the success criteria and obligations satisfied?",
+    "Has the final result been approved by the right people?",
+    "Are rollout, communication, and rollback prepared?"
+  ],
+  "guidance.stage.v0_9.example": "Run final acceptance, obtain approval, and prepare the launch checklist.",
+  "guidance.stage.v1_0.why": "Deliver a usable result and organize continuity after launch.",
+  "guidance.stage.v1_0.questions": [
+    "Is the result accessible to the people concerned?",
+    "Who will handle follow-up, maintenance, or evaluation?",
+    "How will incidents and future improvements be recorded?"
+  ],
+  "guidance.stage.v1_0.example": "Publish the approved result, hand over the guide, and schedule an initial evaluation.",
   "project.stage.notFound": "Stage not found",
   "project.stage.technicalKey": "Technical key: {{key}}",
   "project.stage.fields.status": "Status",
