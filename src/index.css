@@ -345,6 +345,11 @@ h3 {
   text-align: center;
 }
 
+.empty-state-actions {
+  justify-content: center;
+  margin-top: 20px;
+}
+
 .empty-inline {
   padding: 18px;
   border: 1px dashed var(--border);

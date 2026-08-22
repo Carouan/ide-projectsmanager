@@ -14,6 +14,7 @@ export default function App() {
     projects,
     currentProject,
     createProject,
+    installIdeDemoProject,
     openProject,
     deleteProject,
     updateProjectMeta,
@@ -45,6 +46,11 @@ export default function App() {
     setView("project");
   }
 
+  function handleInstallDemoProject() {
+    installIdeDemoProject();
+    setView("project");
+  }
+
   function handleOpenProject(projectId) {
     openProject(projectId);
     setView("project");
@@ -68,6 +74,7 @@ export default function App() {
       <ProjectListScreen
         projects={projects}
         onCreateProject={handleCreateProject}
+        onInstallDemoProject={handleInstallDemoProject}
         onOpenProject={handleOpenProject}
         onDeleteProject={deleteProject}
         onOpenSettings={handleOpenSettings}
