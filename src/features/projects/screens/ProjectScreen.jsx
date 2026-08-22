@@ -7,8 +7,12 @@ import AttachmentsPanel from "../../../components/AttachmentsPanel";
 import DecisionTreeModal from "../../../components/DecisionTreeModal";
 import SyncStatusBadge from "../components/SyncStatusBadge";
 import RepositoryPanel from "../components/RepositoryPanel";
-import { STAGE_DEFINITIONS, getStageDefinition } from "../../../constants/stages";
+import { getStageDefinition } from "../../../constants/stages";
 import { useI18n } from "../../../i18n/useI18n";
+import {
+  getNextStageDefinition,
+  getVisibleStageDefinitions,
+} from "../services/stageVisibility";
 
 export default function ProjectScreen({
   projectDoc,
@@ -28,11 +32,34 @@ export default function ProjectScreen({
   onExportJson,
   onImportJson,
   onExportMarkdown,
+  showFullStageJourney = false,
+  onToggleStageJourney,
 }) {
   const [tab, setTab] = useState("project");
   const [isDecisionTreeOpen, setIsDecisionTreeOpen] = useState(false);
   const fileInputRef = useRef(null);
   const { t } = useI18n();
+
+  const { project, stages, backlog, journal, decisions, attachments } =
+    projectDoc || {};
+  const currentStageKey = project?.currentStage || "v0_0";
+  const currentStage = stages?.[currentStageKey];
+  const currentStageDefinition = getStageDefinition(currentStageKey);
+  const visibleStageDefinitions = getVisibleStageDefinitions(
+    projectDoc,
+    showFullStageJourney
+  );
+  const nextStageDefinition = getNextStageDefinition(currentStageKey);
+
+  const linkedBacklogItems = useMemo(() => {
+    const ids = currentStage?.linkedBacklogIds || [];
+    return (backlog || []).filter((item) => ids.includes(item.id));
+  }, [backlog, currentStage]);
+
+  const linkedJournalEntries = useMemo(() => {
+    const ids = currentStage?.linkedJournalIds || [];
+    return (journal || []).filter((entry) => ids.includes(entry.id));
+  }, [journal, currentStage]);
 
   if (!projectDoc) {
     return (
@@ -49,21 +76,6 @@ export default function ProjectScreen({
       </div>
     );
   }
-
-  const { project, stages, backlog, journal, decisions, attachments } = projectDoc;
-  const currentStageKey = project.currentStage || "v0_0";
-  const currentStage = stages[currentStageKey];
-  const currentStageDefinition = getStageDefinition(currentStageKey);
-
-  const linkedBacklogItems = useMemo(() => {
-    const ids = currentStage?.linkedBacklogIds || [];
-    return backlog.filter((item) => ids.includes(item.id));
-  }, [backlog, currentStage]);
-
-  const linkedJournalEntries = useMemo(() => {
-    const ids = currentStage?.linkedJournalIds || [];
-    return journal.filter((entry) => ids.includes(entry.id));
-  }, [journal, currentStage]);
 
   async function handleImportChange(event) {
     const file = event.target.files?.[0];
@@ -262,10 +274,38 @@ export default function ProjectScreen({
                     })}
                   </p>
                 </div>
+                <div className="stage-navigation-actions">
+                  <button
+                    className="btn btn-secondary"
+                    type="button"
+                    aria-controls="project-stage-navigation"
+                    aria-pressed={showFullStageJourney}
+                    onClick={onToggleStageJourney}
+                  >
+                    {t(
+                      showFullStageJourney
+                        ? "project.stage.hideFuture"
+                        : "project.stage.showJourney"
+                    )}
+                  </button>
+                  {nextStageDefinition && (
+                    <button
+                      className="btn btn-secondary"
+                      type="button"
+                      onClick={() =>
+                        onSetCurrentStage(project.id, nextStageDefinition.key)
+                      }
+                    >
+                      {t("project.stage.next", {
+                        version: nextStageDefinition.shortTitle,
+                      })}
+                    </button>
+                  )}
+                </div>
               </div>
 
-              <div className="stage-nav">
-                {STAGE_DEFINITIONS.map((stageDef) => {
+              <div className="stage-nav" id="project-stage-navigation">
+                {visibleStageDefinitions.map((stageDef) => {
                   const stageData = stages[stageDef.key];
                   const isActive = stageDef.key === currentStageKey;
 
@@ -276,6 +316,7 @@ export default function ProjectScreen({
                       className={`stage-pill ${
                         isActive ? "stage-pill-active" : ""
                       }`}
+                      aria-current={isActive ? "step" : undefined}
                       onClick={() => onSetCurrentStage(project.id, stageDef.key)}
                     >
                       <span className="stage-pill-version">

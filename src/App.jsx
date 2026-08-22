@@ -98,6 +98,12 @@ export default function App() {
         onExportJson={exportCurrentProjectJson}
         onImportJson={importProjectFromFile}
         onExportMarkdown={exportCurrentProjectMarkdown}
+        showFullStageJourney={settings?.showFullStageJourney === true}
+        onToggleStageJourney={() =>
+          updateSettings({
+            showFullStageJourney: settings?.showFullStageJourney !== true,
+          })
+        }
       />
     ) : (
       <SettingsScreen
