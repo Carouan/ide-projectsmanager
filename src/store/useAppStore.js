@@ -54,10 +54,18 @@ import {
   createManualDownloadBackupProvider,
   MANUAL_DOWNLOAD_BACKUP_PROVIDER_ID,
 } from "../repositories/portableBackup/manualDownloadBackupProvider";
+import {
+  createSelectedFolderBackupProvider,
+  SELECTED_FOLDER_BACKUP_PROVIDER_ID,
+} from "../repositories/portableBackup/selectedFolderBackupProvider";
 import { createPortableBackupService } from "../services/portableBackupService";
 
-const manualPortableBackupService = createPortableBackupService({
-  providers: [createManualDownloadBackupProvider()],
+const selectedFolderBackupProvider = createSelectedFolderBackupProvider();
+const portableBackupService = createPortableBackupService({
+  providers: [
+    createManualDownloadBackupProvider(),
+    selectedFolderBackupProvider,
+  ],
   fallbackProviderId: MANUAL_DOWNLOAD_BACKUP_PROVIDER_ID,
 });
 
@@ -144,6 +152,7 @@ export function useAppStore() {
   const [projects, setProjects] = useState([]);
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [userProfile, setUserProfile] = useState(null);
+  const [backupFolderStatus, setBackupFolderStatus] = useState(null);
   const [currentProjectId, setCurrentProjectId] = useState(null);
   const [isHydrated, setIsHydrated] = useState(false);
 
@@ -204,6 +213,29 @@ if (loaded.length > 0) {
 }
 
     hydrateStore();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    async function inspectBackupFolder() {
+      const [status, details] = await Promise.all([
+        portableBackupService.inspect(SELECTED_FOLDER_BACKUP_PROVIDER_ID),
+        selectedFolderBackupProvider.connectionDetails(),
+      ]);
+
+      if (!isCancelled) {
+        setBackupFolderStatus({ ...status, ...details });
+      }
+    }
+
+    inspectBackupFolder().catch((error) => {
+      console.error("Failed to inspect the optional backup folder", error);
+    });
 
     return () => {
       isCancelled = true;
@@ -867,7 +899,7 @@ if (loaded.length > 0) {
 
     const exportedAt = new Date().toISOString();
     const date = exportedAt.slice(0, 10);
-    return manualPortableBackupService.writeFallbackSnapshot(projects, {
+    return portableBackupService.writeFallbackSnapshot(projects, {
       exportedAt,
       filename: `ide-projectsmanager-backup-${date}.json`,
     });
@@ -875,7 +907,7 @@ if (loaded.length > 0) {
 
   async function inspectProjectBundleFile(file) {
     const { bundle: rawBundle } =
-      await manualPortableBackupService.readPortfolioSnapshot(
+      await portableBackupService.readPortfolioSnapshot(
         MANUAL_DOWNLOAD_BACKUP_PROVIDER_ID,
         { file }
       );
@@ -889,6 +921,54 @@ if (loaded.length > 0) {
     };
 
     return analyzeProjectBundle(normalizedBundle, projects);
+  }
+
+  async function refreshBackupFolderStatus() {
+    const [status, details] = await Promise.all([
+      portableBackupService.inspect(SELECTED_FOLDER_BACKUP_PROVIDER_ID),
+      selectedFolderBackupProvider.connectionDetails(),
+    ]);
+    const nextStatus = { ...status, ...details };
+    setBackupFolderStatus(nextStatus);
+    return nextStatus;
+  }
+
+  async function connectBackupFolder() {
+    try {
+      await selectedFolderBackupProvider.connect();
+    } finally {
+      await refreshBackupFolderStatus();
+    }
+  }
+
+  async function reauthorizeBackupFolder() {
+    try {
+      await selectedFolderBackupProvider.reauthorize();
+    } finally {
+      await refreshBackupFolderStatus();
+    }
+  }
+
+  async function disconnectBackupFolder() {
+    try {
+      await selectedFolderBackupProvider.disconnect();
+    } finally {
+      await refreshBackupFolderStatus();
+    }
+  }
+
+  async function exportAllProjectsToBackupFolder() {
+    if (projects.length === 0) return null;
+
+    try {
+      const { result } = await portableBackupService.writePortfolioSnapshot(
+        SELECTED_FOLDER_BACKUP_PROVIDER_ID,
+        projects
+      );
+      return result;
+    } finally {
+      await refreshBackupFolderStatus();
+    }
   }
 
   function restoreProjectsFromBundle(inspection, conflictStrategy) {
@@ -959,6 +1039,7 @@ if (loaded.length > 0) {
     projects,
     settings,
     userProfile,
+    backupFolderStatus,
     currentProject,
     currentProjectId,
     createProject,
@@ -990,6 +1071,10 @@ if (loaded.length > 0) {
     updateBacklogItemStatus,
     exportCurrentProjectJson,
     exportAllProjectsJson,
+    connectBackupFolder,
+    reauthorizeBackupFolder,
+    disconnectBackupFolder,
+    exportAllProjectsToBackupFolder,
     inspectProjectBundleFile,
     restoreProjectsFromBundle,
     importProjectFromFile,

@@ -112,11 +112,11 @@ actuellement à l'étape `v.0.7`.
   - [x] Définir les capacités de lecture, écriture et diagnostic (#82).
   - [x] Conserver le téléchargement manuel comme repli universel (#82).
   - [x] Garder IndexedDB comme unique stockage de travail (#82).
-- [ ] Proposer un dossier local facultatif (#83)
-  - [ ] Détecter explicitement la compatibilité File System Access.
-  - [ ] Demander le choix volontaire d'un dossier.
-  - [ ] Expliquer, mémoriser et renouveler les permissions quand c'est possible.
-  - [ ] Continuer à fonctionner sans dossier ni installation supplémentaire.
+- [x] Proposer un dossier local facultatif (#83)
+  - [x] Détecter explicitement la compatibilité File System Access.
+  - [x] Demander le choix volontaire d'un dossier.
+  - [x] Expliquer, mémoriser et renouveler les permissions quand c'est possible.
+  - [x] Continuer à fonctionner sans dossier ni installation supplémentaire.
 - [ ] Produire des instantanés sûrs par appareil (#84)
   - [ ] Créer une identité locale d'appareil non secrète.
   - [ ] Écrire des sauvegardes distinctes par appareil.

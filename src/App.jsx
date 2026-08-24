@@ -43,6 +43,11 @@ export default function App() {
     exportCurrentProjectMarkdown,
     settings,
     updateSettings,
+    backupFolderStatus,
+    connectBackupFolder,
+    reauthorizeBackupFolder,
+    disconnectBackupFolder,
+    exportAllProjectsToBackupFolder,
   } = useAppStore();
 
   const [view, setView] = useState("list");
@@ -133,6 +138,11 @@ export default function App() {
         onBack={handleBackFromSettings}
         onUpdateSettings={updateSettings}
         onExportAllProjects={exportAllProjectsJson}
+        backupFolderStatus={backupFolderStatus}
+        onConnectBackupFolder={connectBackupFolder}
+        onReauthorizeBackupFolder={reauthorizeBackupFolder}
+        onDisconnectBackupFolder={disconnectBackupFolder}
+        onExportAllProjectsToBackupFolder={exportAllProjectsToBackupFolder}
         onInspectProjectBundle={inspectProjectBundleFile}
         onRestoreProjectBundle={restoreProjectsFromBundle}
       />

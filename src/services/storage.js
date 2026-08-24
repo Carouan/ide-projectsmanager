@@ -12,6 +12,8 @@ const APP_STORE_NAME = "app_storage";
 const SETTINGS_RECORD_KEY = "settings";
 const USER_PROFILE_RECORD_KEY = "user-profile";
 const REPOSITORY_SNAPSHOTS_RECORD_KEY = "repository-snapshots";
+const PORTABLE_BACKUP_DIRECTORY_HANDLE_RECORD_KEY =
+  "portable-backup-directory-handle";
 
 let projectsDbPromise = null;
 
@@ -140,6 +142,14 @@ async function writeAppValueToIndexedDb(recordKey, value) {
     const request = store.put(value, recordKey);
     request.onsuccess = () => resolve();
     request.onerror = () => reject(request.error || new Error("Failed to write app record"));
+  });
+}
+
+async function deleteAppValueFromIndexedDb(recordKey) {
+  await runAppStore("readwrite", (store, resolve, reject) => {
+    const request = store.delete(recordKey);
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error || new Error("Failed to delete app record"));
   });
 }
 
@@ -278,5 +288,42 @@ export async function saveRepositorySnapshots(snapshots) {
       REPOSITORY_SNAPSHOTS_STORAGE_KEY,
       JSON.stringify(safeSnapshots)
     );
+  }
+}
+
+export async function loadPortableBackupDirectoryHandle() {
+  try {
+    return (
+      (await readAppValueFromIndexedDb(
+        PORTABLE_BACKUP_DIRECTORY_HANDLE_RECORD_KEY
+      )) || null
+    );
+  } catch {
+    return null;
+  }
+}
+
+export async function savePortableBackupDirectoryHandle(handle) {
+  if (!handle || typeof indexedDB === "undefined") return false;
+
+  try {
+    await writeAppValueToIndexedDb(
+      PORTABLE_BACKUP_DIRECTORY_HANDLE_RECORD_KEY,
+      handle
+    );
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function clearPortableBackupDirectoryHandle() {
+  try {
+    await deleteAppValueFromIndexedDb(
+      PORTABLE_BACKUP_DIRECTORY_HANDLE_RECORD_KEY
+    );
+    return true;
+  } catch {
+    return false;
   }
 }

@@ -7,6 +7,9 @@ import {
   saveUserProfile,
   loadRepositorySnapshots,
   saveRepositorySnapshots,
+  loadPortableBackupDirectoryHandle,
+  savePortableBackupDirectoryHandle,
+  clearPortableBackupDirectoryHandle,
 } from "../services/storage.js";
 
 export async function loadPersistedProjects() {
@@ -39,4 +42,16 @@ export async function loadPersistedRepositorySnapshots() {
 
 export async function savePersistedRepositorySnapshots(snapshots) {
   await saveRepositorySnapshots(snapshots);
+}
+
+export async function loadPersistedPortableBackupDirectoryHandle() {
+  return loadPortableBackupDirectoryHandle();
+}
+
+export async function savePersistedPortableBackupDirectoryHandle(handle) {
+  return savePortableBackupDirectoryHandle(handle);
+}
+
+export async function clearPersistedPortableBackupDirectoryHandle() {
+  return clearPortableBackupDirectoryHandle();
 }
