@@ -23,6 +23,7 @@ La wiki GitHub pourra éventuellement servir plus tard comme **miroir simplifié
 
 ## Entrées principales
 
+- [Roadmap produit canonique et mesurable](../ROADMAP.md)
 - [Guide utilisateur](user-guide.md) ([English](user-guide.en.md))
 - [A1 — Historique, cadrage et roadmap](project/a1-history-roadmap.md)
 - [A2 — Complétion méthodologique](project/a2-methodological-completion.md)
@@ -31,6 +32,7 @@ La wiki GitHub pourra éventuellement servir plus tard comme **miroir simplifié
 - [C — Glossaire et explications](project/c-glossary.md)
 - [DR-002 — Stockage local-first et sauvegardes portables](decisions/DR-002-local-first-syncthing-backup-architecture.md)
 - [DR-003 — Modèle professionnel phases × chantiers](decisions/DR-003-stages-workstreams-project-model.md)
+- [DR-004 — Roadmap mesurable et progression effective](decisions/DR-004-measurable-roadmap-effective-progress.md)
 - [Roadmap — Sauvegarde autonome et transports facultatifs](roadmaps/local-first-syncthing-roadmap.md)
 - [Releases, Deployments, Packages — différences exactes](project/github-release-deployment-package-differences.md)
 - [Contrat Dashboard–Project Steward v1](contracts/project-steward-dashboard-contract-v1.md)

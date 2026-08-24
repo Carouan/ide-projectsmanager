@@ -106,8 +106,21 @@ lancement public. Un jalon n'est ni une tâche ni un chantier supplémentaire.
 ## Progression déclarée
 
 La **progression déclarée** est une estimation métier facultative comprise entre
-0 et 100 %. Elle doit être renseignée consciemment et ne sera pas déduite du
-numéro d'étape, du nombre de tâches, des commits ou des pull requests.
+0 et 100 %. Elle est renseignée consciemment et reste prioritaire. Aucune
+estimation calculée ne l'écrit ou ne la remplace silencieusement.
+
+## Progression effective
+
+La **progression effective** est le pourcentage affiché sur le tableau de bord.
+Sa source est visible : valeur manuelle, objectifs vérifiables d'une roadmap
+GitHub, ou estimation depuis l'étape actuelle. Elle n'est pas sauvegardée comme
+une seconde vérité dans le document projet.
+
+## Roadmap mesurable
+
+Une **roadmap mesurable** décrit ses objectifs avec des cases Markdown cochées
+ou non cochées. Seuls les objectifs feuilles comptent, avec une pondération
+facultative. Le fichier canonique de ce dépôt est `ROADMAP.md`.
 
 ## Backlog
 

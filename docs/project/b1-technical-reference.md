@@ -84,9 +84,15 @@ Champs importants :
 
 Les anciens projets ne nécessitent aucune migration de schéma : une progression
 absente ou invalide est normalisée vers `null` en conservant les autres champs.
-Les lignes historiques exactement conformes à `Progression déclarée : N %`
-peuvent être prévisualisées puis récupérées explicitement, sans remplacer une
-valeur déjà déclarée.
+Les variantes historiques connues `Progression déclarée : N %.` et
+`Progression déclarée dans Sites : N %.` peuvent être prévisualisées puis
+récupérées explicitement, sans remplacer une valeur déjà déclarée.
+
+La progression **effective** n'ajoute aucun champ persisté. Elle est calculée à
+l'affichage avec la priorité suivante : progression manuelle valide, roadmap
+GitHub mesurable, puis position de l'étape. La source et les éventuelles données
+GitHub périmées sont affichées explicitement. Voir
+[DR-004](../decisions/DR-004-measurable-roadmap-effective-progress.md).
 
 ### `stages`
 Chaque étape versionnée peut porter :
@@ -149,7 +155,15 @@ publique GitHub, sans token ni opération d’écriture, et normalise :
 
 - identité, visibilité, branche par défaut et dernière activité du dépôt ;
 - pull requests ouvertes, état brouillon/prête et liens GitHub ;
-- fusion possible/conflits et statuts de commit lorsqu’ils sont disponibles.
+- fusion possible/conflits et statuts de commit lorsqu’ils sont disponibles ;
+- objectifs feuilles cochés/non cochés de `ROADMAP.md`, ou d'une section
+  roadmap explicite du README lorsqu'aucun fichier dédié n'est exploitable.
+
+La roadmap peut délimiter ses objectifs avec les commentaires
+`roadmap-progress:start` / `roadmap-progress:end` et attribuer un poids par
+`<!-- weight:N -->`. Les groupes parents et exemples dans les blocs de code ne
+sont pas comptés. Un document absent ou non mesurable laisse les autres
+informations du dépôt disponibles et réactive le repli sur l'étape.
 
 `repositorySnapshotService` orchestre le fournisseur et un cache séparé du
 `ProjectDocument`. Chaque résultat expose un état explicite (`fresh`, `stale`,
@@ -214,6 +228,9 @@ Implémenté :
 - preview Markdown intégré
 - attachments
 - base PWA
+- progression manuelle et progression effective expliquée
+- lecture d'une roadmap GitHub mesurable avec cache
+- parcours des étapes focalisé et guides utilisateur contextuels
 
 Le bundle de sauvegarde globale utilise le format suivant sans modifier le
 schéma de chaque projet :
@@ -286,22 +303,18 @@ Non fait :
   navigateurs cibles
 - transports facultatifs non encore comparés sous Windows et Android
 - gestion de vrais fichiers binaires pour attachments non encore traitée
-- navigation des étapes trop dense pour un nouveau projet
-- guide contextuel de remplissage absent de l'interface
-- progression déclarée non structurée
 - dashboard limité à une grille fixe
 - chantiers parallèles non représentés
 
 ## Roadmap technique courte recommandée
 
-1. finaliser le projet de démonstration relié au dépôt
-2. focaliser la navigation des étapes et ajouter l'aide (`#90`, `#91`)
-3. structurer la progression et enrichir le dashboard (`#92`, `#93`)
-4. ajouter le modèle puis l'interface des chantiers (`#94`, `#95`)
-5. introduire le fournisseur et le miroir de sauvegarde (`S1.1`, `S1.2`)
-6. écrire les instantanés et détecter les divergences (`S1.3`, `S1.4`)
-7. comparer les modes autonomes et transports facultatifs (`S1.5`)
-8. traiter `.ipm` et les pièces jointes binaires plus tard (`S2.1`)
+1. conserver les fonctionnalités livrées et la progression mesurable (`#105`)
+2. enrichir les vues, filtres et tris du dashboard (`#93`)
+3. ajouter le modèle puis l'interface des chantiers (`#94`, `#95`)
+4. introduire le fournisseur et le miroir de sauvegarde (`S1.1`, `S1.2`)
+5. écrire les instantanés et détecter les divergences (`S1.3`, `S1.4`)
+6. comparer les modes autonomes et transports facultatifs (`S1.5`)
+7. traiter `.ipm` et les pièces jointes binaires plus tard (`S2.1`)
 
 Les migrations de modèle restent séparées des PR d'interface. Chaque incrément
 doit préserver les projets et bundles existants.

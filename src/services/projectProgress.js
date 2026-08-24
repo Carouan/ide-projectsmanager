@@ -1,5 +1,16 @@
+import { STAGE_DEFINITIONS } from "../constants/stages.js";
+
 const KNOWN_PORTFOLIO_PROGRESS_LINE =
-  /^Progression déclarée\s*:\s*(\d{1,3})\s*%\s*$/u;
+  /^Progression déclarée(?: dans Sites)?\s*:\s*(\d{1,3})\s*%\s*\.?\s*$/u;
+
+const STAGE_PROGRESS = Object.freeze(
+  Object.fromEntries(
+    STAGE_DEFINITIONS.map((stage, index) => [
+      stage.key,
+      Math.round((index / Math.max(1, STAGE_DEFINITIONS.length - 1)) * 100),
+    ])
+  )
+);
 
 export function normalizeProjectProgress(value) {
   if (value === null || value === undefined || value === "") return null;
@@ -39,6 +50,54 @@ export function normalizeProjectProgressDocument(projectDoc) {
 export function formatProjectProgress(value, undeclaredLabel = "—") {
   const progressPercent = normalizeProjectProgress(value);
   return progressPercent === null ? undeclaredLabel : `${progressPercent} %`;
+}
+
+export function resolveProjectProgress(projectDoc, repositoryResult = null) {
+  const declaredProgress = normalizeProjectProgress(
+    projectDoc?.project?.progressPercent
+  );
+
+  if (declaredProgress !== null) {
+    return {
+      percent: declaredProgress,
+      source: "manual",
+      stale: false,
+    };
+  }
+
+  const roadmap = repositoryResult?.snapshot?.roadmap;
+  const roadmapProgress = normalizeProjectProgress(roadmap?.percent);
+
+  if (roadmapProgress !== null && Number(roadmap?.total) > 0) {
+    return {
+      percent: roadmapProgress,
+      source: "roadmap",
+      stale: repositoryResult?.status === "stale",
+      completed: roadmap.completed,
+      total: roadmap.total,
+      completedWeight: roadmap.completedWeight,
+      totalWeight: roadmap.totalWeight,
+      sourcePath: roadmap.sourcePath,
+      url: roadmap.url || null,
+      nextObjectives: roadmap.nextObjectives || [],
+    };
+  }
+
+  const stageProgress = STAGE_PROGRESS[projectDoc?.project?.currentStage];
+  if (stageProgress !== undefined) {
+    return {
+      percent: stageProgress,
+      source: "stage",
+      stale: false,
+      stageKey: projectDoc.project.currentStage,
+    };
+  }
+
+  return {
+    percent: null,
+    source: "unavailable",
+    stale: false,
+  };
 }
 
 function findKnownJournalProgressValues(journal) {

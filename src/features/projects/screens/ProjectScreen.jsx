@@ -7,6 +7,7 @@ import AttachmentsPanel from "../../../components/AttachmentsPanel";
 import DecisionTreeModal from "../../../components/DecisionTreeModal";
 import SyncStatusBadge from "../components/SyncStatusBadge";
 import RepositoryPanel from "../components/RepositoryPanel";
+import ProjectProgressSummary from "../components/ProjectProgressSummary";
 import { ProjectStartGuide } from "../components/ProjectGuidance";
 import { formatStageLabel, getStageDefinition } from "../../../constants/stages";
 import { useI18n } from "../../../i18n/useI18n";
@@ -38,6 +39,7 @@ export default function ProjectScreen({
   onExportJson,
   onImportJson,
   onExportMarkdown,
+  repositoryState,
   showFullStageJourney = false,
   onToggleStageJourney,
 }) {
@@ -236,6 +238,13 @@ export default function ProjectScreen({
             <ProjectStartGuide />
 
             <div className="form-grid">
+              <div className="field field-full project-progress-overview">
+                <ProjectProgressSummary
+                  projectDoc={projectDoc}
+                  repositoryResult={repositoryState.result}
+                />
+              </div>
+
               <label className="field">
                 <span>{t("project.meta.title")}</span>
                 <input
@@ -438,7 +447,9 @@ export default function ProjectScreen({
           />
         )}
 
-        {tab === "repository" && <RepositoryPanel projectDoc={projectDoc} />}
+        {tab === "repository" && (
+          <RepositoryPanel repositoryState={repositoryState} />
+        )}
 
         <DecisionTreeModal
           isOpen={isDecisionTreeOpen}

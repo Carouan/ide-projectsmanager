@@ -51,6 +51,12 @@ Le dépôt a déjà dépassé le MVP initial.
 - métadonnées de sync
 - squelette de sync + détection de conflit + badge UI
 - base PWA
+- liaison à un dépôt GitHub public, panneau de validation et inbox globale
+- projet de démonstration facultatif relié au véritable dépôt IDE
+- navigation focalisée, guides contextuels et présentation canonique `v.0.2`
+- dates localisées en français et en anglais
+- progression manuelle et avancement effectif depuis roadmap ou étape
+- roadmap canonique structurée en releases et objectifs vérifiables
 
 ### Partiellement réalisé
 
@@ -71,9 +77,6 @@ Le dépôt a déjà dépassé le MVP initial.
 - switch preview étape vs export complet
 - désactivation par défaut de la preview sur mobile
 - continuité post-`v1.0` via cycle lié ou sous-projet
-- aides contextuelles
-- navigation focalisée masquant les étapes futures vierges
-- progression déclarée structurée
 - vues liste/grille, filtres et tris du dashboard
 - chantiers parallèles et matrice étapes × chantiers
 - splash screen
@@ -103,6 +106,8 @@ Merges récents confirmés dans le dépôt :
 - 2026-08-21 : Syncthing replacé parmi les transports facultatifs ; parcours
   autonome sans installation confirmé ; modèle professionnel phases ×
   chantiers adopté
+- 2026-08-24 : progression effective priorisée manuelle / roadmap / étape ;
+  roadmap produit mesurable et jalons de release documentés
 
 ## Arborescence de travail locale recommandée
 
@@ -118,21 +123,23 @@ Structure recommandée côté utilisateur :
 
 ## Direction recommandée
 
-La suite logique du produit est définie par
+La [roadmap produit canonique](../../ROADMAP.md) est la source mesurable des
+objectifs livrés et ouverts. La suite logique du produit est définie par
 [DR-002](../decisions/DR-002-local-first-syncthing-backup-architecture.md),
-[DR-003](../decisions/DR-003-stages-workstreams-project-model.md) et la
+[DR-003](../decisions/DR-003-stages-workstreams-project-model.md),
+[DR-004](../decisions/DR-004-measurable-roadmap-effective-progress.md) et la
 [roadmap de sauvegarde portable](../roadmaps/local-first-syncthing-roadmap.md) :
 
-1. ajouter la restauration du bundle global
-2. conserver IndexedDB comme stockage de travail local
-3. ajouter un fournisseur de sauvegarde portable interchangeable
-4. utiliser facultativement un dossier sélectionné comme miroir
-5. conserver Syncthing et les autres transports comme options externes
-6. détecter explicitement les restaurations et divergences
-7. améliorer l'expérience focalisée des étapes et l'aide contextuelle
-8. structurer la progression et les contrôles du dashboard
-9. ajouter les chantiers parallèles sans imposer un modèle logiciel
-10. reporter le format `.ipm` et les binaires après validation du flux JSON
+1. conserver IndexedDB et la restauration JSON sûre déjà disponibles ;
+2. expliquer l'avancement avec priorité manuel / roadmap / étape (#105) ;
+3. enrichir le dashboard avec vues, filtres et tris (#93) ;
+4. ajouter les chantiers parallèles sans imposer un modèle logiciel (#94, #95) ;
+5. introduire un fournisseur de sauvegarde portable interchangeable (#82) ;
+6. proposer facultativement un dossier et des instantanés par appareil (#83, #84) ;
+7. détecter explicitement les restaurations et divergences (#85) ;
+8. valider Windows, Android et les transports facultatifs (#86) ;
+9. traiter séparément projets gouvernés et accès aux dépôts privés (#68, #69) ;
+10. reporter `.ipm`, binaires et explorations directes après stabilisation.
 
 ## Audit historique de l'aide utilisateur
 

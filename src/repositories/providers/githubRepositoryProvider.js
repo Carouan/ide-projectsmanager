@@ -1,4 +1,5 @@
 import { RepositoryProviderError } from "./repositoryProvider.js";
+import { parseRoadmapProgress } from "../../services/roadmapProgress.js";
 
 const DEFAULT_API_BASE_URL = "https://api.github.com";
 const DEFAULT_MAX_PULL_REQUESTS = 20;
@@ -131,6 +132,18 @@ function combineRateLimits(rateLimits) {
   };
 }
 
+function decodeGitHubMarkdown(document) {
+  if (typeof document?.content !== "string") return null;
+  if (document.encoding !== "base64") return null;
+
+  const binary = globalThis.atob(document.content.replace(/\s+/g, ""));
+  const bytes = Uint8Array.from(binary, (character) =>
+    character.charCodeAt(0)
+  );
+
+  return new TextDecoder().decode(bytes);
+}
+
 export function createGitHubRepositoryProvider({
   fetchImpl = (...args) => globalThis.fetch(...args),
   apiBaseUrl = DEFAULT_API_BASE_URL,
@@ -226,11 +239,57 @@ export function createGitHubRepositoryProvider({
       );
     }
 
-    const pullRequests = await requestJson(
-      `/repos/${fullName}/pulls?state=open&sort=updated&direction=desc&per_page=${safeMaxPullRequests}`
-    );
-
     const warnings = [];
+
+    async function readRoadmap() {
+      const candidates = [
+        {
+          sourcePath: "ROADMAP.md",
+          endpoint: `/repos/${fullName}/contents/ROADMAP.md`,
+        },
+        {
+          sourcePath: "README.md",
+          endpoint: `/repos/${fullName}/readme`,
+        },
+      ];
+
+      for (const candidate of candidates) {
+        try {
+          const document = await requestJson(candidate.endpoint);
+          const markdown = decodeGitHubMarkdown(document);
+          const roadmap = parseRoadmapProgress(markdown, {
+            sourcePath: document?.path || candidate.sourcePath,
+          });
+
+          if (!roadmap) continue;
+
+          return {
+            ...roadmap,
+            url:
+              document?.html_url ||
+              `${repositoryData.html_url}/blob/${repositoryData.default_branch || "main"}/${roadmap.sourcePath}`,
+          };
+        } catch (error) {
+          if (error?.code === "not_found") continue;
+
+          warnings.push({
+            capability: "roadmap",
+            code: error?.code || "unknown",
+          });
+          return null;
+        }
+      }
+
+      return null;
+    }
+
+    const [pullRequests, roadmap] = await Promise.all([
+      requestJson(
+        `/repos/${fullName}/pulls?state=open&sort=updated&direction=desc&per_page=${safeMaxPullRequests}`
+      ),
+      readRoadmap(),
+    ]);
+
     const enrichedPullRequests = await Promise.all(
       (Array.isArray(pullRequests) ? pullRequests : []).map(async (pullRequest, index) => {
         if (index >= safeMaxEnrichedPullRequests) {
@@ -282,6 +341,7 @@ export function createGitHubRepositoryProvider({
       },
       lastActivityAt:
         repositoryData.pushed_at || repositoryData.updated_at || null,
+      roadmap,
       openPullRequests: enrichedPullRequests,
       enrichment: {
         pullRequestsListed: enrichedPullRequests.length,

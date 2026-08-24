@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { Buffer } from "node:buffer";
 
 import { createGitHubRepositoryProvider } from "../src/repositories/providers/githubRepositoryProvider.js";
 import { RepositoryProviderError } from "../src/repositories/providers/repositoryProvider.js";
@@ -21,6 +22,15 @@ function jsonResponse(data, { status = 200, headers = {} } = {}) {
       return data;
     },
   };
+}
+
+function markdownResponse(markdown, path = "ROADMAP.md") {
+  return jsonResponse({
+    path,
+    encoding: "base64",
+    content: Buffer.from(markdown, "utf8").toString("base64"),
+    html_url: `https://github.com/Carouan/ide-projectsmanager/blob/main/${path}`,
+  });
 }
 
 test("GitHub provider returns a normalized public repository snapshot", async () => {
@@ -63,6 +73,15 @@ test("GitHub provider returns a normalized public repository snapshot", async ()
       ]);
     }
 
+    if (url.endsWith("/contents/ROADMAP.md")) {
+      return markdownResponse([
+        "# Roadmap",
+        "- [ ] Portfolio cockpit",
+        "  - [x] Delivered objective",
+        "  - [ ] Remaining objective <!-- weight:3 -->",
+      ].join("\n"));
+    }
+
     if (url.endsWith("/pulls/72")) {
       return jsonResponse({ mergeable: true, mergeable_state: "clean" });
     }
@@ -94,6 +113,11 @@ test("GitHub provider returns a normalized public repository snapshot", async ()
   assert.equal(snapshot.repository.defaultBranch, "main");
   assert.equal(snapshot.repository.visibility, "public");
   assert.equal(snapshot.lastActivityAt, "2026-08-20T06:00:00Z");
+  assert.equal(snapshot.roadmap.percent, 25);
+  assert.equal(snapshot.roadmap.completed, 1);
+  assert.equal(snapshot.roadmap.total, 2);
+  assert.equal(snapshot.roadmap.totalWeight, 4);
+  assert.equal(snapshot.roadmap.sourcePath, "ROADMAP.md");
   assert.equal(snapshot.openPullRequests.length, 1);
   assert.deepEqual(snapshot.openPullRequests[0].statusSummary, {
     state: "success",
@@ -112,7 +136,7 @@ test("GitHub provider returns a normalized public repository snapshot", async ()
   });
   assert.equal(snapshot.openPullRequests[0].hasConflicts, false);
   assert.equal(snapshot.warnings.length, 0);
-  assert.equal(calls.length, 4);
+  assert.equal(calls.length, 5);
 
   for (const call of calls) {
     assert.equal(call.options.method, "GET");
@@ -161,8 +185,9 @@ test("GitHub provider keeps core PR data when optional enrichment fails", async 
   assert.equal(snapshot.openPullRequests[0].statusSummary, null);
   assert.deepEqual(
     snapshot.warnings.map((warning) => warning.capability).sort(),
-    ["mergeability", "status"]
+    ["mergeability", "roadmap", "status"]
   );
+  assert.equal(snapshot.roadmap, null);
 });
 
 test("GitHub provider reports public API rate limits deterministically", async () => {
@@ -232,6 +257,15 @@ test("GitHub provider accepts a canonical GitHub URL when fullName is absent", a
       }
 
       if (url.includes("/pulls?")) return jsonResponse([]);
+      if (url.endsWith("/contents/ROADMAP.md")) {
+        return jsonResponse({}, { status: 404 });
+      }
+      if (url.endsWith("/readme")) {
+        return markdownResponse(
+          "# Project\n## Roadmap\n- [x] Delivered\n- [ ] Planned",
+          "README.md"
+        );
+      }
       throw new Error(`Unexpected URL: ${url}`);
     },
   });
@@ -242,7 +276,9 @@ test("GitHub provider accepts a canonical GitHub URL when fullName is absent", a
   });
 
   assert.equal(snapshot.repository.fullName, "Carouan/ide-projectsmanager");
-  assert.equal(calls.length, 2);
+  assert.equal(snapshot.roadmap.sourcePath, "README.md");
+  assert.equal(snapshot.roadmap.percent, 50);
+  assert.equal(calls.length, 4);
 });
 
 test("GitHub provider bounds optional PR enrichment to protect the public rate limit", async () => {
@@ -274,6 +310,9 @@ test("GitHub provider bounds optional PR enrichment to protect the public rate l
         });
       }
       if (url.includes("/pulls?")) return jsonResponse(pullRequests);
+      if (url.endsWith("/contents/ROADMAP.md")) {
+        return markdownResponse("- [x] Existing feature");
+      }
       if (url.endsWith("/pulls/1")) {
         return jsonResponse({ mergeable: true, mergeable_state: "clean" });
       }
@@ -296,5 +335,67 @@ test("GitHub provider bounds optional PR enrichment to protect the public rate l
   assert.equal(snapshot.openPullRequests[0].mergeable, true);
   assert.equal(snapshot.openPullRequests[1].mergeable, null);
   assert.equal(snapshot.openPullRequests[2].statusSummary, null);
-  assert.equal(calls.length, 4);
+  assert.equal(calls.length, 5);
+});
+
+test("missing roadmap and README remain normal optional conditions", async () => {
+  const provider = createGitHubRepositoryProvider({
+    fetchImpl: async (url) => {
+      if (url.endsWith("/repos/owner/repo")) {
+        return jsonResponse({
+          id: 1,
+          full_name: "owner/repo",
+          name: "repo",
+          owner: { login: "owner" },
+          html_url: "https://github.com/owner/repo",
+          visibility: "public",
+          private: false,
+          default_branch: "main",
+        });
+      }
+      if (url.includes("/pulls?")) return jsonResponse([]);
+      return jsonResponse({}, { status: 404 });
+    },
+  });
+
+  const snapshot = await provider.readRepository({
+    provider: "github",
+    fullName: "owner/repo",
+  });
+
+  assert.equal(snapshot.roadmap, null);
+  assert.deepEqual(snapshot.warnings, []);
+  assert.deepEqual(snapshot.openPullRequests, []);
+});
+
+test("a README without a roadmap section never invents project completion", async () => {
+  const provider = createGitHubRepositoryProvider({
+    fetchImpl: async (url) => {
+      if (url.endsWith("/repos/owner/repo")) {
+        return jsonResponse({
+          id: 1,
+          full_name: "owner/repo",
+          name: "repo",
+          owner: { login: "owner" },
+          html_url: "https://github.com/owner/repo",
+          visibility: "public",
+          private: false,
+          default_branch: "main",
+        });
+      }
+      if (url.includes("/pulls?")) return jsonResponse([]);
+      if (url.endsWith("/contents/ROADMAP.md")) {
+        return jsonResponse({}, { status: 404 });
+      }
+      return markdownResponse("# Setup\n- [x] Install dependencies", "README.md");
+    },
+  });
+
+  const snapshot = await provider.readRepository({
+    provider: "github",
+    fullName: "owner/repo",
+  });
+
+  assert.equal(snapshot.roadmap, null);
+  assert.deepEqual(snapshot.warnings, []);
 });

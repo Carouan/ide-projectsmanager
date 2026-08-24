@@ -43,12 +43,15 @@ by:
 
 - [DR-002 — local-first storage and portable backups](decisions/DR-002-local-first-syncthing-backup-architecture.md)
 - [DR-003 — stages × workstreams professional model](decisions/DR-003-stages-workstreams-project-model.md)
+- [DR-004 — measurable roadmaps and effective progress](decisions/DR-004-measurable-roadmap-effective-progress.md)
+- [Canonical measurable product roadmap](../ROADMAP.md)
 - [Standalone backup and optional transports roadmap](roadmaps/local-first-syncthing-roadmap.md)
 
 In short: IndexedDB remains the local working store and manual global JSON is
 the standalone baseline. A selected folder and transports such as Syncthing are
 optional. Stages describe temporal maturity; optional workstreams describe
-parallel professional project fronts.
+parallel professional project fronts. Displayed progress follows an explicit
+priority: manual value, measurable repository roadmap, then stage estimate.
 
 ---
 
@@ -145,7 +148,8 @@ The historical foundations are complete. Codex must now follow this order:
 
 1. finish the repository-backed demonstration project (`#88`)
 2. focus stage navigation and integrate contextual guidance (`#90`, `#91`)
-3. add declared progress and dashboard controls (`#92`, `#93`)
+3. add declared progress, measurable roadmap progress and dashboard controls
+   (`#92`, `#105`, `#93`)
 4. add the workstream model and stage matrix (`#94`, `#95`)
 5. introduce the portable provider and selected-folder adapter (`S1.1`, `S1.2`)
 6. write snapshots and detect divergence (`S1.3`, `S1.4`)
@@ -1247,10 +1251,11 @@ If Codex needs the immediate next sequence, use exactly this order:
 2. `#90` add focused stage navigation
 3. `#91` add contextual guidance
 4. `#92` add declared progress
-5. `#93` add dashboard controls
-6. `#94` add the workstream model
-7. `#95` add workstream planning and the stage matrix
-8. `S1.1`–`S1.5` implement and validate portable backup modes
+5. `#105` add measurable roadmaps and explainable effective progress
+6. `#93` add dashboard controls
+7. `#94` add the workstream model
+8. `#95` add workstream planning and the stage matrix
+9. `S1.1`–`S1.5` implement and validate portable backup modes
 
 Do not start `.ipm` binary attachments before this sequence is stable.
 

@@ -830,7 +830,7 @@ if (loaded.length > 0) {
     setCurrentProjectId(importedId);
   }
 
-  function exportCurrentProjectMarkdown() {
+  function exportCurrentProjectMarkdown(repositoryResult = null) {
     const project = projects.find((p) => p.project.id === currentProjectId);
     if (!project) return;
 
@@ -838,6 +838,7 @@ if (loaded.length > 0) {
     const safeSlug = slug.toLowerCase().replace(/\s+/g, "-");
     const markdown = projectToMarkdown(project, {
       locale: settings?.language,
+      repositoryResult,
     });
 
     downloadMarkdownFile(`${safeSlug}.md`, markdown);

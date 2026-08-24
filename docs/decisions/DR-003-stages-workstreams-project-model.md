@@ -102,9 +102,17 @@ l'informatique.
 
 ## Progression et état
 
-La progression globale reste une valeur métier déclarée et facultative. Elle
-n'est pas calculée automatiquement à partir du nombre de phases, de tâches, de
-commits ou de chantiers terminés.
+La progression métier déclarée reste une valeur facultative saisie
+consciemment. [DR-004](DR-004-measurable-roadmap-effective-progress.md)
+introduit une **progression effective dérivée**, distincte et jamais écrite
+automatiquement dans le projet : saisie manuelle prioritaire, puis roadmap
+constituée d'objectifs vérifiables, puis estimation depuis l'étape actuelle.
+
+Une étape `v.0.4` peut donc fournir un repli affiché à `40 %`, sans prétendre
+que chaque phase, chantier ou tâche représente exactement la même quantité de
+travail. Une roadmap mesurable est plus informative et prévaut lorsqu'elle
+existe. Les commits, pull requests et chantiers non reliés à des objectifs ne
+deviennent pas des preuves arbitraires d'avancement.
 
 Les vues doivent continuer à séparer :
 
@@ -147,6 +155,7 @@ Les vues doivent continuer à séparer :
 - #90 : réduire la densité de la navigation des étapes ;
 - #91 : intégrer l'aide contextuelle ;
 - #92 : structurer la progression déclarée ;
+- #105 : rendre la roadmap mesurable et expliquer la progression effective ;
 - #93 : enrichir les vues et tris du dashboard ;
 - #94 : ajouter le modèle de chantiers ;
 - #95 : ajouter l'interface et la matrice étapes × chantiers.

@@ -30,14 +30,15 @@ accepted UX and project-model sequence now precedes optional folder transport:
 
 1. repository-backed demonstration project (`#88`)
 2. focused stage navigation and contextual guidance (`#90`, `#91`)
-3. declared progress and dashboard controls (`#92`, `#93`)
+3. declared progress, measurable-roadmap estimates and dashboard controls
+   (`#92`, `#105`, `#93`)
 4. generic workstream model and UI (`#94`, `#95`)
 5. portable backup-provider abstraction (`S1.1`)
 6. selected-folder adapter, snapshots and divergence handling (`S1.2`–`S1.4`)
 7. standalone and optional-transport validation matrix (`S1.5`)
 8. versioned `.ipm` package with binary attachments, later (`S2.1`)
 
-Follow DR-003 for stages and workstreams, plus
+Follow DR-003 for stages and workstreams, DR-004 for measurable progress, plus
 `docs/roadmaps/local-first-syncthing-roadmap.md` for portable backups. Do not
 revive the old generic remote-backend sequence as the current product roadmap.
 
@@ -50,8 +51,11 @@ revive the old generic remote-backend sequence as the current product roadmap.
 - Syncthing and other transports remain optional and external.
 - Stages describe temporal maturity; optional workstreams describe parallel
   project fronts and must remain suitable for non-IT projects.
-- Declared business progress, repository health and human attention remain
-  separate signals.
+- Declared business progress remains manually controlled. Effective displayed
+  progress may derive, in order, from that manual value, explicit roadmap
+  objectives, or the current stage. It never silently overwrites project data.
+- Project progress, repository health and human attention remain separate
+  signals.
 - Multi-user accounts, invitations, roles, phase permissions and real-time
   collaboration are out of foreseeable scope.
 - Never silently overwrite local data during restore or synchronization.
@@ -171,9 +175,11 @@ If a data model change is necessary:
 This repository is being upgraded in a controlled way.
 The immediate priority is not random cleanup.
 The global bundle restore is implemented by issue `#81` / `R1.7`. Finish the
-repository-backed demo, then execute `#90` through `#95` in dependency order.
+repository-backed demo, then execute `#90` through `#95` in dependency order,
+inserting measurable progression `#105` before dashboard controls `#93`.
 Resume `S1.1` through `S1.5` afterward. The active decisions are DR-002 for
-portable backup and DR-003 for the professional stages × workstreams model.
+portable backup, DR-003 for the professional stages × workstreams model, and
+DR-004 for measurable roadmaps and effective project progress.
 
 ## If no issue is specified
 Do not perform broad refactors.

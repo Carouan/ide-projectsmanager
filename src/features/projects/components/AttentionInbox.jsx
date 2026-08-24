@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { useI18n } from "../../../i18n/useI18n";
 import { formatDateTime } from "../../../services/dateTimePresentation";
-import { useAttentionInbox } from "../hooks/useAttentionInbox.js";
 import {
   ATTENTION_FILTER,
   deriveAttentionItems,
@@ -23,11 +22,10 @@ function filterTranslationKey(filter) {
     : `repository.attention.${filter}`;
 }
 
-export default function AttentionInbox({ projects, onOpenProject }) {
+export default function AttentionInbox({ projects, onOpenProject, inbox }) {
   const { t, locale } = useI18n();
   const [filter, setFilter] = useState(ATTENTION_FILTER.ALL);
-  const { isLoading, repositoryResults, refreshedAt, refresh } =
-    useAttentionInbox(projects);
+  const { isLoading, repositoryResults, refreshedAt, refresh } = inbox;
   const items = useMemo(
     () => deriveAttentionItems(projects, repositoryResults),
     [projects, repositoryResults]

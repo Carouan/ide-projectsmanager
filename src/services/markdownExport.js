@@ -3,7 +3,10 @@ import {
   formatCalendarDate,
   formatDateTime,
 } from "./dateTimePresentation.js";
-import { formatProjectProgress } from "./projectProgress.js";
+import {
+  formatProjectProgress,
+  resolveProjectProgress,
+} from "./projectProgress.js";
 
 function escapeLine(value) {
   return String(value ?? "").trim();
@@ -16,6 +19,10 @@ export function projectToMarkdown(projectDoc, options = {}) {
 
   const { project, stages, backlog, journal, decisions } = projectDoc;
   const locale = options.locale || "fr";
+  const effectiveProgress = resolveProjectProgress(
+    projectDoc,
+    options.repositoryResult
+  );
   const presentDateTime = (value) => formatDateTime(value, locale, options) || "-";
   const presentCalendarDate = (value) =>
     formatCalendarDate(value, locale, options) || "-";
@@ -41,6 +48,25 @@ export function projectToMarkdown(projectDoc, options = {}) {
       )
     )}`
   );
+  if (effectiveProgress.percent !== null) {
+    const english = locale === "en";
+    const sourceLabel =
+      effectiveProgress.source === "manual"
+        ? english
+          ? "set manually"
+          : "définie manuellement"
+        : effectiveProgress.source === "roadmap"
+          ? english
+            ? `GitHub roadmap: ${effectiveProgress.completed}/${effectiveProgress.total} objectives`
+            : `roadmap GitHub : ${effectiveProgress.completed}/${effectiveProgress.total} objectifs`
+          : english
+            ? `estimated from ${formatStageLabel(effectiveProgress.stageKey)}`
+            : `estimée depuis ${formatStageLabel(effectiveProgress.stageKey)}`;
+
+    lines.push(
+      `- ${english ? "Project progress" : "Avancement du projet"} : ${formatProjectProgress(effectiveProgress.percent)} (${sourceLabel})`
+    );
+  }
   lines.push(`- Propriétaire : ${escapeLine(project.ownerId || "-")}`);
   lines.push(`- Créé le : ${escapeLine(presentDateTime(project.createdAt))}`);
   lines.push(
