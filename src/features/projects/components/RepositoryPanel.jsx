@@ -1,6 +1,5 @@
 import { useI18n } from "../../../i18n/useI18n";
 import { formatDateTime } from "../../../services/dateTimePresentation";
-import { useRepositorySnapshot } from "../hooks/useRepositorySnapshot.js";
 import {
   REPOSITORY_ATTENTION,
   getPullRequestHealth,
@@ -60,11 +59,9 @@ function StatusBadge({ kind, translationKey }) {
   );
 }
 
-export default function RepositoryPanel({ projectDoc }) {
+export default function RepositoryPanel({ repositoryState }) {
   const { t, locale } = useI18n();
-  const { isLoading, result, refresh } = useRepositorySnapshot(
-    projectDoc?.repository || null
-  );
+  const { isLoading, result, refresh } = repositoryState;
   const panelState = getRepositoryPanelState({ isLoading, result });
 
   if (["loading", "unlinked", "rate_limited", "offline", "unsupported", "error"].includes(panelState)) {
@@ -166,6 +163,18 @@ export default function RepositoryPanel({ projectDoc }) {
               <dt>{t("repository.health.cache")}</dt>
               <dd>{cacheAge}</dd>
             </div>
+            {snapshot.roadmap && (
+              <div>
+                <dt>{t("repository.health.roadmap")}</dt>
+                <dd>
+                  {t("repository.health.roadmapObjectives", {
+                    completed: snapshot.roadmap.completed,
+                    total: snapshot.roadmap.total,
+                    percent: snapshot.roadmap.percent,
+                  })}
+                </dd>
+              </div>
+            )}
           </dl>
         </article>
 

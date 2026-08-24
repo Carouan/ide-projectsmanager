@@ -8,7 +8,7 @@ separates complementary kinds of project information.
 
 1. Create a project and give it a clear title.
 2. Summarize the need and the intended outcome in a few sentences.
-3. Open **Stages** and begin with `v0.0`.
+3. Open **Stages** and begin with `v.0.0`.
 4. Use the backlog for future actions, the journal for context, and decisions
    for important choices.
 5. Create a JSON backup regularly.
@@ -17,35 +17,45 @@ The **New idea** button classifies an idea that appears during a project. It
 does not automatically create a separate project and does not replace this
 guide.
 
-## Declare project progress
+## Understand and adjust project progress
 
-In the **Project** tab, **Declared progress** is an optional estimate between
-0 and 100%. An empty value remains **Not declared**. It is never calculated
-from stages, tasks, or GitHub activity.
+The dashboard and **Project** tab show a percentage together with its source:
 
-If an older journal contains the exact line `Progression déclarée : N %`, a
-preview offers to recover that value. Nothing is applied without confirmation,
-and an existing declared value is never replaced.
+1. **Manually declared progress** always takes priority.
+2. Otherwise, a **measurable GitHub roadmap** counts completed objectives.
+3. Otherwise, the **current stage** provides an estimate: `v.0.2` means 20%,
+   `v.0.7` means 70%, and `v.1.0` means 100%.
+
+Enter a value between 0 and 100 in project metadata to override the estimate.
+Clear that value to restore automatic selection. Stale roadmap data is clearly
+marked and never overwrites the stored project.
+
+If an older journal contains a known line such as
+`Progression déclarée : 20 %.` or
+`Progression déclarée dans Sites : 20 %.`, a preview offers to recover that
+value. Nothing is applied without confirmation, and an existing declared value
+is never replaced.
 
 ## Understand stages
 
-A stage represents the project's **overall maturity**, not its progress
-percentage. A future stage can be opened when it becomes useful; the journey is
-not a rigid gate system.
+A stage primarily represents the project's **overall maturity**. Its position
+is used only as a fallback estimate when neither a manual value nor a measurable
+roadmap exists. A future stage can be opened when it becomes useful; the journey
+is not a rigid gate system.
 
 | Stage | Main intent | Possible exit evidence |
 |---|---|---|
-| `v0.0` | Clarify the real need | Problem, people concerned, and intended outcome |
-| `v0.1` | Explore context and options | Sources, findings, and assumptions to test |
-| `v0.2` | Define a useful scope | Minimum outcome, priorities, and exclusions |
-| `v0.3` | Prepare the approach | Plan, resources, dependencies, and risks |
-| `v0.4` | Assemble the parts | First coherent and testable whole |
-| `v0.5` | Test a first version | Observations from controlled use |
-| `v0.6` | Correct blocking defects | Priority problems corrected and retested |
-| `v0.7` | Test in more realistic conditions | Feedback from a limited beta |
-| `v0.8` | Stabilize after feedback | Defects addressed and documentation updated |
-| `v0.9` | Complete final validation | Acceptance, approval, and rollout plan |
-| `v1.0` | Deliver and organize continuity | Available result, follow-up, and maintenance |
+| `v.0.0` | Clarify the real need | Problem, people concerned, and intended outcome |
+| `v.0.1` | Explore context and options | Sources, findings, and assumptions to test |
+| `v.0.2` | Define a useful scope | Minimum outcome, priorities, and exclusions |
+| `v.0.3` | Prepare the approach | Plan, resources, dependencies, and risks |
+| `v.0.4` | Assemble the parts | First coherent and testable whole |
+| `v.0.5` | Test a first version | Observations from controlled use |
+| `v.0.6` | Correct blocking defects | Priority problems corrected and retested |
+| `v.0.7` | Test in more realistic conditions | Feedback from a limited beta |
+| `v.0.8` | Stabilize after feedback | Defects addressed and documentation updated |
+| `v.0.9` | Complete final validation | Acceptance, approval, and rollout plan |
+| `v.1.0` | Deliver and organize continuity | Available result, follow-up, and maintenance |
 
 ## Fill in a stage
 

@@ -8,6 +8,7 @@ import PwaPrompt from "./components/PwaPrompt";
 import AppShell from "./app/AppShell";
 import { I18nProvider } from "./i18n/useI18n";
 import { projectToMarkdown } from "./services/markdownExport";
+import { useRepositorySnapshot } from "./features/projects/hooks/useRepositorySnapshot.js";
 
 export default function App() {
   const {
@@ -41,6 +42,9 @@ export default function App() {
 
   const [view, setView] = useState("list");
   const [previousView, setPreviousView] = useState("list");
+  const repositoryState = useRepositorySnapshot(
+    view === "project" ? currentProject?.repository || null : null
+  );
 
   function handleCreateProject() {
     createProject();
@@ -99,7 +103,10 @@ export default function App() {
         onRemoveAttachment={removeAttachment}
         onExportJson={exportCurrentProjectJson}
         onImportJson={importProjectFromFile}
-        onExportMarkdown={exportCurrentProjectMarkdown}
+        onExportMarkdown={() =>
+          exportCurrentProjectMarkdown(repositoryState.result)
+        }
+        repositoryState={repositoryState}
         showFullStageJourney={settings?.showFullStageJourney === true}
         onToggleStageJourney={() =>
           updateSettings({
@@ -124,6 +131,7 @@ export default function App() {
       <MarkdownPreview
         content={projectToMarkdown(currentProject, {
           locale: settings?.language,
+          repositoryResult: repositoryState.result,
         })}
       />
     ) : null;

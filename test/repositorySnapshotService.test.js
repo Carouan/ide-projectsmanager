@@ -98,6 +98,33 @@ test("offline reads return a cached snapshot as explicitly stale", async () => {
   assert.equal(result.error.code, "offline");
 });
 
+test("offline roadmap objectives remain cached without becoming falsely current", async () => {
+  const roadmap = {
+    sourcePath: "ROADMAP.md",
+    percent: 49,
+    completed: 44,
+    total: 89,
+  };
+  const cache = createMemoryRepositorySnapshotCache({
+    "github:carouan/ide-projectsmanager": {
+      fetchedAt: "2026-08-20T07:59:00.000Z",
+      snapshot: {
+        provider: "github",
+        repository: { fullName: REPOSITORY.fullName },
+        roadmap,
+      },
+    },
+  });
+
+  const result = await createService({ cache, isOnline: () => false }).read(
+    REPOSITORY
+  );
+
+  assert.equal(result.status, REPOSITORY_SNAPSHOT_STATUS.STALE);
+  assert.equal(result.cache.stale, true);
+  assert.deepEqual(result.snapshot.roadmap, roadmap);
+});
+
 test("offline reads without a cache are deterministic", async () => {
   const result = await createService({ isOnline: () => false }).read(REPOSITORY);
 

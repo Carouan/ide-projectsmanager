@@ -228,6 +228,40 @@ h3 {
   accent-color: var(--primary);
 }
 
+.project-progress-source {
+  display: flex;
+  align-items: center;
+  gap: 8px 12px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.project-progress-source a {
+  color: #c4b5fd;
+  text-decoration: none;
+}
+
+.project-progress-source a:hover,
+.project-progress-source a:focus-visible {
+  text-decoration: underline;
+}
+
+.project-progress-stale {
+  color: #fde68a;
+}
+
+.project-progress-overview {
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(124, 58, 237, 0.07);
+}
+
+.project-progress-overview .project-progress {
+  margin: 0;
+}
+
 .progress-migration-preview {
   margin: 0 0 20px;
   border: 1px solid var(--border);

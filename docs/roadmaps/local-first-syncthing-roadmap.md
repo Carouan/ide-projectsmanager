@@ -6,6 +6,10 @@ Elle remplace l'idée imprécise d'un « backend de synchronisation » par de
 petites étapes testables, sans changer la source de vérité locale ni imposer de
 logiciel compagnon.
 
+La [roadmap produit canonique](../../ROADMAP.md) porte le pourcentage global.
+Ce document détaille les preuves spécifiques au chantier de sauvegarde : une
+case cochée décrit un comportement déjà livré, une case vide reste à réaliser.
+
 ## Résultat recherché
 
 Une personne peut :
@@ -37,14 +41,20 @@ Ce ticket est le prérequis fonctionnel de toutes les étapes suivantes : tout
 transport ne fait que déplacer des sauvegardes que l'application doit d'abord
 savoir restaurer correctement.
 
+- [x] Exporter un bundle JSON versionné contenant tous les projets (#77).
+- [x] Valider le wrapper, sa version et le nombre de projets (#81).
+- [x] Prévisualiser projets nouveaux et identifiants en conflit (#81).
+- [x] Ignorer explicitement les conflits ou les importer comme copies (#81).
+- [x] Refuser tout écrasement silencieux et conserver l'import individuel (#81).
+
 ### S1.1 — Introduire un fournisseur de sauvegarde portable
 
 Définir une petite interface indépendante du transport pour :
 
-- écrire un instantané ;
-- lister ou lire les instantanés connus ;
-- signaler capacité, permission et erreur ;
-- conserver le téléchargement manuel comme fournisseur de repli.
+- [ ] Écrire un instantané via un contrat indépendant du transport (#82).
+- [ ] Lister ou lire les instantanés connus (#82).
+- [ ] Signaler capacité, permission et erreur (#82).
+- [ ] Conserver le téléchargement manuel comme fournisseur de repli (#82).
 
 Cette abstraction ne remplace ni le repository IndexedDB ni l'adaptateur GitHub de suivi des dépôts.
 
@@ -52,11 +62,11 @@ Cette abstraction ne remplace ni le repository IndexedDB ni l'adaptateur GitHub 
 
 Utiliser l'API File System Access comme amélioration progressive :
 
-- détection de capacité ;
-- sélection explicite d'un dossier en lecture/écriture ;
-- mémorisation sûre du handle lorsque possible ;
-- renouvellement clair des permissions ;
-- fallback manuel ailleurs.
+- [ ] Détecter la compatibilité de File System Access (#83).
+- [ ] Demander la sélection explicite d'un dossier en lecture/écriture (#83).
+- [ ] Mémoriser le handle uniquement lorsque c'est sûr et supporté (#83).
+- [ ] Expliquer et renouveler clairement les permissions (#83).
+- [ ] Maintenir le fallback manuel partout ailleurs (#83).
 
 Première cible : Chrome/Edge sous Windows. Deuxième cible : Chrome Android sur Galaxy S23.
 
@@ -66,28 +76,34 @@ Créer une identité locale d'appareil non secrète et écrire un `latest.json` 
 
 L'instantané doit être atomique autant que le permet l'API et ne doit pas modifier le format interne de chaque `ProjectDocument` sans migration dédiée.
 
+- [ ] Générer un identifiant local d'appareil non secret (#84).
+- [ ] Produire un espace d'instantané distinct par appareil (#84).
+- [ ] Versionner et dater chaque sauvegarde JSON (#84).
+- [ ] Écrire uniquement lorsque l'application est ouverte et autorisée (#84).
+- [ ] Préserver la structure de tous les `ProjectDocument` historiques (#84).
+
 ### S1.4 — Détecter restauration et divergence
 
 À l'ouverture ou sur action manuelle :
 
-- détecter un instantané inconnu ou plus récent ;
-- distinguer un descendant d'une divergence ;
-- afficher la source, la date et l'impact ;
-- proposer restaurer, importer comme copie ou ignorer ;
-- ne jamais écraser silencieusement.
+- [ ] Détecter un instantané inconnu ou plus récent (#85).
+- [ ] Distinguer un descendant d'une divergence (#85).
+- [ ] Afficher la source, la date et l'impact avant décision (#85).
+- [ ] Proposer restaurer, importer comme copie ou ignorer (#85).
+- [ ] Vérifier qu'aucune branche n'écrase silencieusement les données (#85).
 
 ### S1.5 — Valider les modes de sauvegarde Windows/Android
 
 Fournir un guide court qui commence par le parcours autonome :
 
-- export et restauration manuels sans installation ;
-- sélection dans l'IDE ;
-- restauration sur un deuxième appareil ;
-- renouvellement des permissions ;
-- scénario de conflit ;
-- désactivation et retour à l'import/export manuel ;
-- configuration facultative d'au moins un transport de dossier, par exemple
-  Syncthing, dans une section clairement séparée.
+- [ ] Tester export et restauration manuels sans installation (#86).
+- [ ] Tester la sélection d'un dossier dans l'IDE (#86).
+- [ ] Tester une restauration sur un deuxième appareil (#86).
+- [ ] Tester le renouvellement des permissions (#86).
+- [ ] Tester un scénario de divergence ou de conflit (#86).
+- [ ] Tester la désactivation et le retour à l'import/export manuel (#86).
+- [ ] Documenter séparément un transport facultatif, par exemple Syncthing (#86).
+- [ ] Publier la matrice réelle Chrome/Edge Windows et Chrome Android (#86).
 
 La validation doit inclure une matrice Chrome/Edge Windows, Chrome Android, un
 navigateur sans File System Access, le parcours sans installation et au moins
@@ -96,6 +112,10 @@ un transport facultatif.
 ### S2.1 — Définir le format `.ipm` avec pièces jointes
 
 Étape ultérieure, après retour d'expérience sur la synchronisation JSON : conteneur versionné, manifeste, projets, blobs identifiés par hash et migrations. Ne pas commencer avant stabilisation de S1.
+
+- [ ] Définir un manifeste versionné et une stratégie de migration.
+- [ ] Inclure projets JSON et pièces jointes binaires identifiées par hash.
+- [ ] Vérifier l'intégrité et la compatibilité ascendante avant import.
 
 ## Dépendances
 

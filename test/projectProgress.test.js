@@ -8,6 +8,7 @@ import {
   normalizeProjectProgressDocument,
   previewKnownPortfolioProgressMigrations,
   previewKnownProjectProgressMigration,
+  resolveProjectProgress,
 } from "../src/services/projectProgress.js";
 import {
   createProjectBundle,
@@ -137,6 +138,21 @@ test("portfolio recovery accepts known title lines and the valid zero boundary",
   );
 });
 
+test("historical Sites variants accept their known label and final punctuation", () => {
+  for (const content of [
+    "Progression déclarée : 20 %.",
+    "Progression déclarée dans Sites : 20 %.",
+    "Progression déclarée dans Sites : 20 %",
+  ]) {
+    assert.equal(
+      previewKnownProjectProgressMigration(
+        project("known-sites-import", { journal: [{ content }] })
+      ).progressPercent,
+      20
+    );
+  }
+});
+
 test("portfolio recovery never guesses from general text, stages or GitHub facts", () => {
   for (const content of [
     "Le projet est terminé à 60 %.",
@@ -179,6 +195,107 @@ test("existing declared values and conflicting legacy lines are never replaced",
       })
     ),
     null
+  );
+});
+
+test("manual progress, including zero, always overrides roadmap and stage", () => {
+  const repositoryResult = {
+    status: "fresh",
+    snapshot: {
+      roadmap: { percent: 85, completed: 17, total: 20 },
+    },
+  };
+
+  assert.deepEqual(
+    resolveProjectProgress(
+      project("manual", { progressPercent: 0, currentStage: "v0_7" }),
+      repositoryResult
+    ),
+    { percent: 0, source: "manual", stale: false }
+  );
+});
+
+test("a measurable repository roadmap overrides the stage fallback", () => {
+  const result = resolveProjectProgress(
+    project("roadmap", { currentStage: "v0_2" }),
+    {
+      status: "fresh",
+      snapshot: {
+        roadmap: {
+          percent: 64,
+          completed: 7,
+          total: 11,
+          completedWeight: 9,
+          totalWeight: 14,
+          sourcePath: "ROADMAP.md",
+          url: "https://github.com/example/project/blob/main/ROADMAP.md",
+        },
+      },
+    }
+  );
+
+  assert.equal(result.percent, 64);
+  assert.equal(result.source, "roadmap");
+  assert.equal(result.completed, 7);
+  assert.equal(result.total, 11);
+  assert.equal(result.stale, false);
+});
+
+test("stale roadmap progress remains usable but is clearly marked", () => {
+  const result = resolveProjectProgress(project("cached"), {
+    status: "stale",
+    snapshot: { roadmap: { percent: 70, completed: 7, total: 10 } },
+  });
+
+  assert.equal(result.percent, 70);
+  assert.equal(result.source, "roadmap");
+  assert.equal(result.stale, true);
+});
+
+test("the stage supplies deterministic 0–100 estimates without persistence", () => {
+  for (const [stage, expected] of [
+    ["v0_0", 0],
+    ["v0_2", 20],
+    ["v0_4", 40],
+    ["v0_7", 70],
+    ["v1_0", 100],
+  ]) {
+    const projectDoc = project(`stage-${stage}`, { currentStage: stage });
+    const original = JSON.stringify(projectDoc);
+    const result = resolveProjectProgress(projectDoc);
+
+    assert.equal(result.percent, expected);
+    assert.equal(result.source, "stage");
+    assert.equal(JSON.stringify(projectDoc), original);
+  }
+});
+
+test("missing roadmaps, invalid percentages and unrelated GitHub facts fall back locally", () => {
+  const projectDoc = project("fallback", { currentStage: "v0_4" });
+
+  for (const repositoryResult of [
+    null,
+    { status: "offline", snapshot: null },
+    { status: "fresh", snapshot: { roadmap: null, openPullRequests: [{}] } },
+    {
+      status: "fresh",
+      snapshot: { roadmap: { percent: 101, completed: 10, total: 10 } },
+    },
+    {
+      status: "fresh",
+      snapshot: { roadmap: { percent: 60, completed: 0, total: 0 } },
+    },
+  ]) {
+    const result = resolveProjectProgress(projectDoc, repositoryResult);
+    assert.equal(result.percent, 40);
+    assert.equal(result.source, "stage");
+  }
+});
+
+test("an unknown stage with no manual or roadmap source stays unavailable", () => {
+  assert.deepEqual(
+    resolveProjectProgress(project("unknown-stage", { currentStage: "future" })),
+    { percent: null, source: "unavailable", stale: false }
   );
 });
 
@@ -260,4 +377,40 @@ test("Markdown includes declared progress and localized undeclared labels", () =
   assert.match(declaredMarkdown, /- Progression déclarée : 0 %/);
   assert.match(undeclaredFrench, /- Progression déclarée : Non déclarée/);
   assert.match(undeclaredEnglish, /- Progression déclarée : Not declared/);
+  assert.match(
+    declaredMarkdown,
+    /- Avancement du projet : 0 % \(définie manuellement\)/
+  );
+  assert.match(
+    undeclaredFrench,
+    /- Avancement du projet : 70 % \(estimée depuis v\.0\.7\)/
+  );
+  assert.match(
+    undeclaredEnglish,
+    /- Project progress : 70 % \(estimated from v\.0\.7\)/
+  );
+});
+
+test("Markdown preview and export can present the same measured roadmap source", () => {
+  const repositoryResult = {
+    status: "fresh",
+    snapshot: {
+      roadmap: {
+        percent: 49,
+        completed: 44,
+        total: 89,
+        sourcePath: "ROADMAP.md",
+      },
+    },
+  };
+
+  const markdown = projectToMarkdown(project("repository-backed"), {
+    locale: "fr",
+    repositoryResult,
+  });
+
+  assert.match(
+    markdown,
+    /- Avancement du projet : 49 % \(roadmap GitHub : 44\/89 objectifs\)/
+  );
 });

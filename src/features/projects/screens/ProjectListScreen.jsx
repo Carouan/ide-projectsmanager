@@ -1,41 +1,10 @@
 import { useI18n } from "../../../i18n/useI18n";
 import { formatStageLabel } from "../../../constants/stages";
 import { formatDateTime } from "../../../services/dateTimePresentation";
-import {
-  formatProjectProgress,
-  normalizeProjectProgress,
-} from "../../../services/projectProgress";
 import AttentionInbox from "../components/AttentionInbox";
 import ProjectProgressMigrationPreview from "../components/ProjectProgressMigrationPreview";
-
-function ProjectProgressSummary({ progressPercent, t }) {
-  const declaredProgress = normalizeProjectProgress(progressPercent);
-
-  return (
-    <div className="project-progress">
-      <div className="project-progress-header">
-        <span>{t("project.progress.label")}</span>
-        <strong>
-          {formatProjectProgress(
-            declaredProgress,
-            t("project.progress.undeclared")
-          )}
-        </strong>
-      </div>
-
-      {declaredProgress !== null && (
-        <progress
-          className="project-progress-bar"
-          max="100"
-          value={declaredProgress}
-          aria-label={t("project.progress.progressBarLabel", {
-            value: declaredProgress,
-          })}
-        />
-      )}
-    </div>
-  );
-}
+import ProjectProgressSummary from "../components/ProjectProgressSummary";
+import { useAttentionInbox } from "../hooks/useAttentionInbox.js";
 
 export default function ProjectListScreen({
   projects,
@@ -47,6 +16,7 @@ export default function ProjectListScreen({
   onMigrateKnownPortfolioProgress,
 }) {
   const { t, locale } = useI18n();
+  const attentionInbox = useAttentionInbox(projects);
 
   return (
     <div className="page-shell">
@@ -73,6 +43,7 @@ export default function ProjectListScreen({
             <AttentionInbox
               projects={projects}
               onOpenProject={onOpenProject}
+              inbox={attentionInbox}
             />
             <ProjectProgressMigrationPreview
               projects={projects}
@@ -124,8 +95,10 @@ export default function ProjectListScreen({
                 </div>
 
                 <ProjectProgressSummary
-                  progressPercent={p.project.progressPercent}
-                  t={t}
+                  projectDoc={p}
+                  repositoryResult={
+                    attentionInbox.repositoryResults[p.project.id]
+                  }
                 />
 
                 <div className="project-actions">
