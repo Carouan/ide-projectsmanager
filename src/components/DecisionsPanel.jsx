@@ -1,12 +1,13 @@
 import { useI18n } from "../i18n/useI18n";
 import { formatStageLabel } from "../constants/stages";
+import { formatCalendarDate } from "../services/dateTimePresentation";
 
 export default function DecisionsPanel({
   decisions = [],
   onUpdateDecisionStatus,
   projectId,
 }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
 
   return (
     <section className="panel">
@@ -30,7 +31,11 @@ export default function DecisionsPanel({
                 <div>
                   <h3>{decision.title}</h3>
                   <p className="muted">
-                    {t("decisions.item.date", { date: decision.date })}
+                    {t("decisions.item.date", {
+                      date:
+                        formatCalendarDate(decision.date, locale) ||
+                        t("global.meta.unknownDate"),
+                    })}
                     {decision.stage
                       ? ` • ${t("decisions.item.stage", {
                           stage: formatStageLabel(decision.stage),

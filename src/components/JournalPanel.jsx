@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { formatStageLabel, STAGE_DEFINITIONS } from "../constants/stages";
 import { useI18n } from "../i18n/useI18n";
+import { formatDateTime } from "../services/dateTimePresentation";
 
 export default function JournalPanel({
   projectId,
   journal,
   onAddJournalEntry,
 }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [type, setType] = useState("note");
   const [title, setTitle] = useState("");
   const [stage, setStage] = useState("v0_0");
@@ -121,9 +122,8 @@ export default function JournalPanel({
                   <h3>{entry.title}</h3>
                   <p className="muted">
                     {entry.type} · {formatStageLabel(entry.stage)} ·{" "}
-                    {entry.createdAt
-                      ? new Date(entry.createdAt).toLocaleString()
-                      : t("journal.item.unknownDate")}
+                    {formatDateTime(entry.createdAt, locale) ||
+                      t("journal.item.unknownDate")}
                   </p>
                 </div>
                 <span className="badge">{entry.type}</span>

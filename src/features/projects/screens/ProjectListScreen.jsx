@@ -1,5 +1,6 @@
 import { useI18n } from "../../../i18n/useI18n";
 import { formatStageLabel } from "../../../constants/stages";
+import { formatDateTime } from "../../../services/dateTimePresentation";
 import AttentionInbox from "../components/AttentionInbox";
 
 export default function ProjectListScreen({
@@ -10,7 +11,7 @@ export default function ProjectListScreen({
   onDeleteProject,
   onOpenSettings,
 }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
 
   return (
     <div className="page-shell">
@@ -74,7 +75,9 @@ export default function ProjectListScreen({
                   <span>{t("global.meta.status", { status: p.project.status })}</span>
                   <span>
                     {t("global.meta.updated", {
-                      timestamp: new Date(p.project.updatedAt).toLocaleString(),
+                      timestamp:
+                        formatDateTime(p.project.updatedAt, locale) ||
+                        t("global.meta.unknownDate"),
                     })}
                   </span>
                 </div>

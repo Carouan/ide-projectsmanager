@@ -58,6 +58,7 @@
   "global.empty.demoDescription": "Ou découvre l’interface avec une copie locale d’IDE-projectsmanager reliée à son véritable dépôt GitHub public.",
   "global.meta.status": "Statut : {{status}}",
   "global.meta.updated": "Modifié : {{timestamp}}",
+  "global.meta.unknownDate": "date inconnue",
   "attentionInbox.eyebrow": "Vue globale",
   "attentionInbox.title": "À votre attention",
   "attentionInbox.description": "Décisions, validations et blocages déterminés à partir des projets et des dépôts liés.",

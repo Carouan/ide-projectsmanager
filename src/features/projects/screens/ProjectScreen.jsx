@@ -10,6 +10,7 @@ import RepositoryPanel from "../components/RepositoryPanel";
 import { ProjectStartGuide } from "../components/ProjectGuidance";
 import { formatStageLabel, getStageDefinition } from "../../../constants/stages";
 import { useI18n } from "../../../i18n/useI18n";
+import { formatDateTime } from "../../../services/dateTimePresentation";
 import {
   getNextStageDefinition,
   getVisibleStageDefinitions,
@@ -39,7 +40,7 @@ export default function ProjectScreen({
   const [tab, setTab] = useState("project");
   const [isDecisionTreeOpen, setIsDecisionTreeOpen] = useState(false);
   const fileInputRef = useRef(null);
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
 
   const { project, stages, backlog, journal, decisions, attachments } =
     projectDoc || {};
@@ -129,7 +130,9 @@ export default function ProjectScreen({
             <SyncStatusBadge projectDoc={projectDoc} />
             <span className="muted">
               {t("project.meta.lastUpdated", {
-                timestamp: new Date(project.updatedAt).toLocaleString(),
+                timestamp:
+                  formatDateTime(project.updatedAt, locale) ||
+                  t("global.meta.unknownDate"),
               })}
             </span>
           </div>
