@@ -17,6 +17,16 @@ The **New idea** button classifies an idea that appears during a project. It
 does not automatically create a separate project and does not replace this
 guide.
 
+## Declare project progress
+
+In the **Project** tab, **Declared progress** is an optional estimate between
+0 and 100%. An empty value remains **Not declared**. It is never calculated
+from stages, tasks, or GitHub activity.
+
+If an older journal contains the exact line `Progression déclarée : N %`, a
+preview offers to recover that value. Nothing is applied without confirmation,
+and an existing declared value is never replaced.
+
 ## Understand stages
 
 A stage represents the project's **overall maturity**, not its progress

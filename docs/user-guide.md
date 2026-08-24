@@ -16,6 +16,16 @@ navigateur et organise les informations en plusieurs espaces complémentaires.
 Le bouton **Nouvelle idée** sert à classer une idée apparue pendant un projet.
 Il ne crée pas automatiquement un autre projet et ne remplace pas le guide.
 
+## Déclarer la progression
+
+Dans l'onglet **Projet**, la **progression déclarée** est une estimation
+facultative comprise entre 0 et 100 %. Une valeur vide reste **Non déclarée**.
+Elle n'est jamais calculée à partir des étapes, des tâches ou de GitHub.
+
+Si un ancien journal contient exactement `Progression déclarée : N %`, un aperçu
+propose de récupérer cette valeur. Rien n'est appliqué sans confirmation et une
+progression déjà renseignée n'est jamais remplacée.
+
 ## Comprendre les étapes
 
 Une étape décrit la **maturité globale** du projet, pas son pourcentage
