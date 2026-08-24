@@ -1,7 +1,41 @@
 import { useI18n } from "../../../i18n/useI18n";
 import { formatStageLabel } from "../../../constants/stages";
 import { formatDateTime } from "../../../services/dateTimePresentation";
+import {
+  formatProjectProgress,
+  normalizeProjectProgress,
+} from "../../../services/projectProgress";
 import AttentionInbox from "../components/AttentionInbox";
+import ProjectProgressMigrationPreview from "../components/ProjectProgressMigrationPreview";
+
+function ProjectProgressSummary({ progressPercent, t }) {
+  const declaredProgress = normalizeProjectProgress(progressPercent);
+
+  return (
+    <div className="project-progress">
+      <div className="project-progress-header">
+        <span>{t("project.progress.label")}</span>
+        <strong>
+          {formatProjectProgress(
+            declaredProgress,
+            t("project.progress.undeclared")
+          )}
+        </strong>
+      </div>
+
+      {declaredProgress !== null && (
+        <progress
+          className="project-progress-bar"
+          max="100"
+          value={declaredProgress}
+          aria-label={t("project.progress.progressBarLabel", {
+            value: declaredProgress,
+          })}
+        />
+      )}
+    </div>
+  );
+}
 
 export default function ProjectListScreen({
   projects,
@@ -10,6 +44,7 @@ export default function ProjectListScreen({
   onOpenProject,
   onDeleteProject,
   onOpenSettings,
+  onMigrateKnownPortfolioProgress,
 }) {
   const { t, locale } = useI18n();
 
@@ -34,10 +69,16 @@ export default function ProjectListScreen({
         </div>
 
         {projects.length > 0 && (
-          <AttentionInbox
-            projects={projects}
-            onOpenProject={onOpenProject}
-          />
+          <>
+            <AttentionInbox
+              projects={projects}
+              onOpenProject={onOpenProject}
+            />
+            <ProjectProgressMigrationPreview
+              projects={projects}
+              onApply={onMigrateKnownPortfolioProgress}
+            />
+          </>
         )}
 
         {projects.length === 0 ? (
@@ -81,6 +122,11 @@ export default function ProjectListScreen({
                     })}
                   </span>
                 </div>
+
+                <ProjectProgressSummary
+                  progressPercent={p.project.progressPercent}
+                  t={t}
+                />
 
                 <div className="project-actions">
                   <button

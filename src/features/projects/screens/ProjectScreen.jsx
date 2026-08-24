@@ -12,6 +12,10 @@ import { formatStageLabel, getStageDefinition } from "../../../constants/stages"
 import { useI18n } from "../../../i18n/useI18n";
 import { formatDateTime } from "../../../services/dateTimePresentation";
 import {
+  normalizeProjectProgress,
+  previewKnownProjectProgressMigration,
+} from "../../../services/projectProgress";
+import {
   getNextStageDefinition,
   getVisibleStageDefinitions,
 } from "../services/stageVisibility";
@@ -52,6 +56,8 @@ export default function ProjectScreen({
     showFullStageJourney
   );
   const nextStageDefinition = getNextStageDefinition(currentStageKey);
+  const knownProgressMigration =
+    previewKnownProjectProgressMigration(projectDoc);
 
   const linkedBacklogItems = useMemo(() => {
     const ids = currentStage?.linkedBacklogIds || [];
@@ -239,6 +245,54 @@ export default function ProjectScreen({
                   }
                 />
               </label>
+
+              <label className="field">
+                <span>{t("project.progress.label")}</span>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="1"
+                  inputMode="numeric"
+                  value={normalizeProjectProgress(project.progressPercent) ?? ""}
+                  placeholder={t("project.progress.undeclared")}
+                  aria-describedby="project-progress-help"
+                  onChange={(event) =>
+                    onUpdateProjectMeta(project.id, {
+                      progressPercent: normalizeProjectProgress(
+                        event.target.value
+                      ),
+                    })
+                  }
+                />
+                <small className="muted" id="project-progress-help">
+                  {t("project.progress.help")}
+                </small>
+              </label>
+
+              {knownProgressMigration && (
+                <div className="field field-full project-progress-recovery">
+                  <strong>{t("project.progress.migration.singleTitle")}</strong>
+                  <p className="muted">
+                    {t("project.progress.migration.singleDescription", {
+                      value: knownProgressMigration.progressPercent,
+                    })}
+                  </p>
+                  <button
+                    className="btn btn-secondary"
+                    type="button"
+                    onClick={() =>
+                      onUpdateProjectMeta(project.id, {
+                        progressPercent: knownProgressMigration.progressPercent,
+                      })
+                    }
+                  >
+                    {t("project.progress.migration.applyOne", {
+                      value: knownProgressMigration.progressPercent,
+                    })}
+                  </button>
+                </div>
+              )}
 
               <label className="field field-full">
                 <span>{t("project.meta.summary")}</span>

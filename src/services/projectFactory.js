@@ -19,6 +19,7 @@ export function createEmptyProject(ownerId = null) {
       tags: [],
       ownerId,
       currentStage: "v0_0",
+      progressPercent: null,
     },
     stages: buildDefaultStages(),
     backlog: [],

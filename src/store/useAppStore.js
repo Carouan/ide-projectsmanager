@@ -32,6 +32,11 @@ import { normalizeUserProfile } from "../services/userProfile";
 import { normalizeSyncMetadata } from "../services/syncMetadata";
 import { normalizeRepositoryLink } from "../services/repositoryLink";
 import {
+  applyKnownPortfolioProgressMigrations,
+  normalizeProjectProgress,
+  normalizeProjectProgressDocument,
+} from "../services/projectProgress";
+import {
   IDE_DEMO_PROJECT_ID,
   installIdeDemoProject as prepareIdeDemoProjectInstall,
 } from "../services/demoProject";
@@ -59,7 +64,9 @@ function slugify(value) {
 }
 
 function normalizeProject(projectDoc) {
-  const normalized = ensureProjectStages(projectDoc);
+  const normalized = normalizeProjectProgressDocument(
+    ensureProjectStages(projectDoc)
+  );
 
   return {
     ...normalized,
@@ -274,6 +281,16 @@ if (loaded.length > 0) {
   }
 
   function updateProjectMeta(projectId, patch) {
+    const normalizedPatch = Object.prototype.hasOwnProperty.call(
+      patch,
+      "progressPercent"
+    )
+      ? {
+          ...patch,
+          progressPercent: normalizeProjectProgress(patch.progressPercent),
+        }
+      : patch;
+
     setProjects((prev) =>
       prev.map((p) =>
         p.project.id === projectId
@@ -281,12 +298,18 @@ if (loaded.length > 0) {
               ...p,
               project: {
                 ...p.project,
-                ...patch,
+                ...normalizedPatch,
                 updatedAt: new Date().toISOString(),
               },
             }
           : p
       )
+    );
+  }
+
+  function migrateKnownPortfolioProgress() {
+    setProjects((previousProjects) =>
+      applyKnownPortfolioProgressMigrations(previousProjects).projects
     );
   }
 
@@ -835,6 +858,7 @@ if (loaded.length > 0) {
     openProject,
     deleteProject,
     updateProjectMeta,
+    migrateKnownPortfolioProgress,
     setCurrentStage,
     updateStageField,
     addBacklogItem,

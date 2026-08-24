@@ -39,6 +39,7 @@ export function createIdeDemoProject(options = {}) {
       tags: ["demo", "github", "pwa", "project-steward"],
       ownerId,
       currentStage,
+      progressPercent: null,
     },
     stages,
     backlog: [

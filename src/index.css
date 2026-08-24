@@ -203,6 +203,88 @@ h3 {
   flex-wrap: wrap;
 }
 
+.project-progress {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 18px;
+}
+
+.project-progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.project-progress-header strong {
+  color: var(--text);
+}
+
+.project-progress-bar {
+  width: 100%;
+  height: 9px;
+  accent-color: var(--primary);
+}
+
+.progress-migration-preview {
+  margin: 0 0 20px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(124, 58, 237, 0.08);
+}
+
+.progress-migration-preview summary {
+  display: grid;
+  gap: 4px;
+  padding: 16px 18px;
+  cursor: pointer;
+}
+
+.progress-migration-preview summary span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.progress-migration-content {
+  display: grid;
+  gap: 14px;
+  padding: 0 18px 18px;
+}
+
+.progress-migration-content p,
+.project-progress-recovery p {
+  margin: 0;
+}
+
+.progress-migration-content .btn,
+.project-progress-recovery .btn {
+  justify-self: start;
+  width: fit-content;
+}
+
+.progress-migration-list {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.progress-migration-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.project-progress-recovery {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(124, 58, 237, 0.08);
+}
+
 .panel {
   padding: 24px;
 }

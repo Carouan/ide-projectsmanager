@@ -18,6 +18,7 @@ export default function App() {
     openProject,
     deleteProject,
     updateProjectMeta,
+    migrateKnownPortfolioProgress,
     setCurrentStage,
     updateStageField,
     addBacklogItem,
@@ -78,6 +79,7 @@ export default function App() {
         onOpenProject={handleOpenProject}
         onDeleteProject={deleteProject}
         onOpenSettings={handleOpenSettings}
+        onMigrateKnownPortfolioProgress={migrateKnownPortfolioProgress}
       />
     ) : view === "project" ? (
       <ProjectScreen

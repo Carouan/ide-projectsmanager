@@ -80,7 +80,13 @@ Champs importants :
 - `updatedAt`
 - `ownerId`
 - `currentStage`
-- `progressPercent` (facultatif, planifié par #92)
+- `progressPercent` (facultatif ; entier de 0 à 100, ou `null` si non déclaré)
+
+Les anciens projets ne nécessitent aucune migration de schéma : une progression
+absente ou invalide est normalisée vers `null` en conservant les autres champs.
+Les lignes historiques exactement conformes à `Progression déclarée : N %`
+peuvent être prévisualisées puis récupérées explicitement, sans remplacer une
+valeur déjà déclarée.
 
 ### `stages`
 Chaque étape versionnée peut porter :

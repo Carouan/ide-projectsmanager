@@ -3,6 +3,7 @@ import {
   formatCalendarDate,
   formatDateTime,
 } from "./dateTimePresentation.js";
+import { formatProjectProgress } from "./projectProgress.js";
 
 function escapeLine(value) {
   return String(value ?? "").trim();
@@ -31,6 +32,14 @@ export function projectToMarkdown(projectDoc, options = {}) {
   lines.push(`- Statut : ${escapeLine(project.status)}`);
   lines.push(
     `- Étape actuelle : ${escapeLine(formatStageLabel(project.currentStage))}`
+  );
+  lines.push(
+    `- Progression déclarée : ${escapeLine(
+      formatProjectProgress(
+        project.progressPercent,
+        locale === "en" ? "Not declared" : "Non déclarée"
+      )
+    )}`
   );
   lines.push(`- Propriétaire : ${escapeLine(project.ownerId || "-")}`);
   lines.push(`- Créé le : ${escapeLine(presentDateTime(project.createdAt))}`);
