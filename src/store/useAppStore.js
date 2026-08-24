@@ -36,6 +36,7 @@ import {
   normalizeProjectProgress,
   normalizeProjectProgressDocument,
 } from "../services/projectProgress";
+import { normalizeProjectWorkstreams } from "../services/projectWorkstreams";
 import {
   IDE_DEMO_PROJECT_ID,
   installIdeDemoProject as prepareIdeDemoProjectInstall,
@@ -64,8 +65,8 @@ function slugify(value) {
 }
 
 function normalizeProject(projectDoc) {
-  const normalized = normalizeProjectProgressDocument(
-    ensureProjectStages(projectDoc)
+  const normalized = normalizeProjectWorkstreams(
+    normalizeProjectProgressDocument(ensureProjectStages(projectDoc))
   );
 
   return {

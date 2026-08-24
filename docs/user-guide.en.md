@@ -62,6 +62,13 @@ is used only as a fallback estimate when neither a manual value nor a measurable
 roadmap exists. A future stage can be opened when it becomes useful; the journey
 is not a rigid gate system.
 
+**Workstreams** are a separate dimension: they describe parallel fronts that
+can advance during the same stage. For example, a research project at `v.0.2`
+can prepare its methodology, review regulatory requirements, and organize its
+documentation at the same time. The underlying model already preserves
+existing projects and exports; its dedicated management screen will arrive in
+a separate increment.
+
 | Stage | Main intent | Possible exit evidence |
 |---|---|---|
 | `v.0.0` | Clarify the real need | Problem, people concerned, and intended outcome |

@@ -62,6 +62,13 @@ que d'estimation de repli lorsqu'aucune valeur manuelle ni roadmap mesurable
 n'est disponible. Une étape future peut être ouverte dès qu'elle devient utile ;
 le parcours n'est pas une contrainte rigide.
 
+Les **chantiers** constituent une dimension différente : ils représentent les
+fronts pouvant avancer simultanément pendant une même étape. Par exemple, un
+projet scientifique à l'étape `v.0.2` peut préparer sa méthodologie, examiner
+les exigences réglementaires et organiser sa documentation en parallèle. Le
+modèle est déjà compatible avec les projets et exports existants ; son écran de
+gestion dédié sera livré dans une étape séparée.
+
 | Étape | Intention principale | Preuve de sortie possible |
 |---|---|---|
 | `v.0.0` | Clarifier le besoin réel | Problème, personnes concernées et résultat attendu |

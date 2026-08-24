@@ -1,6 +1,6 @@
-import { buildDefaultStages } from "../constants/stages";
-import { DEFAULT_SETTINGS } from "../constants/settings";
-import { buildDefaultSyncMetadata } from "./syncMetadata";
+import { buildDefaultStages } from "../constants/stages.js";
+import { DEFAULT_SETTINGS } from "../constants/settings.js";
+import { buildDefaultSyncMetadata } from "./syncMetadata.js";
 
 export function createEmptyProject(ownerId = null) {
   const now = new Date().toISOString();
@@ -22,6 +22,7 @@ export function createEmptyProject(ownerId = null) {
       progressPercent: null,
     },
     stages: buildDefaultStages(),
+    workstreams: [],
     backlog: [],
     journal: [],
     decisions: [],

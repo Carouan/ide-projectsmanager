@@ -79,6 +79,9 @@ test("future stages with direct or reverse links remain visible", () => {
   const reverseBacklogLink = project({
     backlog: [{ id: "b2", relatedStage: "v0_4" }],
   });
+  const workstreamBacklogLink = project({
+    backlog: [{ id: "b3", workstreamId: "ws_method", stageKey: "v0_6" }],
+  });
   const reverseJournalLink = project({
     journal: [{ id: "j2", stage: "v0_5" }],
   });
@@ -94,6 +97,10 @@ test("future stages with direct or reverse links remain visible", () => {
   assert.deepEqual(keys(getVisibleStageDefinitions(reverseBacklogLink)), [
     "v0_0",
     "v0_4",
+  ]);
+  assert.deepEqual(keys(getVisibleStageDefinitions(workstreamBacklogLink)), [
+    "v0_0",
+    "v0_6",
   ]);
   assert.deepEqual(keys(getVisibleStageDefinitions(reverseJournalLink)), [
     "v0_0",

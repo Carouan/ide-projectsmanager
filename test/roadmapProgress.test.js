@@ -159,6 +159,19 @@ test("canonical IDE roadmap reflects delivered, planned and excluded scope", () 
         objective.completed
     )
   );
+  assert.ok(
+    progress.objectives.some(
+      (objective) =>
+        objective.label.includes("chantiers facultatifs") && objective.completed
+    )
+  );
+  assert.ok(
+    progress.objectives.some(
+      (objective) =>
+        objective.label.includes("depuis l'interface du backlog") &&
+        !objective.completed
+    )
+  );
   assert.equal(
     progress.objectives.some((objective) =>
       objective.label.includes("Objectif terminé")

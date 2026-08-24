@@ -81,7 +81,7 @@ Structure logique :
 - `journal`
 - `decisions`
 - `attachments`
-- `workstreams` (facultatif, planifié par #94)
+- `workstreams` (facultatif, normalisé et compatible avec le schéma `1.0`)
 - `repository` (facultatif)
 - `settings`
 - `sync`
@@ -126,17 +126,36 @@ Chaque étape versionnée peut porter :
 - `linkedBacklogIds`
 - `linkedJournalIds`
 
-### `workstreams` — direction acceptée
+### `workstreams` — modèle compatible livré
 
-Les étapes décrivent la maturité temporelle. Les futurs chantiers décriront les
-fronts parallèles du projet. Ils resteront facultatifs et génériques : UI/UX et
-backend ne sont que des exemples logiciels parmi des chantiers de recherche,
-juridiques, financiers, opérationnels ou de communication.
+Les étapes décrivent la maturité temporelle ; les chantiers décrivent les
+fronts parallèles du projet. Un document existant sans collection est
+normalisé vers `workstreams: []`, sans modifier sa version `1.0` ni supprimer
+ses propriétés historiques.
 
-[DR-003](../decisions/DR-003-stages-workstreams-project-model.md) fixe le modèle
-conceptuel. #94 doit définir sa normalisation compatible, puis #95 son
-interface et sa matrice étapes × chantiers. Aucune propriété décrite ici comme
-planifiée ne doit être considérée comme déjà disponible dans les exports.
+Chaque chantier possède :
+
+- `id` : identifiant stable ;
+- `title` et `description` ;
+- `status` : `planned`, `active`, `paused`, `blocked` ou `completed` ;
+- `order` : ordre déterministe ;
+- `archived` : archivage distinct de l'état métier ;
+- `category`, `icon` et `color` : présentation facultative.
+
+Les actions du backlog peuvent ajouter `workstreamId` et `stageKey`, sans
+remplacer l'ancien `relatedStage`. Les références inconnues sont conservées,
+diagnostiquées et rendues explicites dans l'export Markdown ; aucune dépendance
+de tâche artificielle n'est ajoutée au modèle existant.
+
+`projectWorkstreams.js` propose des modèles facultatifs localisés pour les
+projets logiciels, scientifiques, associatifs et personnels. Un nouveau projet
+reste vide ; seule la démonstration IDE, explicitement logicielle, présente
+trois chantiers exemples. La progression du projet ne dépend pas du nombre de
+chantiers.
+
+[DR-003](../decisions/DR-003-stages-workstreams-project-model.md) fixe le cadre
+du modèle. L'onglet de gestion, l'édition du backlog et la matrice étapes ×
+chantiers restent à construire dans #95.
 
 ### `attachments`
 Types prévus :
@@ -252,6 +271,8 @@ Implémenté :
 - parcours des étapes focalisé et guides utilisateur contextuels
 - vues grille/liste, recherche, filtres portefeuille et tri déterministe
 - progression cohérente dans les cartes d'attention et de projet
+- chantiers facultatifs, suggestions multi-domaines et références backlog/étape
+- exports JSON/Markdown compatibles et diagnostic des références inconnues
 
 Le bundle de sauvegarde globale utilise le format suivant sans modifier le
 schéma de chaque projet :
@@ -325,12 +346,12 @@ Non fait :
   navigateurs cibles
 - transports facultatifs non encore comparés sous Windows et Android
 - gestion de vrais fichiers binaires pour attachments non encore traitée
-- chantiers parallèles non représentés
+- interface de gestion et matrice des chantiers parallèles non encore livrées
 
 ## Roadmap technique courte recommandée
 
 1. conserver la progression mesurable et le dashboard livré (`#105`, `#93`)
-2. ajouter le modèle puis l'interface des chantiers (`#94`, `#95`)
+2. ajouter l'interface au modèle de chantiers déjà livré (`#95`)
 3. introduire le fournisseur et le miroir de sauvegarde (`S1.1`, `S1.2`)
 4. écrire les instantanés et détecter les divergences (`S1.3`, `S1.4`)
 5. comparer les modes autonomes et transports facultatifs (`S1.5`)

@@ -22,7 +22,13 @@ export function isPristineStage(stage, stageKey, backlog = [], journal = []) {
     return false;
   }
 
-  if (backlog.some((item) => item?.relatedStage === stageKey)) return false;
+  if (
+    backlog.some(
+      (item) => item?.relatedStage === stageKey || item?.stageKey === stageKey
+    )
+  ) {
+    return false;
+  }
   if (journal.some((entry) => entry?.stage === stageKey)) return false;
 
   return true;
