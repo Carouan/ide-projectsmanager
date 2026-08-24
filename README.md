@@ -29,6 +29,7 @@ des exports JSON et Markdown.
 - même progression visible dans l'inbox, la collection et chaque fiche projet
 - chantiers parallèles facultatifs, suggestions multi-domaines et matrice étapes
 - actions du backlog associables et filtrables par chantier
+- frontière de sauvegarde portable avec téléchargement/import JSON comme repli
 - projet de démonstration facultatif relié au dépôt GitHub public de l'application
 
 ## Piloter le portefeuille
@@ -105,6 +106,10 @@ travail ; ils ne prétendent pas qu'une release GitHub ou un tag a déjà été 
   silencieusement un projet existant.
 - L'import/export manuel reste le parcours universel, autonome et sans
   installation supplémentaire.
+- Les opérations de sauvegarde passent par un contrat indépendant du transport
+  qui expose disponibilité, permission, lecture, écriture et erreurs normalisées.
+- Le téléchargement et l'import JSON existants sont le fournisseur de repli ;
+  aucun accès direct à un dossier n'est activé à ce stade.
 - Un dossier choisi pourra servir de miroir facultatif lorsque le navigateur le
   permet ; il ne se synchronise pas à lui seul.
 - Syncthing ou un autre transport pourra synchroniser ce dossier, sans devenir

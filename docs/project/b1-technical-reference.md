@@ -257,6 +257,41 @@ fixe les responsabilités suivantes :
 L'accès direct au dossier doit être détecté au runtime. Un navigateur qui ne
 propose pas l'API requise continue à utiliser le flux manuel existant.
 
+### Frontière de sauvegarde portable
+
+L'issue #82 introduit une frontière distincte dans
+`src/repositories/portableBackup/`. Elle n'est reliée ni au repository
+IndexedDB ni aux fournisseurs de lecture des dépôts GitHub.
+
+Un fournisseur de sauvegarde possède un identifiant stable, une inspection et
+jusqu'à trois opérations :
+
+- `writeSnapshot` : écrire un bundle global existant ;
+- `listSnapshots` : retourner les références d'instantanés connus ;
+- `readSnapshot` : relire un bundle à partir d'une référence.
+
+L'inspection expose explicitement :
+
+- disponibilité : `available` ou `unavailable` ;
+- permission : `granted`, `prompt`, `denied` ou `unknown` ;
+- capacités réelles : `write`, `list` et `read` ;
+- motif d'indisponibilité et erreur normalisée.
+
+`portableBackupService.js` contrôle ces états avant chaque opération. Une
+permission manquante, un adaptateur indisponible, une opération non prise en
+charge ou une réponse invalide ne devient jamais silencieusement un résultat
+vide. L'erreur conserve l'identifiant du fournisseur, l'opération et le repli
+manuel disponible.
+
+`manualDownloadBackupProvider.js` est le premier adaptateur. Il réutilise sans
+les modifier le bundle global JSON v1, le téléchargement et la lecture d'un
+fichier choisi. Il sait écrire et lire, mais ne prétend pas pouvoir lister les
+fichiers téléchargés par le navigateur. Les boutons de sauvegarde et de
+restauration existants passent désormais par ce contrat.
+
+Cette étape n'ajoute aucun accès à `showDirectoryPicker`, aucune persistance de
+handle et aucun transport Syncthing : ces responsabilités commencent en S1.2.
+
 ## État réel d’implémentation
 
 ### Noyau produit
@@ -285,6 +320,7 @@ Implémenté :
 - progression cohérente dans les cartes d'attention et de projet
 - chantiers facultatifs, suggestions multi-domaines et références backlog/étape
 - exports JSON/Markdown compatibles et diagnostic des références inconnues
+- fournisseur de sauvegarde portable indépendant avec repli JSON manuel
 
 Le bundle de sauvegarde globale utilise le format suivant sans modifier le
 schéma de chaque projet :

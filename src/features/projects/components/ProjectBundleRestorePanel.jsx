@@ -32,7 +32,12 @@ export default function ProjectBundleRestorePanel({
   const [isRestoring, setIsRestoring] = useState(false);
 
   function translateError(error) {
-    const code = KNOWN_ERROR_CODES.has(error?.code) ? error.code : "generic";
+    const providerCauseCode = error?.causeCode;
+    const code = KNOWN_ERROR_CODES.has(providerCauseCode)
+      ? providerCauseCode
+      : KNOWN_ERROR_CODES.has(error?.code)
+        ? error.code
+        : "generic";
     return t(`settings.backup.restore.errors.${code}`);
   }
 

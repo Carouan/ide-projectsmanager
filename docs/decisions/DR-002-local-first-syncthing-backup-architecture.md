@@ -95,6 +95,14 @@ La première validation vise Chrome/Edge sous Windows, puis Chrome Android sur l
 
 ## Conséquences
 
+### État d'implémentation
+
+La frontière S1.1 est livrée par #82. Elle définit un contrat indépendant du
+transport, des états explicites de disponibilité et de permission, des erreurs
+normalisées et le téléchargement/import JSON comme repli. Elle ne sélectionne
+encore aucun dossier et ne crée aucune identité d'appareil ni nouvel emballage
+d'instantané ; ces éléments restent affectés aux incréments suivants.
+
 ### Positives
 
 - fonctionnement hors ligne et rapidité actuels préservés ;
