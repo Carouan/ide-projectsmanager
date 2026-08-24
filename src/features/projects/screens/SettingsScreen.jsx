@@ -1,6 +1,7 @@
 import { useI18n } from "../../../i18n/useI18n";
 import ProjectBundleRestorePanel from "../components/ProjectBundleRestorePanel";
 import SelectedBackupFolderPanel from "../components/SelectedBackupFolderPanel";
+import BackupSnapshotReviewPanel from "../components/BackupSnapshotReviewPanel";
 
 export default function SettingsScreen({
   settings,
@@ -12,10 +13,13 @@ export default function SettingsScreen({
   onRestoreProjectBundle,
   backupFolderStatus,
   backupDevice,
+  backupSnapshotReview,
   onConnectBackupFolder,
   onReauthorizeBackupFolder,
   onDisconnectBackupFolder,
   onExportAllProjectsToBackupFolder,
+  onInspectBackupSnapshots,
+  onResolveBackupSnapshot,
 }) {
   const safeSettings = settings || {};
   const { t } = useI18n();
@@ -104,6 +108,15 @@ export default function SettingsScreen({
           onDisconnect={onDisconnectBackupFolder}
           onWrite={onExportAllProjectsToBackupFolder}
         />
+
+        {backupFolderStatus?.isConnected && (
+          <BackupSnapshotReviewPanel
+            status={backupFolderStatus}
+            review={backupSnapshotReview}
+            onInspect={onInspectBackupSnapshots}
+            onDecision={onResolveBackupSnapshot}
+          />
+        )}
 
         <ProjectBundleRestorePanel
           onInspectProjectBundle={onInspectProjectBundle}

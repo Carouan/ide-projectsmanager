@@ -122,11 +122,11 @@ actuellement à l'étape `v.0.7`.
   - [x] Écrire des sauvegardes distinctes par appareil.
   - [x] Versionner et dater les instantanés JSON.
   - [x] Éviter les écritures concurrentes dans un fichier partagé.
-- [ ] Gérer les restaurations et divergences (#85)
-  - [ ] Détecter les sauvegardes inconnues ou plus récentes.
-  - [ ] Distinguer un descendant d'un état divergent.
-  - [ ] Expliquer l'origine, la date et l'impact avant application.
-  - [ ] Restaurer, importer comme copie ou ignorer explicitement.
+- [x] Gérer les restaurations et divergences (#85)
+  - [x] Détecter les sauvegardes inconnues ou plus récentes.
+  - [x] Distinguer un descendant d'un état divergent.
+  - [x] Expliquer l'origine, la date et l'impact avant application.
+  - [x] Restaurer, importer comme copie ou ignorer explicitement.
 - [ ] Valider Windows, Android et les replis (#86)
   - [ ] Vérifier Chrome/Edge sous Windows.
   - [ ] Vérifier Chrome Android sur les appareils réellement visés.

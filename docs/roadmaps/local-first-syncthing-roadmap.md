@@ -121,11 +121,24 @@ Implémentation livrée :
 
 À l'ouverture ou sur action manuelle :
 
-- [ ] Détecter un instantané inconnu ou plus récent (#85).
-- [ ] Distinguer un descendant d'une divergence (#85).
-- [ ] Afficher la source, la date et l'impact avant décision (#85).
-- [ ] Proposer restaurer, importer comme copie ou ignorer (#85).
-- [ ] Vérifier qu'aucune branche n'écrase silencieusement les données (#85).
+- [x] Détecter un instantané inconnu ou plus récent (#85).
+- [x] Distinguer un descendant d'une divergence (#85).
+- [x] Afficher la source, la date et l'impact avant décision (#85).
+- [x] Proposer restaurer, importer comme copie ou ignorer (#85).
+- [x] Vérifier qu'aucune branche n'écrase silencieusement les données (#85).
+
+Implémentation livrée :
+
+- `portableBackupReview.js` compare les identifiants d'instantanés et leur
+  filiation explicite ; une date récente ne prouve jamais seule une descendance ;
+- les états identique, descendant, antérieur, divergent, inconnu et illisible
+  sont distingués sans appliquer de changement au portefeuille local ;
+- **Paramètres → Sauvegardes des autres appareils** affiche appareil, date,
+  projets nouveaux, projets remplacés et projets absents avant toute décision ;
+- importer comme copies conserve les projets existants ; remplacer le portefeuille
+  exige une case de confirmation explicite puis une deuxième action volontaire ;
+- conserver l'état local mémorise la décision, ignorer la diffère, et une
+  sauvegarde invalide demeure visible sans jamais être appliquée.
 
 ### S1.5 — Valider les modes de sauvegarde Windows/Android
 

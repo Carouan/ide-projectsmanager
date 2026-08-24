@@ -130,7 +130,12 @@ test("device identity is local, stable and contains no account or browser metada
 
   assert.equal(first.id, "device_11111111-2222-3333-4444-555555555555");
   assert.equal(first.label, "Device 11111111");
-  assert.deepEqual(Object.keys(first), ["id", "label", "lastSnapshotId"]);
+  assert.deepEqual(Object.keys(first), [
+    "id",
+    "label",
+    "lastSnapshotId",
+    "acknowledgedSnapshotIds",
+  ]);
   assert.deepEqual(restored, first);
 });
 
@@ -377,4 +382,30 @@ test("device-directory mismatches are rejected without importing untrusted conte
     ),
     (error) => error.code === PORTABLE_BACKUP_ERROR_CODE.INVALID_SNAPSHOT
   );
+});
+
+test("unreadable device files remain visible without hiding valid device snapshots", async () => {
+  const tree = mockFileTree();
+  const service = await connectedService(tree);
+
+  for (const device of [
+    { id: "device_valid", label: "Valid" },
+    { id: "device_broken", label: "Broken" },
+  ]) {
+    await service.writeDevicePortfolioSnapshot(
+      SELECTED_FOLDER_BACKUP_PROVIDER_ID,
+      [project(device.id)],
+      { device, snapshotId: `snapshot_${device.id}`, createdAt: CREATED_AT }
+    );
+  }
+
+  tree.files.set("snapshots/device_broken/latest.json", "{broken-json");
+  const listed = await service.listSnapshots(SELECTED_FOLDER_BACKUP_PROVIDER_ID);
+  const broken = listed.find((entry) => entry.deviceId === "device_broken");
+  const valid = listed.find((entry) => entry.deviceId === "device_valid");
+
+  assert.equal(listed.length, 2);
+  assert.equal(broken.unreadable, true);
+  assert.equal(broken.reference, "snapshots/device_broken/latest.json");
+  assert.equal(valid.snapshotId, "snapshot_device_valid");
 });
