@@ -149,7 +149,14 @@ test("canonical IDE roadmap reflects delivered, planned and excluded scope", () 
   );
   assert.ok(
     progress.objectives.some((objective) =>
-      objective.label.includes("grille ou en liste")
+      objective.label.includes("grille ou en liste") && objective.completed
+    )
+  );
+  assert.ok(
+    progress.objectives.some(
+      (objective) =>
+        objective.label.includes("dans l'inbox et la collection") &&
+        objective.completed
     )
   );
   assert.equal(

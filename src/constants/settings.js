@@ -5,4 +5,7 @@ export const DEFAULT_SETTINGS = {
   uiDensity: "comfortable",
   exportFormat: "markdown",
   autosave: true,
+  dashboardView: "grid",
+  dashboardSortField: "updatedAt",
+  dashboardSortDirection: "desc",
 };

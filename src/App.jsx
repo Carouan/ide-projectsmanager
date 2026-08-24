@@ -84,6 +84,8 @@ export default function App() {
         onDeleteProject={deleteProject}
         onOpenSettings={handleOpenSettings}
         onMigrateKnownPortfolioProgress={migrateKnownPortfolioProgress}
+        settings={settings}
+        onUpdateSettings={updateSettings}
       />
     ) : view === "project" ? (
       <ProjectScreen

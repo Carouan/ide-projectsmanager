@@ -7,6 +7,7 @@ des exports JSON et Markdown.
 ## Fonctionnalités actuelles
 
 - gestion multi-projets
+- cockpit portefeuille en grille ou en liste, avec recherche, filtres et tris
 - étapes versionnées `v.0.0 → v.1.0`, avec parcours focalisé et aide contextuelle
 - backlog
 - journal de projet
@@ -25,7 +26,23 @@ des exports JSON et Markdown.
 - suivi des pull requests, de la santé du dépôt et des validations humaines
 - inbox globale des décisions, blocages et validations réellement requis
 - avancement explicable : valeur manuelle, roadmap mesurable ou étape du projet
+- même progression visible dans l'inbox, la collection et chaque fiche projet
 - projet de démonstration facultatif relié au dépôt GitHub public de l'application
+
+## Piloter le portefeuille
+
+Le tableau de bord sépare les signaux **À votre attention** de la collection des
+projets. Chaque carte affiche la même progression expliquée, y compris pour un
+projet lié à une roadmap GitHub.
+
+- Présentation en grille ou en liste ; préférence mémorisée sur l'appareil.
+- Recherche locale par titre, résumé, description, catégorie, tag ou dépôt.
+- Filtres cumulables par statut, catégorie/tag, dépôt lié et attention humaine.
+- Tri par titre, dernière mise à jour ou avancement effectif, dans les deux sens.
+- Nombre de résultats visible et réinitialisation explicite des filtres.
+- La recherche et les filtres temporaires ne sont jamais sauvegardés.
+- Les snapshots GitHub déjà disponibles sont réutilisés sans lecture réseau
+  supplémentaire pour filtrer ou trier les projets.
 
 ## Calcul de l'avancement
 

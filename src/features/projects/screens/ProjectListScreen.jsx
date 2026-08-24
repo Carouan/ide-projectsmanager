@@ -1,10 +1,19 @@
+import { useMemo, useState } from "react";
 import { useI18n } from "../../../i18n/useI18n";
 import { formatStageLabel } from "../../../constants/stages";
 import { formatDateTime } from "../../../services/dateTimePresentation";
 import AttentionInbox from "../components/AttentionInbox";
+import ProjectDashboardControls from "../components/ProjectDashboardControls";
 import ProjectProgressMigrationPreview from "../components/ProjectProgressMigrationPreview";
 import ProjectProgressSummary from "../components/ProjectProgressSummary";
 import { useAttentionInbox } from "../hooks/useAttentionInbox.js";
+import {
+  DEFAULT_DASHBOARD_FILTERS,
+  createDashboardProjectRows,
+  deriveDashboardFilterOptions,
+  normalizeDashboardPreferences,
+  selectDashboardProjects,
+} from "../services/projectDashboardModel.js";
 
 export default function ProjectListScreen({
   projects,
@@ -14,9 +23,29 @@ export default function ProjectListScreen({
   onDeleteProject,
   onOpenSettings,
   onMigrateKnownPortfolioProgress,
+  settings,
+  onUpdateSettings,
 }) {
   const { t, locale } = useI18n();
   const attentionInbox = useAttentionInbox(projects);
+  const [filters, setFilters] = useState(() => ({ ...DEFAULT_DASHBOARD_FILTERS }));
+  const preferences = useMemo(() => normalizeDashboardPreferences(settings), [settings]);
+  const projectRows = useMemo(
+    () => createDashboardProjectRows(projects, attentionInbox.repositoryResults),
+    [projects, attentionInbox.repositoryResults]
+  );
+  const filterOptions = useMemo(
+    () => deriveDashboardFilterOptions(projectRows, locale),
+    [projectRows, locale]
+  );
+  const visibleRows = useMemo(
+    () => selectDashboardProjects(projectRows, { filters, preferences, locale }),
+    [projectRows, filters, preferences, locale]
+  );
+
+  function updateFilters(patch) {
+    setFilters((current) => ({ ...current, ...patch }));
+  }
 
   return (
     <div className="page-shell">
@@ -70,54 +99,82 @@ export default function ProjectListScreen({
             </div>
           </div>
         ) : (
-          <div className="card-grid">
-            {projects.map((p) => (
-              <article className="project-card" key={p.project.id}>
-                <div className="project-card-header">
-                  <div>
-                    <h3>{p.project.title}</h3>
-                    <p className="muted">{p.project.summary}</p>
-                  </div>
-                  <span className="badge">
-                    {formatStageLabel(p.project.currentStage)}
-                  </span>
-                </div>
+          <>
+            <ProjectDashboardControls
+              filters={filters}
+              filterOptions={filterOptions}
+              preferences={preferences}
+              resultCount={visibleRows.length}
+              totalCount={projects.length}
+              onChangeFilters={updateFilters}
+              onChangePreferences={onUpdateSettings}
+            />
 
-                <div className="project-meta">
-                  <span>{t("global.meta.status", { status: p.project.status })}</span>
-                  <span>
-                    {t("global.meta.updated", {
-                      timestamp:
-                        formatDateTime(p.project.updatedAt, locale) ||
-                        t("global.meta.unknownDate"),
-                    })}
-                  </span>
-                </div>
+            {visibleRows.length === 0 ? (
+              <div className="empty-state dashboard-filtered-empty">
+                <h3>{t("dashboard.empty.title")}</h3>
+                <p>{t("dashboard.empty.description")}</p>
+                <button
+                  className="btn btn-secondary"
+                  type="button"
+                  onClick={() => updateFilters(DEFAULT_DASHBOARD_FILTERS)}
+                >
+                  {t("dashboard.filters.reset")}
+                </button>
+              </div>
+            ) : (
+              <div
+                className={`card-grid project-collection-${preferences.dashboardView}`}
+              >
+                {visibleRows.map(({ projectDoc: p, repositoryResult }) => (
+                  <article className="project-card" key={p.project.id}>
+                    <div className="project-card-header">
+                      <div>
+                        <h3>{p.project.title}</h3>
+                        <p className="muted">{p.project.summary}</p>
+                      </div>
+                      <span className="badge">
+                        {formatStageLabel(p.project.currentStage)}
+                      </span>
+                    </div>
 
-                <ProjectProgressSummary
-                  projectDoc={p}
-                  repositoryResult={
-                    attentionInbox.repositoryResults[p.project.id]
-                  }
-                />
+                    <div className="project-meta">
+                      <span>
+                        {t("global.meta.status", { status: p.project.status })}
+                      </span>
+                      <span>
+                        {t("global.meta.updated", {
+                          timestamp:
+                            formatDateTime(p.project.updatedAt, locale) ||
+                            t("global.meta.unknownDate"),
+                        })}
+                      </span>
+                    </div>
 
-                <div className="project-actions">
-                  <button
-                    className="btn btn-secondary"
-                    onClick={() => onOpenProject(p.project.id)}
-                  >
-                    {t("global.actions.open")}
-                  </button>
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => onDeleteProject(p.project.id)}
-                  >
-                    {t("global.actions.delete")}
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
+                    <ProjectProgressSummary
+                      projectDoc={p}
+                      repositoryResult={repositoryResult}
+                    />
+
+                    <div className="project-actions">
+                      <button
+                        className="btn btn-secondary"
+                        onClick={() => onOpenProject(p.project.id)}
+                      >
+                        {t("global.actions.open")}
+                      </button>
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => onDeleteProject(p.project.id)}
+                      >
+                        {t("global.actions.delete")}
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
