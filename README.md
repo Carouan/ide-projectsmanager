@@ -30,6 +30,7 @@ des exports JSON et Markdown.
 - chantiers parallèles facultatifs, suggestions multi-domaines et matrice étapes
 - actions du backlog associables et filtrables par chantier
 - frontière de sauvegarde portable avec téléchargement/import JSON comme repli
+- dossier de sauvegarde facultatif, choisi et autorisé explicitement
 - projet de démonstration facultatif relié au dépôt GitHub public de l'application
 
 ## Piloter le portefeuille
@@ -108,10 +109,14 @@ travail ; ils ne prétendent pas qu'une release GitHub ou un tag a déjà été 
   installation supplémentaire.
 - Les opérations de sauvegarde passent par un contrat indépendant du transport
   qui expose disponibilité, permission, lecture, écriture et erreurs normalisées.
-- Le téléchargement et l'import JSON existants sont le fournisseur de repli ;
-  aucun accès direct à un dossier n'est activé à ce stade.
-- Un dossier choisi pourra servir de miroir facultatif lorsque le navigateur le
-  permet ; il ne se synchronise pas à lui seul.
+- Le téléchargement et l'import JSON existants restent le fournisseur de repli
+  universel, y compris lorsque le navigateur ne permet aucun accès à un dossier.
+- **Paramètres → Dossier local de sauvegarde** permet, quand le navigateur le
+  prend en charge, de choisir volontairement un dossier, de vérifier ou renouveler
+  son autorisation, d'y écrire une sauvegarde et de le déconnecter.
+- Le dossier n'est mémorisé que si IndexedDB peut conserver son handle de manière
+  sûre ; sinon il reste limité à la session courante. Aucun accès n'est demandé
+  silencieusement et le dossier ne se synchronise pas à lui seul.
 - Syncthing ou un autre transport pourra synchroniser ce dossier, sans devenir
   une dépendance de l'application.
 

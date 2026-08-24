@@ -462,6 +462,50 @@ h3 {
   flex: 0 0 auto;
 }
 
+.settings-folder-panel {
+  display: grid;
+  gap: 18px;
+}
+
+.settings-folder-panel .hero-text {
+  margin-bottom: 0;
+}
+
+.folder-status {
+  display: grid;
+  gap: 7px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--panel-2);
+}
+
+.folder-status span,
+.folder-fallback-note {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.folder-status-granted {
+  border-color: rgba(34, 197, 94, 0.48);
+}
+
+.folder-status-prompt,
+.folder-status-denied,
+.folder-status-unknown {
+  border-color: rgba(245, 158, 11, 0.52);
+}
+
+.folder-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.folder-fallback-note {
+  margin: 0;
+}
+
 .settings-restore-panel {
   display: grid;
   gap: 20px;

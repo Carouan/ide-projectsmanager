@@ -73,11 +73,22 @@ Implémentation livrée :
 
 Utiliser l'API File System Access comme amélioration progressive :
 
-- [ ] Détecter la compatibilité de File System Access (#83).
-- [ ] Demander la sélection explicite d'un dossier en lecture/écriture (#83).
-- [ ] Mémoriser le handle uniquement lorsque c'est sûr et supporté (#83).
-- [ ] Expliquer et renouveler clairement les permissions (#83).
-- [ ] Maintenir le fallback manuel partout ailleurs (#83).
+- [x] Détecter la compatibilité de File System Access (#83).
+- [x] Demander la sélection explicite d'un dossier en lecture/écriture (#83).
+- [x] Mémoriser le handle uniquement lorsque c'est sûr et supporté (#83).
+- [x] Expliquer et renouveler clairement les permissions (#83).
+- [x] Maintenir le fallback manuel partout ailleurs (#83).
+
+Implémentation livrée :
+
+- `selectedFolderBackupProvider.js` détecte l'API disponible, demande un choix
+  explicite et expose lecture, écriture, liste et état des permissions ;
+- le handle est mémorisé uniquement par clonage structuré dans IndexedDB lorsque
+  le navigateur l'autorise, jamais dans `localStorage` ni dans les exports ;
+- **Paramètres → Dossier local de sauvegarde** permet de choisir, changer,
+  réautoriser ou déconnecter le dossier et de déclencher une sauvegarde ;
+- un navigateur incompatible conserve intégralement le téléchargement et
+  l'import JSON manuels ; aucune autorisation n'est demandée en arrière-plan.
 
 Première cible : Chrome/Edge sous Windows. Deuxième cible : Chrome Android sur Galaxy S23.
 
