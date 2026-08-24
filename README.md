@@ -29,6 +29,7 @@ des exports JSON et Markdown.
 - même progression visible dans l'inbox, la collection et chaque fiche projet
 - chantiers parallèles facultatifs, suggestions multi-domaines et matrice étapes
 - actions du backlog associables et filtrables par chantier
+- création gouvernée facultative avec mandat, critères mesurables et fichiers relisibles
 - frontière de sauvegarde portable avec téléchargement/import JSON comme repli
 - dossier de sauvegarde facultatif, choisi et autorisé explicitement
 - instantanés JSON versionnés et séparés pour chaque appareil
@@ -88,6 +89,32 @@ progression par chantier.
 Les chantiers restent facultatifs, personnalisables et indépendants des dépôts
 GitHub. Les projets historiques, les exports JSON/Markdown et le projet IDE de
 démonstration restent compatibles.
+
+## Préparer un projet gouverné
+
+Le bouton **+ Nouveau projet** conserve la création locale immédiate. Le bouton
+distinct **Projet gouverné** prépare un projet compatible avec
+[AI Project Template](https://github.com/Carouan/ai-project-template) et
+[AI Project Steward](https://github.com/Carouan/ai-project-steward) :
+
+1. Renseigner explicitement l'objectif, le contexte, au moins un livrable et un
+   critère de réussite vérifiable.
+2. Déclarer le dépôt GitHub canonique prévu et sa visibilité ; le mode privé
+   reste la valeur par défaut.
+3. Relire les cinq fichiers générés : `PROJECT_MANDATE.md`, `PROJECT_CONTEXT.md`,
+   `PROJECT_STATUS.md`, `.project-steward.yml` et `README.md`.
+4. Télécharger un fichier individuel ou le paquet JSON versionné, puis créer le
+   projet local avec ses documents conservés comme pièces jointes textuelles.
+
+Un même identifiant opaque et stable relie le projet local, le manifeste et le
+dépôt déclaré. Le mandat utilise exclusivement les informations saisies. Le
+statut indique explicitement que l'existence du dépôt n'est pas vérifiée ; la
+méthodologie Project Steward reste référencée dans son dépôt source et n'est
+jamais copiée dans l'application.
+
+**Aucun dépôt GitHub n'est créé, modifié ou publié automatiquement.** La
+création effective du dépôt et la publication des fichiers nécessitent une
+action humaine distincte. Annuler ce parcours ne crée aucun projet local.
 
 ## Roadmap mesurable et releases
 

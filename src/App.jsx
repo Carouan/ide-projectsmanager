@@ -1,6 +1,7 @@
 ﻿import { useState } from "react";
 import { useAppStore } from "./store/useAppStore";
 import ProjectListScreen from "./features/projects/screens/ProjectListScreen";
+import GovernedProjectBootstrapScreen from "./features/projects/screens/GovernedProjectBootstrapScreen";
 import ProjectScreen from "./features/projects/screens/ProjectScreen";
 import SettingsScreen from "./features/projects/screens/SettingsScreen";
 import MarkdownPreview from "./features/markdown/components/MarkdownPreview";
@@ -15,6 +16,7 @@ export default function App() {
     projects,
     currentProject,
     createProject,
+    createGovernedProject,
     installIdeDemoProject,
     openProject,
     deleteProject,
@@ -65,6 +67,11 @@ export default function App() {
     setView("project");
   }
 
+  function handleCreateGovernedProject(preparedPackage) {
+    createGovernedProject(preparedPackage);
+    setView("project");
+  }
+
   function handleInstallDemoProject() {
     installIdeDemoProject();
     setView("project");
@@ -93,6 +100,7 @@ export default function App() {
       <ProjectListScreen
         projects={projects}
         onCreateProject={handleCreateProject}
+        onStartGovernedProject={() => setView("governed")}
         onInstallDemoProject={handleInstallDemoProject}
         onOpenProject={handleOpenProject}
         onDeleteProject={deleteProject}
@@ -100,6 +108,11 @@ export default function App() {
         onMigrateKnownPortfolioProgress={migrateKnownPortfolioProgress}
         settings={settings}
         onUpdateSettings={updateSettings}
+      />
+    ) : view === "governed" ? (
+      <GovernedProjectBootstrapScreen
+        onBack={handleBack}
+        onCreateProject={handleCreateGovernedProject}
       />
     ) : view === "project" ? (
       <ProjectScreen

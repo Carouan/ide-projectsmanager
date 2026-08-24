@@ -136,11 +136,11 @@ actuellement à l'étape `v.0.7`.
 
 ## Release D — cible `0.4.0` — Gouvernance avancée des projets liés
 
-- [ ] Préparer un projet gouverné depuis AI Project Template (#68)
-  - [ ] Conserver la création immédiate d'une idée purement locale.
-  - [ ] Préparer un mandat et un identifiant de projet explicites.
-  - [ ] Générer un ensemble de fichiers relisibles avant toute création de dépôt.
-  - [ ] Relier explicitement le dépôt canonique et Project Steward.
+- [x] Préparer un projet gouverné depuis AI Project Template (#68)
+  - [x] Conserver la création immédiate d'une idée purement locale.
+  - [x] Préparer un mandat et un identifiant de projet explicites.
+  - [x] Générer un ensemble de fichiers relisibles avant toute création de dépôt.
+  - [x] Relier explicitement le dépôt canonique et Project Steward.
 - [ ] Concevoir l'accès en lecture aux dépôts privés (#69)
   - [ ] Comparer les modèles de confiance et documenter la décision de sécurité.
   - [ ] Exclure tout secret du code, du build, des exports et des logs.
