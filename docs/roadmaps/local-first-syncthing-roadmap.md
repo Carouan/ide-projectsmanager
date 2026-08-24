@@ -51,12 +51,23 @@ savoir restaurer correctement.
 
 Définir une petite interface indépendante du transport pour :
 
-- [ ] Écrire un instantané via un contrat indépendant du transport (#82).
-- [ ] Lister ou lire les instantanés connus (#82).
-- [ ] Signaler capacité, permission et erreur (#82).
-- [ ] Conserver le téléchargement manuel comme fournisseur de repli (#82).
+- [x] Écrire un instantané via un contrat indépendant du transport (#82).
+- [x] Lister ou lire les instantanés connus (#82).
+- [x] Signaler capacité, permission et erreur (#82).
+- [x] Conserver le téléchargement manuel comme fournisseur de repli (#82).
 
 Cette abstraction ne remplace ni le repository IndexedDB ni l'adaptateur GitHub de suivi des dépôts.
+
+Implémentation livrée :
+
+- `portableBackupProvider.js` normalise disponibilité, permission, capacités et
+  erreurs des adaptateurs ;
+- `portableBackupService.js` fournit les opérations d'écriture, de liste et de
+  lecture sans connaître le transport ;
+- `manualDownloadBackupProvider.js` branche le téléchargement et l'import JSON
+  existants comme repli explicite disponible dans tous les navigateurs pris en
+  charge ;
+- aucun accès direct au système de fichiers n'est encore introduit.
 
 ### S1.2 — Ajouter l'adaptateur de dossier sélectionné
 

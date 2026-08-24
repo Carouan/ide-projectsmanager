@@ -10,7 +10,6 @@ import {
 import { createEmptyProject } from "../services/projectFactory";
 import {
   analyzeProjectBundle,
-  createProjectBundle,
   downloadJsonFile,
   readJsonFile,
   restoreProjectBundle as applyProjectBundleRestore,
@@ -51,6 +50,16 @@ import {
   IDE_DEMO_PROJECT_ID,
   installIdeDemoProject as prepareIdeDemoProjectInstall,
 } from "../services/demoProject";
+import {
+  createManualDownloadBackupProvider,
+  MANUAL_DOWNLOAD_BACKUP_PROVIDER_ID,
+} from "../repositories/portableBackup/manualDownloadBackupProvider";
+import { createPortableBackupService } from "../services/portableBackupService";
+
+const manualPortableBackupService = createPortableBackupService({
+  providers: [createManualDownloadBackupProvider()],
+  fallbackProviderId: MANUAL_DOWNLOAD_BACKUP_PROVIDER_ID,
+});
 
 function newBacklogId() {
   return `b_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
@@ -853,18 +862,23 @@ if (loaded.length > 0) {
     downloadJsonFile(`${safeSlug}.json`, project);
   }
 
-  function exportAllProjectsJson() {
+  async function exportAllProjectsJson() {
     if (projects.length === 0) return;
 
     const exportedAt = new Date().toISOString();
     const date = exportedAt.slice(0, 10);
-    const bundle = createProjectBundle(projects, { exportedAt });
-
-    downloadJsonFile(`ide-projectsmanager-backup-${date}.json`, bundle);
+    return manualPortableBackupService.writeFallbackSnapshot(projects, {
+      exportedAt,
+      filename: `ide-projectsmanager-backup-${date}.json`,
+    });
   }
 
   async function inspectProjectBundleFile(file) {
-    const rawBundle = validateProjectBundle(await readJsonFile(file));
+    const { bundle: rawBundle } =
+      await manualPortableBackupService.readPortfolioSnapshot(
+        MANUAL_DOWNLOAD_BACKUP_PROVIDER_ID,
+        { file }
+      );
     const normalizedBundle = {
       ...rawBundle,
       projects: rawBundle.projects.map((projectDoc) =>

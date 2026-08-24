@@ -62,6 +62,7 @@ Le dépôt a déjà dépassé le MVP initial.
 - chantiers facultatifs, suggestions multi-domaines, gestion et archivage
 - backlog filtrable et associable aux chantiers ainsi qu'aux étapes
 - matrice étapes × chantiers, synthèse et cartes adaptées au mobile
+- frontière de sauvegarde portable et repli manuel JSON indépendant du transport
 
 ### Partiellement réalisé
 
@@ -117,6 +118,8 @@ Merges récents confirmés dans le dépôt :
   logiciels, scientifiques, associatifs et personnels
 - 2026-08-24 : interface complète des chantiers ; prochaine action recommandée,
   backlog associé et matrice responsive étapes × chantiers
+- 2026-08-24 : fournisseur de sauvegarde portable abstrait ; capacités,
+  permissions, erreurs et repli téléchargement/import JSON normalisés
 
 ## Arborescence de travail locale recommandée
 
@@ -143,7 +146,7 @@ objectifs livrés et ouverts. La suite logique du produit est définie par
 2. expliquer l'avancement avec priorité manuel / roadmap / étape (#105) ;
 3. conserver le dashboard filtrable et la progression cohérente livrés (#93) ;
 4. conserver l'interface, le backlog lié et la matrice des chantiers (#95) ;
-5. introduire un fournisseur de sauvegarde portable interchangeable (#82) ;
+5. conserver le fournisseur de sauvegarde portable interchangeable livré (#82) ;
 6. proposer facultativement un dossier et des instantanés par appareil (#83, #84) ;
 7. détecter explicitement les restaurations et divergences (#85) ;
 8. valider Windows, Android et les transports facultatifs (#86) ;

@@ -108,10 +108,10 @@ actuellement à l'étape `v.0.7`.
 
 ## Release C — cible `0.3.0` — Sauvegardes portables et continuité personnelle
 
-- [ ] Isoler un fournisseur de sauvegarde portable (#82)
-  - [ ] Définir les capacités de lecture, écriture et diagnostic.
-  - [ ] Conserver le téléchargement manuel comme repli universel.
-  - [ ] Garder IndexedDB comme unique stockage de travail.
+- [x] Isoler un fournisseur de sauvegarde portable (#82)
+  - [x] Définir les capacités de lecture, écriture et diagnostic (#82).
+  - [x] Conserver le téléchargement manuel comme repli universel (#82).
+  - [x] Garder IndexedDB comme unique stockage de travail (#82).
 - [ ] Proposer un dossier local facultatif (#83)
   - [ ] Détecter explicitement la compatibilité File System Access.
   - [ ] Demander le choix volontaire d'un dossier.
