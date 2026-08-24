@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useI18n } from "../../../i18n/useI18n";
 import { formatDateTime } from "../../../services/dateTimePresentation";
+import ProjectProgressSummary from "./ProjectProgressSummary";
 import {
   ATTENTION_FILTER,
   deriveAttentionItems,
@@ -34,6 +35,10 @@ export default function AttentionInbox({ projects, onOpenProject, inbox }) {
   const visibleItems = useMemo(
     () => filterAttentionItems(items, filter),
     [items, filter]
+  );
+  const projectsById = useMemo(
+    () => new Map(projects.map((projectDoc) => [projectDoc.project.id, projectDoc])),
+    [projects]
   );
   const linkedProjectCount = projects.filter(
     (projectDoc) => projectDoc?.repository
@@ -158,6 +163,14 @@ export default function AttentionInbox({ projects, onOpenProject, inbox }) {
               </div>
 
               <p>{t(`attentionInbox.reason.${item.reason}`)}</p>
+
+              {projectsById.has(item.projectId) && (
+                <ProjectProgressSummary
+                  compact
+                  projectDoc={projectsById.get(item.projectId)}
+                  repositoryResult={repositoryResults[item.projectId]}
+                />
+              )}
 
               <div className="attention-item-footer">
                 <span>{t(`attentionInbox.source.${item.source}`)}</span>

@@ -5,7 +5,11 @@ import {
   resolveProjectProgress,
 } from "../../../services/projectProgress";
 
-export default function ProjectProgressSummary({ projectDoc, repositoryResult }) {
+export default function ProjectProgressSummary({
+  projectDoc,
+  repositoryResult,
+  compact = false,
+}) {
   const { t } = useI18n();
   const progress = resolveProjectProgress(projectDoc, repositoryResult);
   const sourceDescription =
@@ -21,7 +25,7 @@ export default function ProjectProgressSummary({ projectDoc, repositoryResult })
         : t(`project.progress.source.${progress.source}`);
 
   return (
-    <div className="project-progress">
+    <div className={`project-progress${compact ? " project-progress-compact" : ""}`}>
       <div className="project-progress-header">
         <span>{t("project.progress.effectiveLabel")}</span>
         <strong>
@@ -50,7 +54,7 @@ export default function ProjectProgressSummary({ projectDoc, repositoryResult })
             {t("project.progress.source.stale")}
           </span>
         )}
-        {progress.source === "roadmap" && progress.url && (
+        {!compact && progress.source === "roadmap" && progress.url && (
           <a href={progress.url} target="_blank" rel="noreferrer">
             {t("project.progress.source.openRoadmap")}
           </a>

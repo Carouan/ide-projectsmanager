@@ -83,16 +83,17 @@ actuellement à l'étape `v.0.7`.
   - [x] Afficher la source et le nombre d'objectifs réellement terminés (#105).
   - [x] Conserver le cache et le caractère périmé des données GitHub (#105).
   - [x] Reconnaître les variantes historiques du portfolio Sites (#105).
-- [ ] Transformer la collection en vrai cockpit portefeuille (#93)
-  - [ ] Choisir une présentation en grille ou en liste.
-  - [ ] Rechercher un projet par texte.
-  - [ ] Filtrer par statut, tags et catégorie.
-  - [ ] Filtrer les projets liés ou non à un dépôt.
-  - [ ] Filtrer selon l'attention humaine requise.
-  - [ ] Trier par titre, dernière mise à jour ou progression effective.
-  - [ ] Choisir l'ordre croissant ou décroissant.
-  - [ ] Afficher le nombre de résultats et réinitialiser les filtres.
-  - [ ] Conserver localement les préférences de présentation.
+- [x] Transformer la collection en vrai cockpit portefeuille (#93)
+  - [x] Choisir une présentation en grille ou en liste.
+  - [x] Rechercher un projet par texte.
+  - [x] Filtrer par statut, tags et catégorie.
+  - [x] Filtrer les projets liés ou non à un dépôt.
+  - [x] Filtrer selon l'attention humaine requise.
+  - [x] Trier par titre, dernière mise à jour ou progression effective.
+  - [x] Choisir l'ordre croissant ou décroissant.
+  - [x] Afficher le nombre de résultats et réinitialiser les filtres.
+  - [x] Conserver localement les préférences de présentation.
+  - [x] Afficher le même avancement mesuré dans l'inbox et la collection.
 - [ ] Structurer les fronts de travail parallèles (#94, #95)
   - [ ] Ajouter des chantiers facultatifs aux anciens et nouveaux projets.
   - [ ] Permettre des chantiers logiciels, scientifiques, associatifs ou personnels.

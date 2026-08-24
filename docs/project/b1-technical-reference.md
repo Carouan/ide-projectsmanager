@@ -37,6 +37,25 @@ Principes structurants :
 - écran projet
 - écran paramètres
 
+### Tableau de bord du portefeuille
+
+L'inbox d'attention et la collection de projets restent deux vues dérivées
+distinctes. Elles partagent les snapshots de dépôt lus par `useAttentionInbox`,
+ce qui garantit le même avancement effectif manuel / roadmap / étape sans
+déclencher de lecture réseau supplémentaire pour les filtres ou les tris.
+
+`projectDashboardModel.js` dérive des lignes locales et fournit la recherche,
+les options de filtre et un ordre déterministe. La recherche couvre les
+métadonnées, les tags, la catégorie et le dépôt ; les filtres combinent statut,
+catégorie/tag, présence d'un dépôt et catégories d'attention humaine. Le tri
+porte sur le titre, la dernière modification ou l'avancement effectif ; les
+valeurs indisponibles sont toujours placées après les valeurs mesurables.
+
+Les paramètres globaux `dashboardView`, `dashboardSortField` et
+`dashboardSortDirection` sont normalisés avec des valeurs de repli et conservés
+dans la persistance applicative existante. Les recherches et filtres temporaires
+restent uniquement dans l'état React, sans migration du `ProjectDocument`.
+
 ### Sous-zones de l’écran projet
 
 - métadonnées projet
@@ -231,6 +250,8 @@ Implémenté :
 - progression manuelle et progression effective expliquée
 - lecture d'une roadmap GitHub mesurable avec cache
 - parcours des étapes focalisé et guides utilisateur contextuels
+- vues grille/liste, recherche, filtres portefeuille et tri déterministe
+- progression cohérente dans les cartes d'attention et de projet
 
 Le bundle de sauvegarde globale utilise le format suivant sans modifier le
 schéma de chaque projet :
@@ -259,6 +280,7 @@ Implémenté :
 - persistance de la langue
 - persistance du toggle preview Markdown
 - structure de settings globale
+- persistance locale de la vue et du tri du tableau de bord
 
 Encore incomplet :
 
@@ -303,18 +325,16 @@ Non fait :
   navigateurs cibles
 - transports facultatifs non encore comparés sous Windows et Android
 - gestion de vrais fichiers binaires pour attachments non encore traitée
-- dashboard limité à une grille fixe
 - chantiers parallèles non représentés
 
 ## Roadmap technique courte recommandée
 
-1. conserver les fonctionnalités livrées et la progression mesurable (`#105`)
-2. enrichir les vues, filtres et tris du dashboard (`#93`)
-3. ajouter le modèle puis l'interface des chantiers (`#94`, `#95`)
-4. introduire le fournisseur et le miroir de sauvegarde (`S1.1`, `S1.2`)
-5. écrire les instantanés et détecter les divergences (`S1.3`, `S1.4`)
-6. comparer les modes autonomes et transports facultatifs (`S1.5`)
-7. traiter `.ipm` et les pièces jointes binaires plus tard (`S2.1`)
+1. conserver la progression mesurable et le dashboard livré (`#105`, `#93`)
+2. ajouter le modèle puis l'interface des chantiers (`#94`, `#95`)
+3. introduire le fournisseur et le miroir de sauvegarde (`S1.1`, `S1.2`)
+4. écrire les instantanés et détecter les divergences (`S1.3`, `S1.4`)
+5. comparer les modes autonomes et transports facultatifs (`S1.5`)
+6. traiter `.ipm` et les pièces jointes binaires plus tard (`S2.1`)
 
 Les migrations de modèle restent séparées des PR d'interface. Chaque incrément
 doit préserver les projets et bundles existants.

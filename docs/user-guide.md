@@ -16,6 +16,25 @@ navigateur et organise les informations en plusieurs espaces complémentaires.
 Le bouton **Nouvelle idée** sert à classer une idée apparue pendant un projet.
 Il ne crée pas automatiquement un autre projet et ne remplace pas le guide.
 
+## Organiser le tableau de bord
+
+La zone **À votre attention** conserve une vue globale des décisions,
+validations et blocages. Ses cartes affichent aussi l'avancement du projet
+concerné, avec la même source et le même pourcentage que sa fiche détaillée.
+
+La collection **Vos projets** reste distincte :
+
+- Choisir **Grille** ou **Liste** selon l'écran et le nombre de projets.
+- Rechercher un titre, un résumé, une description, un tag ou un dépôt.
+- Ouvrir **Filtres et tri** pour combiner statut, catégorie/tag, présence d'un
+  dépôt et besoin d'attention humaine.
+- Trier par titre, date de modification ou avancement réel, dans l'ordre voulu.
+- Consulter le nombre de résultats et réinitialiser les filtres si nécessaire.
+
+La présentation et le tri sont mémorisés localement. La recherche et les filtres
+ne le sont pas. Filtrer les projets n'effectue aucune lecture GitHub
+supplémentaire et ne masque jamais les alertes globales.
+
 ## Comprendre et ajuster l'avancement
 
 Le tableau de bord et l'onglet **Projet** affichent un pourcentage accompagné de

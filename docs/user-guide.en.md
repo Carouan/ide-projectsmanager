@@ -17,6 +17,25 @@ The **New idea** button classifies an idea that appears during a project. It
 does not automatically create a separate project and does not replace this
 guide.
 
+## Organize the dashboard
+
+**Needs your attention** remains a global view of decisions, validations, and
+blockers. Each attention card also shows its project's progress, using the same
+source and percentage as the detailed project view.
+
+The **Your projects** collection stays separate:
+
+- Choose **Grid** or **List** to fit your screen and project count.
+- Search titles, summaries, descriptions, tags, or linked repositories.
+- Open **Filters and sorting** to combine status, category/tag, repository
+  linkage, and human-attention filters.
+- Sort by title, update date, or effective progress in either direction.
+- Check the result count and clear filters whenever needed.
+
+The selected view and sorting are remembered locally. Temporary searches and
+filters are not saved. Filtering never triggers additional GitHub requests or
+hides global attention signals.
+
 ## Understand and adjust project progress
 
 The dashboard and **Project** tab show a percentage together with its source:

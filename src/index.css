@@ -165,6 +165,117 @@ h3 {
   gap: 16px;
 }
 
+.project-collection-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
+  align-items: stretch;
+}
+
+.project-collection-list {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.dashboard-controls {
+  display: grid;
+  gap: 16px;
+  margin: 0 0 20px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.42);
+}
+
+.dashboard-controls-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.dashboard-controls-header h2,
+.dashboard-result-count {
+  margin: 0;
+}
+
+.dashboard-result-count {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.dashboard-view-toggle {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.dashboard-view-button {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 9px 13px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.035);
+  cursor: pointer;
+}
+
+.dashboard-view-button-active {
+  border-color: rgba(167, 139, 250, 0.8);
+  color: var(--text);
+  background: rgba(124, 58, 237, 0.18);
+}
+
+.dashboard-search {
+  display: grid;
+  gap: 8px;
+}
+
+.dashboard-search span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.dashboard-search input {
+  width: 100%;
+}
+
+.dashboard-advanced-controls {
+  border-top: 1px solid rgba(167, 178, 197, 0.16);
+  padding-top: 12px;
+}
+
+.dashboard-advanced-controls summary {
+  width: fit-content;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.dashboard-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 215px), 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.dashboard-reset-filters {
+  margin-top: 16px;
+}
+
+.dashboard-reset-filters:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.dashboard-filtered-empty {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+  padding: 24px;
+}
+
+.dashboard-filtered-empty h3,
+.dashboard-filtered-empty p {
+  margin: 0;
+}
+
 .project-card,
 .panel,
 .empty-state,
@@ -207,6 +318,19 @@ h3 {
   display: grid;
   gap: 8px;
   margin: 0 0 18px;
+}
+
+.project-progress-compact {
+  gap: 6px;
+  margin: 0;
+  padding: 11px 12px;
+  border: 1px solid rgba(167, 178, 197, 0.14);
+  border-radius: 12px;
+  background: rgba(124, 58, 237, 0.07);
+}
+
+.project-progress-compact .project-progress-bar {
+  height: 7px;
 }
 
 .project-progress-header {
@@ -591,6 +715,7 @@ select:focus {
 @media (max-width: 760px) {
   .hero,
   .topbar,
+  .dashboard-controls-header,
   .project-card-header,
   .panel-header,
   .backlog-item-top,
@@ -601,6 +726,10 @@ select:focus {
 
   .form-grid {
     grid-template-columns: 1fr;
+  }
+
+  .dashboard-controls {
+    padding: 16px;
   }
 
   .field-full {
