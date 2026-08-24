@@ -44,6 +44,7 @@ export default function App() {
     settings,
     updateSettings,
     backupFolderStatus,
+    backupDevice,
     connectBackupFolder,
     reauthorizeBackupFolder,
     disconnectBackupFolder,
@@ -139,6 +140,7 @@ export default function App() {
         onUpdateSettings={updateSettings}
         onExportAllProjects={exportAllProjectsJson}
         backupFolderStatus={backupFolderStatus}
+        backupDevice={backupDevice}
         onConnectBackupFolder={connectBackupFolder}
         onReauthorizeBackupFolder={reauthorizeBackupFolder}
         onDisconnectBackupFolder={disconnectBackupFolder}

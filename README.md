@@ -31,6 +31,7 @@ des exports JSON et Markdown.
 - actions du backlog associables et filtrables par chantier
 - frontière de sauvegarde portable avec téléchargement/import JSON comme repli
 - dossier de sauvegarde facultatif, choisi et autorisé explicitement
+- instantanés JSON versionnés et séparés pour chaque appareil
 - projet de démonstration facultatif relié au dépôt GitHub public de l'application
 
 ## Piloter le portefeuille
@@ -117,6 +118,10 @@ travail ; ils ne prétendent pas qu'une release GitHub ou un tag a déjà été 
 - Le dossier n'est mémorisé que si IndexedDB peut conserver son handle de manière
   sûre ; sinon il reste limité à la session courante. Aucun accès n'est demandé
   silencieusement et le dossier ne se synchronise pas à lui seul.
+- Chaque appareil possède une identité locale aléatoire et non secrète ; une
+  sauvegarde explicite écrit uniquement `snapshots/<device-id>/latest.json`.
+- Cet instantané contient son identifiant, sa date, le parent connu et le bundle
+  global intact. Deux appareils ne modifient jamais le même fichier de sauvegarde.
 - Syncthing ou un autre transport pourra synchroniser ce dossier, sans devenir
   une dépendance de l'application.
 

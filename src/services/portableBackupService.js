@@ -14,6 +14,11 @@ import {
   ProjectBundleError,
   validateProjectBundle,
 } from "./jsonTransfer.js";
+import {
+  createPortableBackupSnapshot,
+  PortableBackupSnapshotError,
+  validatePortableBackupSnapshot,
+} from "./portableBackupSnapshots.js";
 
 function unavailableFallbackStatus() {
   return {
@@ -145,6 +150,21 @@ export function createPortableBackupService(options = {}) {
       );
     },
 
+    async writeDevicePortfolioSnapshot(providerId, projects, writeOptions = {}) {
+      const snapshot = createPortableBackupSnapshot(projects, {
+        device: writeOptions.device,
+        parentSnapshotId: writeOptions.parentSnapshotId,
+        createdAt: writeOptions.createdAt,
+        snapshotId: writeOptions.snapshotId,
+      });
+      const result = await run(providerId, PORTABLE_BACKUP_OPERATION.WRITE, {
+        bundle: snapshot.bundle,
+        snapshot,
+      });
+
+      return { snapshot, bundle: snapshot.bundle, result };
+    },
+
     async listSnapshots(providerId) {
       const snapshots = await run(
         providerId,
@@ -175,13 +195,22 @@ export function createPortableBackupService(options = {}) {
         );
         const bundle = validateProjectBundle(result?.bundle || result);
 
-        return {
+        const response = {
           providerId: result?.providerId || providerId,
           reference: result?.reference || null,
           bundle,
         };
+
+        if (result?.snapshot) {
+          response.snapshot = validatePortableBackupSnapshot(result.snapshot);
+        }
+
+        return response;
       } catch (error) {
-        if (error instanceof ProjectBundleError) {
+        if (
+          error instanceof ProjectBundleError ||
+          error instanceof PortableBackupSnapshotError
+        ) {
           throw new PortableBackupProviderError(
             PORTABLE_BACKUP_ERROR_CODE.INVALID_SNAPSHOT,
             error.message,

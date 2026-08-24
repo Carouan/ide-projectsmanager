@@ -98,11 +98,24 @@ Créer une identité locale d'appareil non secrète et écrire un `latest.json` 
 
 L'instantané doit être atomique autant que le permet l'API et ne doit pas modifier le format interne de chaque `ProjectDocument` sans migration dédiée.
 
-- [ ] Générer un identifiant local d'appareil non secret (#84).
-- [ ] Produire un espace d'instantané distinct par appareil (#84).
-- [ ] Versionner et dater chaque sauvegarde JSON (#84).
-- [ ] Écrire uniquement lorsque l'application est ouverte et autorisée (#84).
-- [ ] Préserver la structure de tous les `ProjectDocument` historiques (#84).
+- [x] Générer un identifiant local d'appareil non secret (#84).
+- [x] Produire un espace d'instantané distinct par appareil (#84).
+- [x] Versionner et dater chaque sauvegarde JSON (#84).
+- [x] Écrire uniquement lorsque l'application est ouverte et autorisée (#84).
+- [x] Préserver la structure de tous les `ProjectDocument` historiques (#84).
+
+Implémentation livrée :
+
+- `portableBackupSnapshots.js` crée et valide un instantané versionné contenant
+  son identifiant, la date, l'appareil, le parent connu et le bundle JSON intact ;
+- chaque navigateur autorisé écrit exclusivement son propre fichier
+  `snapshots/<device-id>/latest.json` dans le dossier explicitement sélectionné ;
+- l'identité aléatoire de l'appareil est locale, non secrète et indépendante de
+  tout compte, nom d'hôte, navigateur ou profil utilisateur ;
+- l'écriture utilise le flux transactionnel du navigateur et annule un flux
+  interrompu afin de conserver autant que possible le dernier fichier valide ;
+- la sauvegarde n'est déclenchée que par l'action explicite de l'utilisateur,
+  application ouverte et permission accordée ; l'export manuel reste inchangé.
 
 ### S1.4 — Détecter restauration et divergence
 

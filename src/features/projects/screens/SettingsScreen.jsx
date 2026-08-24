@@ -11,6 +11,7 @@ export default function SettingsScreen({
   onInspectProjectBundle,
   onRestoreProjectBundle,
   backupFolderStatus,
+  backupDevice,
   onConnectBackupFolder,
   onReauthorizeBackupFolder,
   onDisconnectBackupFolder,
@@ -97,6 +98,7 @@ export default function SettingsScreen({
         <SelectedBackupFolderPanel
           projectCount={projectCount}
           status={backupFolderStatus}
+          device={backupDevice}
           onConnect={onConnectBackupFolder}
           onReauthorize={onReauthorizeBackupFolder}
           onDisconnect={onDisconnectBackupFolder}

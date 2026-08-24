@@ -3,6 +3,8 @@ const SETTINGS_STORAGE_KEY = "ide-projet-personnel.settings";
 const USER_PROFILE_STORAGE_KEY = "ide-projet-personnel.user-profile";
 const REPOSITORY_SNAPSHOTS_STORAGE_KEY =
   "ide-projet-personnel.repository-snapshots";
+const PORTABLE_BACKUP_DEVICE_STORAGE_KEY =
+  "ide-projet-personnel.portable-backup-device";
 
 const PROJECTS_DB_NAME = "ide-projet-personnel";
 const PROJECTS_DB_VERSION = 2;
@@ -14,6 +16,7 @@ const USER_PROFILE_RECORD_KEY = "user-profile";
 const REPOSITORY_SNAPSHOTS_RECORD_KEY = "repository-snapshots";
 const PORTABLE_BACKUP_DIRECTORY_HANDLE_RECORD_KEY =
   "portable-backup-directory-handle";
+const PORTABLE_BACKUP_DEVICE_RECORD_KEY = "portable-backup-device";
 
 let projectsDbPromise = null;
 
@@ -325,5 +328,33 @@ export async function clearPortableBackupDirectoryHandle() {
     return true;
   } catch {
     return false;
+  }
+}
+
+export async function loadPortableBackupDevice() {
+  try {
+    const storedDevice = await readAppValueFromIndexedDb(
+      PORTABLE_BACKUP_DEVICE_RECORD_KEY
+    );
+
+    if (storedDevice && typeof storedDevice === "object") {
+      return storedDevice;
+    }
+
+    return parseJsonObject(localStorage.getItem(PORTABLE_BACKUP_DEVICE_STORAGE_KEY));
+  } catch {
+    try {
+      return parseJsonObject(localStorage.getItem(PORTABLE_BACKUP_DEVICE_STORAGE_KEY));
+    } catch {
+      return null;
+    }
+  }
+}
+
+export async function savePortableBackupDevice(device) {
+  try {
+    await writeAppValueToIndexedDb(PORTABLE_BACKUP_DEVICE_RECORD_KEY, device);
+  } catch {
+    localStorage.setItem(PORTABLE_BACKUP_DEVICE_STORAGE_KEY, JSON.stringify(device));
   }
 }

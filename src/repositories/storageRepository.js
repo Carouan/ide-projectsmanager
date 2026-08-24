@@ -10,6 +10,8 @@ import {
   loadPortableBackupDirectoryHandle,
   savePortableBackupDirectoryHandle,
   clearPortableBackupDirectoryHandle,
+  loadPortableBackupDevice,
+  savePortableBackupDevice,
 } from "../services/storage.js";
 
 export async function loadPersistedProjects() {
@@ -54,4 +56,12 @@ export async function savePersistedPortableBackupDirectoryHandle(handle) {
 
 export async function clearPersistedPortableBackupDirectoryHandle() {
   return clearPortableBackupDirectoryHandle();
+}
+
+export async function loadPersistedPortableBackupDevice() {
+  return loadPortableBackupDevice();
+}
+
+export async function savePersistedPortableBackupDevice(device) {
+  await savePortableBackupDevice(device);
 }
