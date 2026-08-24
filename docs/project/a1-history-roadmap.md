@@ -59,6 +59,7 @@ Le dépôt a déjà dépassé le MVP initial.
 - roadmap canonique structurée en releases et objectifs vérifiables
 - dashboard en grille/liste, recherche, filtres cumulables et tris persistants
 - même progression effective dans l'inbox, les cartes et les fiches projet
+- modèle facultatif de chantiers parallèles, suggestions génériques et exports
 
 ### Partiellement réalisé
 
@@ -79,7 +80,7 @@ Le dépôt a déjà dépassé le MVP initial.
 - switch preview étape vs export complet
 - désactivation par défaut de la preview sur mobile
 - continuité post-`v1.0` via cycle lié ou sous-projet
-- chantiers parallèles et matrice étapes × chantiers
+- interface des chantiers parallèles et matrice étapes × chantiers
 - splash screen
 - édition bidirectionnelle preview ↔ formulaire
 - formats d’édition / export supplémentaires
@@ -111,6 +112,8 @@ Merges récents confirmés dans le dépôt :
   roadmap produit mesurable et jalons de release documentés
 - 2026-08-24 : cockpit portefeuille filtrable ; avancement GitHub harmonisé
   entre l'inbox globale, la collection et les projets ouverts
+- 2026-08-24 : modèle de chantiers compatibles avec l'historique ; exemples
+  logiciels, scientifiques, associatifs et personnels
 
 ## Arborescence de travail locale recommandée
 
@@ -136,7 +139,7 @@ objectifs livrés et ouverts. La suite logique du produit est définie par
 1. conserver IndexedDB et la restauration JSON sûre déjà disponibles ;
 2. expliquer l'avancement avec priorité manuel / roadmap / étape (#105) ;
 3. conserver le dashboard filtrable et la progression cohérente livrés (#93) ;
-4. ajouter ensuite les chantiers sans imposer un modèle logiciel (#94, #95) ;
+4. compléter l'interface des chantiers génériques déjà modélisés (#95) ;
 5. introduire un fournisseur de sauvegarde portable interchangeable (#82) ;
 6. proposer facultativement un dossier et des instantanés par appareil (#83, #84) ;
 7. détecter explicitement les restaurations et divergences (#85) ;

@@ -1,4 +1,4 @@
-import { formatStageLabel } from "../constants/stages.js";
+import { formatStageLabel, getStageDefinition } from "../constants/stages.js";
 import {
   formatCalendarDate,
   formatDateTime,
@@ -7,6 +7,7 @@ import {
   formatProjectProgress,
   resolveProjectProgress,
 } from "./projectProgress.js";
+import { normalizeWorkstreams } from "./projectWorkstreams.js";
 
 function escapeLine(value) {
   return String(value ?? "").trim();
@@ -19,6 +20,11 @@ export function projectToMarkdown(projectDoc, options = {}) {
 
   const { project, stages, backlog, journal, decisions } = projectDoc;
   const locale = options.locale || "fr";
+  const english = locale === "en";
+  const workstreams = normalizeWorkstreams(projectDoc.workstreams);
+  const workstreamsById = new Map(
+    workstreams.map((workstream) => [workstream.id, workstream])
+  );
   const effectiveProgress = resolveProjectProgress(
     projectDoc,
     options.repositoryResult
@@ -49,7 +55,6 @@ export function projectToMarkdown(projectDoc, options = {}) {
     )}`
   );
   if (effectiveProgress.percent !== null) {
-    const english = locale === "en";
     const sourceLabel =
       effectiveProgress.source === "manual"
         ? english
@@ -79,6 +84,36 @@ export function projectToMarkdown(projectDoc, options = {}) {
     lines.push("");
     lines.push(escapeLine(project.description));
     lines.push("");
+  }
+
+  if (workstreams.length > 0) {
+    lines.push(english ? "## Workstreams" : "## Chantiers");
+    lines.push("");
+
+    for (const workstream of workstreams) {
+      lines.push(`### ${escapeLine(workstream.title)}`);
+      lines.push("");
+      lines.push(
+        `- ${english ? "Status" : "Statut"} : ${escapeLine(workstream.status)}`
+      );
+
+      if (workstream.category) {
+        lines.push(
+          `- ${english ? "Category" : "Catégorie"} : ${escapeLine(workstream.category)}`
+        );
+      }
+
+      if (workstream.archived) {
+        lines.push(english ? "- Archived : yes" : "- Archivé : oui");
+      }
+
+      if (escapeLine(workstream.description)) {
+        lines.push("");
+        lines.push(escapeLine(workstream.description));
+      }
+
+      lines.push("");
+    }
   }
 
   lines.push("## Étapes");
@@ -135,8 +170,30 @@ export function projectToMarkdown(projectDoc, options = {}) {
       lines.push(`- Type : ${escapeLine(item.type)}`);
       lines.push(`- Priorité : ${escapeLine(item.priority)}`);
       lines.push(`- Source : ${escapeLine(item.source)}`);
+
+      if (item.workstreamId) {
+        const linkedWorkstream = workstreamsById.get(item.workstreamId);
+        const workstreamTitle = linkedWorkstream
+          ? linkedWorkstream.title
+          : english
+            ? `[unknown reference: ${item.workstreamId}]`
+            : `[référence inconnue : ${item.workstreamId}]`;
+
+        lines.push(
+          `- ${english ? "Workstream" : "Chantier"} : ${escapeLine(workstreamTitle)}`
+        );
+      }
+
+      const linkedStage = item.stageKey || item.relatedStage;
+      const stageLabel =
+        item.stageKey && !getStageDefinition(item.stageKey)
+          ? english
+            ? `[unknown stage: ${item.stageKey}]`
+            : `[étape inconnue : ${item.stageKey}]`
+          : formatStageLabel(linkedStage);
+
       lines.push(
-        `- Étape liée : ${escapeLine(formatStageLabel(item.relatedStage))}`
+        `- Étape liée : ${escapeLine(stageLabel)}`
       );
       lines.push("");
       if (escapeLine(item.description)) {

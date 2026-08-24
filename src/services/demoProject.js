@@ -1,6 +1,7 @@
 import { buildDefaultStages } from "../constants/stages.js";
 import { DEFAULT_SETTINGS } from "../constants/settings.js";
 import { buildDefaultSyncMetadata } from "./syncMetadata.js";
+import { suggestProjectWorkstreams } from "./projectWorkstreams.js";
 
 export const IDE_DEMO_PROJECT_ID = "demo-ide-projectsmanager";
 
@@ -10,6 +11,15 @@ export function createIdeDemoProject(options = {}) {
   const currentStage = "v0_7";
   const activeBacklogId = "demo-ide-projectsmanager-review-repository";
   const stages = buildDefaultStages();
+  const workstreams = suggestProjectWorkstreams("software")
+    .filter(({ id }) =>
+      ["ws_software_product", "ws_software_ui_ux", "ws_software_quality"].includes(id)
+    )
+    .map((workstream, index) => ({
+      ...workstream,
+      order: index * 10,
+      status: workstream.id === "ws_software_ui_ux" ? "planned" : "active",
+    }));
 
   stages[currentStage] = {
     ...stages[currentStage],
@@ -42,6 +52,7 @@ export function createIdeDemoProject(options = {}) {
       progressPercent: null,
     },
     stages,
+    workstreams,
     backlog: [
       {
         id: activeBacklogId,
@@ -50,6 +61,8 @@ export function createIdeDemoProject(options = {}) {
         status: "open",
         priority: "high",
         source: "demo",
+        workstreamId: "ws_software_quality",
+        stageKey: currentStage,
       },
       {
         id: "demo-ide-projectsmanager-portable-backup",
@@ -58,6 +71,7 @@ export function createIdeDemoProject(options = {}) {
         status: "planned",
         priority: "medium",
         source: "demo",
+        workstreamId: "ws_software_product",
       },
     ],
     journal: [

@@ -29,6 +29,7 @@ Structure typique :
   "schemaVersion": "1.0",
   "project": {},
   "stages": {},
+  "workstreams": [],
   "backlog": [],
   "journal": [],
   "decisions": [],
@@ -94,8 +95,10 @@ Exemples :
 - projet personnel : planification, achats, production, documentation.
 
 Un chantier répond à la question : **sur quel domaine travaille-t-on ?** Il est
-facultatif et personnalisable. Le modèle détaillé est défini dans DR-003 et son
-implémentation est planifiée par #94 et #95.
+facultatif et personnalisable. #94 a livré le modèle compatible, les suggestions
+multi-domaines et les références backlog/étape ; #95 ajoutera l'onglet de
+gestion et la matrice visuelle. Un ancien projet sans `workstreams` continue à
+fonctionner normalement.
 
 ## Jalon
 

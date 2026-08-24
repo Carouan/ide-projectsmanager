@@ -23,7 +23,13 @@ test("the IDE demo is a normal repository-backed project document", () => {
   assert.equal(projectDoc.repository.visibility, "public");
   assert.equal(projectDoc.repository.governance, "project-steward");
   assert.equal(projectDoc.stages.v0_7.status, "in_progress");
+  assert.deepEqual(
+    projectDoc.workstreams.map(({ id }) => id),
+    ["ws_software_product", "ws_software_ui_ux", "ws_software_quality"]
+  );
   assert.equal(projectDoc.backlog.length, 2);
+  assert.equal(projectDoc.backlog[0].workstreamId, "ws_software_quality");
+  assert.equal(projectDoc.backlog[0].stageKey, "v0_7");
   assert.equal(projectDoc.journal.length, 1);
 });
 

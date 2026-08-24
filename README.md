@@ -27,6 +27,7 @@ des exports JSON et Markdown.
 - inbox globale des décisions, blocages et validations réellement requis
 - avancement explicable : valeur manuelle, roadmap mesurable ou étape du projet
 - même progression visible dans l'inbox, la collection et chaque fiche projet
+- modèle facultatif de chantiers parallèles compatible avec les anciens projets
 - projet de démonstration facultatif relié au dépôt GitHub public de l'application
 
 ## Piloter le portefeuille
@@ -57,6 +58,22 @@ nombre d'objectifs terminés et un cache éventuellement périmé restent visibl
 La formule, la granularité et la pondération facultative sont décrites dans
 [`ROADMAP.md`](ROADMAP.md) et dans
 [DR-004](docs/decisions/DR-004-measurable-roadmap-effective-progress.md).
+
+## Étapes et chantiers parallèles
+
+Une **étape** indique la maturité globale du projet, par exemple `v.0.2`. Un
+**chantier** désigne un front de travail pouvant traverser plusieurs étapes :
+
+- logiciel : produit, interface, frontend, backend, qualité et déploiement ;
+- recherche : bibliographie, méthode, collecte, analyse, éthique et diffusion ;
+- association : juridique, finances, opérations, communication et partenariats ;
+- projet personnel : planification, achats, production et documentation.
+
+Les chantiers restent facultatifs, personnalisables et indépendants des dépôts
+GitHub. Leur modèle est compatible avec les projets existants, les exports
+JSON/Markdown et les actions du backlog. Le projet IDE de démonstration montre
+trois exemples concrets ; l'onglet de gestion et la matrice étapes × chantiers
+seront ajoutés séparément par l'issue #95.
 
 ## Roadmap mesurable et releases
 
