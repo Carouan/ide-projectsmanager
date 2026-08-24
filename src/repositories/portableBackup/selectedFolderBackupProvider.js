@@ -315,28 +315,40 @@ export function createSelectedFolderBackupProvider(options = {}) {
             }
 
             const file = await fileHandle.getFile();
-            const snapshot = validatePortableBackupSnapshot(
-              JSON.parse(await file.text())
-            );
+            const reference = buildPortableBackupDeviceSnapshotReference(deviceId);
 
-            if (snapshot.device.id !== deviceId) {
-              throw new PortableBackupProviderError(
-                PORTABLE_BACKUP_ERROR_CODE.INVALID_SNAPSHOT,
-                "The snapshot device does not match its own directory.",
-                { providerId: SELECTED_FOLDER_BACKUP_PROVIDER_ID }
+            try {
+              const snapshot = validatePortableBackupSnapshot(
+                JSON.parse(await file.text())
               );
-            }
 
-            snapshots.push(snapshotFileMetadata(file, {
-              reference: buildPortableBackupDeviceSnapshotReference(deviceId),
-              filename: "latest.json",
-              snapshotId: snapshot.snapshotId,
-              deviceId,
-              deviceLabel: snapshot.device.label,
-              parentSnapshotId: snapshot.parentSnapshotId,
-              createdAt: snapshot.createdAt,
-              projectCount: snapshot.bundle.projectCount,
-            }));
+              if (snapshot.device.id !== deviceId) {
+                throw new PortableBackupProviderError(
+                  PORTABLE_BACKUP_ERROR_CODE.INVALID_SNAPSHOT,
+                  "The snapshot device does not match its own directory.",
+                  { providerId: SELECTED_FOLDER_BACKUP_PROVIDER_ID }
+                );
+              }
+
+              snapshots.push(snapshotFileMetadata(file, {
+                reference,
+                filename: "latest.json",
+                snapshotId: snapshot.snapshotId,
+                deviceId,
+                deviceLabel: snapshot.device.label,
+                parentSnapshotId: snapshot.parentSnapshotId,
+                createdAt: snapshot.createdAt,
+                projectCount: snapshot.bundle.projectCount,
+              }));
+            } catch (error) {
+              snapshots.push(snapshotFileMetadata(file, {
+                reference,
+                filename: "latest.json",
+                deviceId,
+                unreadable: true,
+                errorCode: error?.code || PORTABLE_BACKUP_ERROR_CODE.INVALID_SNAPSHOT,
+              }));
+            }
           }
         }
       }

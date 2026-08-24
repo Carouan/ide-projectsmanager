@@ -32,6 +32,7 @@ des exports JSON et Markdown.
 - frontière de sauvegarde portable avec téléchargement/import JSON comme repli
 - dossier de sauvegarde facultatif, choisi et autorisé explicitement
 - instantanés JSON versionnés et séparés pour chaque appareil
+- comparaison des sauvegardes externes et restauration confirmée sans écrasement silencieux
 - projet de démonstration facultatif relié au dépôt GitHub public de l'application
 
 ## Piloter le portefeuille
@@ -122,6 +123,13 @@ travail ; ils ne prétendent pas qu'une release GitHub ou un tag a déjà été 
   sauvegarde explicite écrit uniquement `snapshots/<device-id>/latest.json`.
 - Cet instantané contient son identifiant, sa date, le parent connu et le bundle
   global intact. Deux appareils ne modifient jamais le même fichier de sauvegarde.
+- **Paramètres → Sauvegardes des autres appareils** identifie les filiations
+  vérifiées, les états antérieurs, divergents, inconnus ou illisibles. La date
+  seule ne sert jamais à décider qu'un état peut remplacer les données locales.
+- Avant toute action, l'interface détaille l'appareil, la date et les projets
+  ajoutés, remplacés ou retirés. Importer comme copies préserve les données ;
+  restaurer exige une confirmation explicite. Il n'existe aucune restauration
+  automatique.
 - Syncthing ou un autre transport pourra synchroniser ce dossier, sans devenir
   une dépendance de l'application.
 

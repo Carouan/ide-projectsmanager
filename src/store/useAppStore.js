@@ -61,7 +61,17 @@ import {
   SELECTED_FOLDER_BACKUP_PROVIDER_ID,
 } from "../repositories/portableBackup/selectedFolderBackupProvider";
 import { createPortableBackupService } from "../services/portableBackupService";
-import { normalizePortableBackupDevice } from "../services/portableBackupSnapshots";
+import {
+  acknowledgePortableBackupSnapshot,
+  normalizePortableBackupDevice,
+} from "../services/portableBackupSnapshots";
+import {
+  applyPortableBackupSnapshotDecision,
+  PORTABLE_SNAPSHOT_DECISION,
+  PORTABLE_SNAPSHOT_REVIEW_STATE,
+  reviewPortableBackupSnapshots,
+  summarizePortableBackupReview,
+} from "../services/portableBackupReview";
 
 const selectedFolderBackupProvider = createSelectedFolderBackupProvider();
 const portableBackupService = createPortableBackupService({
@@ -157,6 +167,7 @@ export function useAppStore() {
   const [userProfile, setUserProfile] = useState(null);
   const [backupFolderStatus, setBackupFolderStatus] = useState(null);
   const [backupDevice, setBackupDevice] = useState(null);
+  const [backupSnapshotReview, setBackupSnapshotReview] = useState(null);
   const [currentProjectId, setCurrentProjectId] = useState(null);
   const [isHydrated, setIsHydrated] = useState(false);
 
@@ -975,6 +986,7 @@ if (loaded.length > 0) {
   async function disconnectBackupFolder() {
     try {
       await selectedFolderBackupProvider.disconnect();
+      setBackupSnapshotReview(null);
     } finally {
       await refreshBackupFolderStatus();
     }
@@ -1013,6 +1025,132 @@ if (loaded.length > 0) {
     await savePersistedPortableBackupDevice(device);
     setBackupDevice(device);
     return device;
+  }
+
+  async function inspectBackupSnapshots() {
+    try {
+      const device = await ensureBackupDevice();
+      const listed = await portableBackupService.listSnapshots(
+        SELECTED_FOLDER_BACKUP_PROVIDER_ID
+      );
+      const externalSnapshots = [];
+      const unreadable = [];
+      let localSnapshot = null;
+
+      for (const entry of listed) {
+        if (entry.unreadable) {
+          unreadable.push(entry);
+          continue;
+        }
+
+        if (!entry.snapshotId || !entry.deviceId) continue;
+
+        try {
+          const snapshot = await portableBackupService.readPortfolioSnapshot(
+            SELECTED_FOLDER_BACKUP_PROVIDER_ID,
+            entry.reference
+          );
+
+          if (entry.deviceId === device.id) {
+            localSnapshot = snapshot.snapshot;
+          } else {
+            externalSnapshots.push({
+              reference: entry.reference,
+              snapshot: snapshot.snapshot,
+            });
+          }
+        } catch (error) {
+          unreadable.push({
+            ...entry,
+            unreadable: true,
+            errorCode: error?.code || "invalid_snapshot",
+          });
+        }
+      }
+
+      const review = reviewPortableBackupSnapshots({
+        localDevice: device,
+        localProjects: projects,
+        localSnapshot,
+        externalSnapshots,
+        unreadable,
+      });
+      setBackupSnapshotReview(review);
+      return review;
+    } catch (error) {
+      setBackupSnapshotReview({
+        state: PORTABLE_SNAPSHOT_REVIEW_STATE.PERMISSION_ERROR,
+        candidates: [],
+        unreadable: [],
+        errorCode: error?.code || "unknown",
+      });
+      await refreshBackupFolderStatus();
+      throw error;
+    }
+  }
+
+  async function resolveBackupSnapshot(candidate, action, options = {}) {
+    const snapshot = {
+      ...candidate.snapshot,
+      bundle: {
+        ...candidate.snapshot.bundle,
+        projects: candidate.snapshot.bundle.projects.map((projectDoc) =>
+          stripLegacyProjectOwner(
+            withProjectOwnerId(projectDoc, userProfile?.id)
+          )
+        ),
+      },
+    };
+    const result = applyPortableBackupSnapshotDecision(
+      { ...candidate, snapshot },
+      projects,
+      action,
+      options
+    );
+
+    if (action !== PORTABLE_SNAPSHOT_DECISION.IGNORE) {
+      const currentDevice = await ensureBackupDevice();
+      let updatedDevice = acknowledgePortableBackupSnapshot(
+        currentDevice,
+        snapshot.snapshotId
+      );
+
+      if (action === PORTABLE_SNAPSHOT_DECISION.RESTORE) {
+        updatedDevice = {
+          ...updatedDevice,
+          lastSnapshotId: snapshot.snapshotId,
+        };
+      }
+
+      await savePersistedPortableBackupDevice(updatedDevice);
+      setBackupDevice(updatedDevice);
+    }
+
+    if (
+      action === PORTABLE_SNAPSHOT_DECISION.RESTORE ||
+      action === PORTABLE_SNAPSHOT_DECISION.COPY
+    ) {
+      setProjects(result.projects);
+
+      if (!result.projects.some((project) => project.project.id === currentProjectId)) {
+        setCurrentProjectId(result.projects[0]?.project?.id || null);
+      }
+    }
+
+    setBackupSnapshotReview((previous) => {
+      if (!previous) return previous;
+
+      const candidates = previous.candidates.filter((entry) =>
+        entry.snapshotId !== snapshot.snapshotId
+      );
+      return {
+        ...previous,
+        candidates,
+        state: summarizePortableBackupReview(candidates, previous.unreadable),
+      };
+    });
+
+    return result.summary;
   }
 
   function restoreProjectsFromBundle(inspection, conflictStrategy) {
@@ -1085,6 +1223,7 @@ if (loaded.length > 0) {
     userProfile,
     backupFolderStatus,
     backupDevice,
+    backupSnapshotReview,
     currentProject,
     currentProjectId,
     createProject,
@@ -1120,6 +1259,8 @@ if (loaded.length > 0) {
     reauthorizeBackupFolder,
     disconnectBackupFolder,
     exportAllProjectsToBackupFolder,
+    inspectBackupSnapshots,
+    resolveBackupSnapshot,
     inspectProjectBundleFile,
     restoreProjectsFromBundle,
     importProjectFromFile,

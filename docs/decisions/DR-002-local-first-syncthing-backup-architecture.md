@@ -105,8 +105,10 @@ S1.2 (#83) ajoute le dossier choisi explicitement et la gestion des permissions,
 sans modifier IndexedDB ni rendre ce dossier obligatoire. S1.3 (#84) ajoute une
 identité locale non secrète et un instantané JSON versionné à l'emplacement
 `snapshots/<device-id>/latest.json`. Chaque appareil n'écrit que son propre
-fichier ; la détection et le traitement explicites des divergences restent
-affectés à S1.4 (#85).
+fichier. S1.4 (#85) compare ensuite les parents d'instantanés, rend les
+divergences visibles et exige une confirmation explicite avant toute
+restauration remplaçant le portefeuille local. L'import comme copies conserve
+les projets existants ; aucun instantané n'est appliqué automatiquement.
 
 ### Positives
 

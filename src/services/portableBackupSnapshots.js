@@ -50,6 +50,24 @@ export function normalizePortableBackupDevice(value, options = {}) {
       typeof candidate.lastSnapshotId === "string" && candidate.lastSnapshotId.trim()
         ? candidate.lastSnapshotId.trim()
         : null,
+    acknowledgedSnapshotIds: Array.isArray(candidate.acknowledgedSnapshotIds)
+      ? [...new Set(candidate.acknowledgedSnapshotIds.filter((snapshotId) =>
+        typeof snapshotId === "string" && snapshotId.trim()
+      ))].slice(-50)
+      : [],
+  };
+}
+
+export function acknowledgePortableBackupSnapshot(device, snapshotId) {
+  const normalized = normalizePortableBackupDevice(device);
+  if (typeof snapshotId !== "string" || !snapshotId.trim()) return normalized;
+
+  return {
+    ...normalized,
+    acknowledgedSnapshotIds: [
+      ...normalized.acknowledgedSnapshotIds.filter((id) => id !== snapshotId),
+      snapshotId,
+    ].slice(-50),
   };
 }
 
