@@ -6,6 +6,8 @@ import {
   savePersistedSettings,
   loadPersistedUserProfile,
   savePersistedUserProfile,
+  loadPersistedPortableBackupDevice,
+  savePersistedPortableBackupDevice,
 } from "../repositories/storageRepository";
 import { createEmptyProject } from "../services/projectFactory";
 import {
@@ -59,6 +61,7 @@ import {
   SELECTED_FOLDER_BACKUP_PROVIDER_ID,
 } from "../repositories/portableBackup/selectedFolderBackupProvider";
 import { createPortableBackupService } from "../services/portableBackupService";
+import { normalizePortableBackupDevice } from "../services/portableBackupSnapshots";
 
 const selectedFolderBackupProvider = createSelectedFolderBackupProvider();
 const portableBackupService = createPortableBackupService({
@@ -153,6 +156,7 @@ export function useAppStore() {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [userProfile, setUserProfile] = useState(null);
   const [backupFolderStatus, setBackupFolderStatus] = useState(null);
+  const [backupDevice, setBackupDevice] = useState(null);
   const [currentProjectId, setCurrentProjectId] = useState(null);
   const [isHydrated, setIsHydrated] = useState(false);
 
@@ -213,6 +217,24 @@ if (loaded.length > 0) {
 }
 
     hydrateStore();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    loadPersistedPortableBackupDevice()
+      .then((storedDevice) => {
+        if (!isCancelled && storedDevice) {
+          setBackupDevice(normalizePortableBackupDevice(storedDevice));
+        }
+      })
+      .catch((error) => {
+        console.error("Failed to inspect the local backup device", error);
+      });
 
     return () => {
       isCancelled = true;
@@ -936,6 +958,7 @@ if (loaded.length > 0) {
   async function connectBackupFolder() {
     try {
       await selectedFolderBackupProvider.connect();
+      await ensureBackupDevice();
     } finally {
       await refreshBackupFolderStatus();
     }
@@ -961,14 +984,35 @@ if (loaded.length > 0) {
     if (projects.length === 0) return null;
 
     try {
-      const { result } = await portableBackupService.writePortfolioSnapshot(
+      const device = await ensureBackupDevice();
+      const { result, snapshot } = await portableBackupService.writeDevicePortfolioSnapshot(
         SELECTED_FOLDER_BACKUP_PROVIDER_ID,
-        projects
+        projects,
+        {
+          device,
+          parentSnapshotId: device.lastSnapshotId,
+        }
       );
+      const updatedDevice = {
+        ...device,
+        lastSnapshotId: snapshot.snapshotId,
+      };
+      await savePersistedPortableBackupDevice(updatedDevice);
+      setBackupDevice(updatedDevice);
       return result;
     } finally {
       await refreshBackupFolderStatus();
     }
+  }
+
+  async function ensureBackupDevice() {
+    if (backupDevice) return backupDevice;
+
+    const storedDevice = await loadPersistedPortableBackupDevice();
+    const device = normalizePortableBackupDevice(storedDevice);
+    await savePersistedPortableBackupDevice(device);
+    setBackupDevice(device);
+    return device;
   }
 
   function restoreProjectsFromBundle(inspection, conflictStrategy) {
@@ -1040,6 +1084,7 @@ if (loaded.length > 0) {
     settings,
     userProfile,
     backupFolderStatus,
+    backupDevice,
     currentProject,
     currentProjectId,
     createProject,

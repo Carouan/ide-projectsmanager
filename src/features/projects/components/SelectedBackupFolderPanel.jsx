@@ -25,6 +25,7 @@ function translatedError(t, error) {
 export default function SelectedBackupFolderPanel({
   projectCount,
   status,
+  device,
   onConnect,
   onReauthorize,
   onDisconnect,
@@ -49,7 +50,7 @@ export default function SelectedBackupFolderPanel({
         setFeedback({
           kind: "success",
           message: t("settings.backup.folder.saved", {
-            filename: result.filename,
+            filename: result.reference || result.filename,
           }),
         });
       }
@@ -74,6 +75,9 @@ export default function SelectedBackupFolderPanel({
         <strong>{t(`settings.backup.folder.status.${permission}`)}</strong>
         {isConnected && status.folderName && (
           <span>{t("settings.backup.folder.name", { name: status.folderName })}</span>
+        )}
+        {isConnected && device?.label && (
+          <span>{t("settings.backup.folder.device", { label: device.label })}</span>
         )}
         <span>{t(`settings.backup.folder.explanation.${permission}`)}</span>
         {isConnected && (

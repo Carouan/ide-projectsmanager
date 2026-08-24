@@ -5,6 +5,11 @@ import {
 } from "../storageRepository.js";
 import { validateProjectBundle } from "../../services/jsonTransfer.js";
 import {
+  buildPortableBackupDeviceSnapshotReference,
+  isSafePortableBackupDeviceId,
+  validatePortableBackupSnapshot,
+} from "../../services/portableBackupSnapshots.js";
+import {
   PORTABLE_BACKUP_AVAILABILITY,
   PORTABLE_BACKUP_ERROR_CODE,
   PORTABLE_BACKUP_PERMISSION,
@@ -54,6 +59,27 @@ function normalizedPermission(value) {
   return Object.values(PORTABLE_BACKUP_PERMISSION).includes(value)
     ? value
     : PORTABLE_BACKUP_PERMISSION.UNKNOWN;
+}
+
+async function writeJsonFile(fileHandle, value) {
+  const writable = await fileHandle.createWritable();
+
+  try {
+    await writable.write(`${JSON.stringify(value, null, 2)}\n`);
+    await writable.close();
+  } catch (error) {
+    await writable.abort?.().catch(() => {});
+    throw error;
+  }
+}
+
+function snapshotFileMetadata(file, overrides = {}) {
+  return {
+    modifiedAt: Number.isFinite(file.lastModified)
+      ? new Date(file.lastModified).toISOString()
+      : null,
+    ...overrides,
+  };
 }
 
 export function createSelectedFolderBackupProvider(options = {}) {
@@ -207,19 +233,42 @@ export function createSelectedFolderBackupProvider(options = {}) {
 
     async writeSnapshot(input = {}) {
       const bundle = validateProjectBundle(input.bundle);
+
+      if (input.snapshot) {
+        const snapshot = validatePortableBackupSnapshot(input.snapshot);
+        const snapshotDirectory = await directoryHandle.getDirectoryHandle(
+          "snapshots",
+          { create: true }
+        );
+        const deviceDirectory = await snapshotDirectory.getDirectoryHandle(
+          snapshot.device.id,
+          { create: true }
+        );
+        const fileHandle = await deviceDirectory.getFileHandle("latest.json", {
+          create: true,
+        });
+
+        await writeJsonFile(fileHandle, snapshot);
+
+        return {
+          providerId: SELECTED_FOLDER_BACKUP_PROVIDER_ID,
+          filename: "latest.json",
+          reference: buildPortableBackupDeviceSnapshotReference(snapshot.device.id),
+          snapshotId: snapshot.snapshotId,
+          deviceId: snapshot.device.id,
+          deviceLabel: snapshot.device.label,
+          parentSnapshotId: snapshot.parentSnapshotId,
+          createdAt: snapshot.createdAt,
+          projectCount: bundle.projectCount,
+          exportedAt: bundle.exportedAt,
+        };
+      }
+
       const filename = safeSnapshotFilename(input.filename, bundle);
       const fileHandle = await directoryHandle.getFileHandle(filename, {
         create: true,
       });
-      const writable = await fileHandle.createWritable();
-
-      try {
-        await writable.write(`${JSON.stringify(bundle, null, 2)}\n`);
-        await writable.close();
-      } catch (error) {
-        await writable.abort?.().catch(() => {});
-        throw error;
-      }
+      await writeJsonFile(fileHandle, bundle);
 
       return {
         providerId: SELECTED_FOLDER_BACKUP_PROVIDER_ID,
@@ -235,17 +284,67 @@ export function createSelectedFolderBackupProvider(options = {}) {
       for await (const [name, handle] of directoryHandle.entries()) {
         if (handle.kind !== "file" || !name.endsWith(".json")) continue;
         const file = await handle.getFile();
-        snapshots.push({
+        snapshots.push(snapshotFileMetadata(file, {
           reference: name,
           filename: name,
-          modifiedAt: Number.isFinite(file.lastModified)
-            ? new Date(file.lastModified).toISOString()
-            : null,
-        });
+        }));
+      }
+
+      if (typeof directoryHandle.getDirectoryHandle === "function") {
+        let snapshotDirectory = null;
+
+        try {
+          snapshotDirectory = await directoryHandle.getDirectoryHandle("snapshots");
+        } catch (error) {
+          if (error?.name !== "NotFoundError") throw error;
+        }
+
+        if (snapshotDirectory) {
+          for await (const [deviceId, deviceDirectory] of snapshotDirectory.entries()) {
+            if (
+              deviceDirectory.kind !== "directory" ||
+              !isSafePortableBackupDeviceId(deviceId)
+            ) continue;
+
+            let fileHandle;
+            try {
+              fileHandle = await deviceDirectory.getFileHandle("latest.json");
+            } catch (error) {
+              if (error?.name === "NotFoundError") continue;
+              throw error;
+            }
+
+            const file = await fileHandle.getFile();
+            const snapshot = validatePortableBackupSnapshot(
+              JSON.parse(await file.text())
+            );
+
+            if (snapshot.device.id !== deviceId) {
+              throw new PortableBackupProviderError(
+                PORTABLE_BACKUP_ERROR_CODE.INVALID_SNAPSHOT,
+                "The snapshot device does not match its own directory.",
+                { providerId: SELECTED_FOLDER_BACKUP_PROVIDER_ID }
+              );
+            }
+
+            snapshots.push(snapshotFileMetadata(file, {
+              reference: buildPortableBackupDeviceSnapshotReference(deviceId),
+              filename: "latest.json",
+              snapshotId: snapshot.snapshotId,
+              deviceId,
+              deviceLabel: snapshot.device.label,
+              parentSnapshotId: snapshot.parentSnapshotId,
+              createdAt: snapshot.createdAt,
+              projectCount: snapshot.bundle.projectCount,
+            }));
+          }
+        }
       }
 
       return snapshots.sort((left, right) =>
-        right.filename.localeCompare(left.filename)
+        (right.createdAt || right.filename).localeCompare(
+          left.createdAt || left.filename
+        )
       );
     },
 
@@ -254,20 +353,59 @@ export function createSelectedFolderBackupProvider(options = {}) {
         ? input
         : input.reference || input.filename;
 
-      if (typeof reference !== "string" || reference.includes("/") || reference.includes("\\")) {
+      const nestedSnapshot = typeof reference === "string"
+        ? /^snapshots\/([a-zA-Z0-9][a-zA-Z0-9_-]{0,127})\/latest\.json$/u.exec(reference)
+        : null;
+
+      if (
+        typeof reference !== "string" ||
+        reference.includes("\\") ||
+        (reference.includes("/") && !nestedSnapshot)
+      ) {
         throw new PortableBackupProviderError(
           PORTABLE_BACKUP_ERROR_CODE.INVALID_SNAPSHOT,
-          "Choose a backup file located directly in the selected folder.",
+          "Choose a JSON backup or a valid device-specific snapshot.",
           { providerId: SELECTED_FOLDER_BACKUP_PROVIDER_ID }
         );
       }
 
-      const handle = await directoryHandle.getFileHandle(reference);
+      let handle;
+
+      if (nestedSnapshot) {
+        const snapshotDirectory = await directoryHandle.getDirectoryHandle("snapshots");
+        const deviceDirectory = await snapshotDirectory.getDirectoryHandle(
+          nestedSnapshot[1]
+        );
+        handle = await deviceDirectory.getFileHandle("latest.json");
+      } else {
+        handle = await directoryHandle.getFileHandle(reference);
+      }
+
       const file = await handle.getFile();
+      const content = JSON.parse(await file.text());
+
+      if (nestedSnapshot) {
+        const snapshot = validatePortableBackupSnapshot(content);
+        if (snapshot.device.id !== nestedSnapshot[1]) {
+          throw new PortableBackupProviderError(
+            PORTABLE_BACKUP_ERROR_CODE.INVALID_SNAPSHOT,
+            "The snapshot device does not match its own directory.",
+            { providerId: SELECTED_FOLDER_BACKUP_PROVIDER_ID }
+          );
+        }
+
+        return {
+          providerId: SELECTED_FOLDER_BACKUP_PROVIDER_ID,
+          reference,
+          snapshot,
+          bundle: snapshot.bundle,
+        };
+      }
+
       return {
         providerId: SELECTED_FOLDER_BACKUP_PROVIDER_ID,
         reference,
-        bundle: JSON.parse(await file.text()),
+        bundle: content,
       };
     },
   });

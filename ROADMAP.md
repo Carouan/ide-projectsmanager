@@ -117,11 +117,11 @@ actuellement à l'étape `v.0.7`.
   - [x] Demander le choix volontaire d'un dossier.
   - [x] Expliquer, mémoriser et renouveler les permissions quand c'est possible.
   - [x] Continuer à fonctionner sans dossier ni installation supplémentaire.
-- [ ] Produire des instantanés sûrs par appareil (#84)
-  - [ ] Créer une identité locale d'appareil non secrète.
-  - [ ] Écrire des sauvegardes distinctes par appareil.
-  - [ ] Versionner et dater les instantanés JSON.
-  - [ ] Éviter les écritures concurrentes dans un fichier partagé.
+- [x] Produire des instantanés sûrs par appareil (#84)
+  - [x] Créer une identité locale d'appareil non secrète.
+  - [x] Écrire des sauvegardes distinctes par appareil.
+  - [x] Versionner et dater les instantanés JSON.
+  - [x] Éviter les écritures concurrentes dans un fichier partagé.
 - [ ] Gérer les restaurations et divergences (#85)
   - [ ] Détecter les sauvegardes inconnues ou plus récentes.
   - [ ] Distinguer un descendant d'un état divergent.

@@ -99,9 +99,14 @@ La première validation vise Chrome/Edge sous Windows, puis Chrome Android sur l
 
 La frontière S1.1 est livrée par #82. Elle définit un contrat indépendant du
 transport, des états explicites de disponibilité et de permission, des erreurs
-normalisées et le téléchargement/import JSON comme repli. Elle ne sélectionne
-encore aucun dossier et ne crée aucune identité d'appareil ni nouvel emballage
-d'instantané ; ces éléments restent affectés aux incréments suivants.
+normalisées et le téléchargement/import JSON comme repli.
+
+S1.2 (#83) ajoute le dossier choisi explicitement et la gestion des permissions,
+sans modifier IndexedDB ni rendre ce dossier obligatoire. S1.3 (#84) ajoute une
+identité locale non secrète et un instantané JSON versionné à l'emplacement
+`snapshots/<device-id>/latest.json`. Chaque appareil n'écrit que son propre
+fichier ; la détection et le traitement explicites des divergences restent
+affectés à S1.4 (#85).
 
 ### Positives
 
