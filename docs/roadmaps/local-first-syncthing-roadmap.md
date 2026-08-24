@@ -150,8 +150,15 @@ Fournir un guide court qui commence par le parcours autonome :
 - [ ] Tester le renouvellement des permissions (#86).
 - [ ] Tester un scénario de divergence ou de conflit (#86).
 - [ ] Tester la désactivation et le retour à l'import/export manuel (#86).
-- [ ] Documenter séparément un transport facultatif, par exemple Syncthing (#86).
+- [x] Documenter séparément un transport facultatif, par exemple Syncthing (#86).
 - [ ] Publier la matrice réelle Chrome/Edge Windows et Chrome Android (#86).
+
+Le [guide de sauvegarde et sa matrice de validation](../portable-backup-user-guide.md)
+documentent le parcours autonome sans installation, le dossier facultatif, les
+permissions, les conflits et le transport externe optionnel. Ils distinguent
+explicitement les scénarios déjà couverts par les tests automatisés des essais
+sur appareils physiques qui restent à réaliser. L'issue #86 demeure ouverte
+tant que ces résultats réels ne sont pas observés.
 
 La validation doit inclure une matrice Chrome/Edge Windows, Chrome Android, un
 navigateur sans File System Access, le parcours sans installation et au moins

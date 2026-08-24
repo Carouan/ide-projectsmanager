@@ -131,5 +131,14 @@ et honnête vaut mieux qu'une réponse artificiellement complète.
 
 L'export **JSON** est le format de sauvegarde machine-lisible à conserver.
 L'export **Markdown** est une vue lisible destinée à la consultation ou au
-partage. Le stockage actif reste local au navigateur tant qu'aucun mécanisme de
-sauvegarde facultatif n'est configuré.
+partage. Le stockage actif reste toujours local au navigateur.
+
+Dans **Paramètres**, télécharger une sauvegarde globale puis la restaurer sur
+un autre appareil ne demande aucun logiciel supplémentaire. Si le navigateur
+le permet, un dossier local facultatif peut également recevoir un instantané
+distinct par appareil. Les sauvegardes externes peuvent être examinées,
+importées comme copies ou restaurées après confirmation explicite.
+
+Le [guide complet des sauvegardes personnelles](portable-backup-user-guide.md)
+détaille le parcours autonome, les permissions, les divergences, le transport
+externe facultatif et les validations sur appareils réels encore attendues.

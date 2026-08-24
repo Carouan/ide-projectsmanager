@@ -133,6 +133,11 @@ travail ; ils ne prétendent pas qu'une release GitHub ou un tag a déjà été 
 - Syncthing ou un autre transport pourra synchroniser ce dossier, sans devenir
   une dépendance de l'application.
 
+Le [guide pratique des sauvegardes personnelles](docs/portable-backup-user-guide.md)
+commence par le parcours autonome sans installation et distingue les tests
+automatisés des validations Windows, Galaxy S23 et transports externes encore
+à réaliser sur des appareils réels.
+
 La décision complète et l'ordre d'implémentation sont documentés dans
 [DR-002](docs/decisions/DR-002-local-first-syncthing-backup-architecture.md),
 [DR-003](docs/decisions/DR-003-stages-workstreams-project-model.md) et la

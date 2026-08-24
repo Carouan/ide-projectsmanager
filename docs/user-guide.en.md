@@ -109,5 +109,14 @@ useful than artificially complete text.
 
 The **JSON** export is the machine-readable backup format to preserve. The
 **Markdown** export is a readable view for consultation or sharing. Active
-storage remains local to the browser until an optional backup mechanism is
-configured.
+storage always remains local to the browser.
+
+In **Settings**, downloading a global backup and restoring it on another device
+requires no additional software. Where the browser supports it, an optional
+selected folder can also hold a separate snapshot for each device. External
+snapshots can be inspected, imported as copies, or restored only after explicit
+confirmation.
+
+The [personal-backup guide and validation matrix](portable-backup-user-guide.md)
+documents standalone use, folder permissions, conflict handling, optional
+external transport, and hardware validation that still requires real devices.
