@@ -18,6 +18,7 @@ import {
 export default function ProjectListScreen({
   projects,
   onCreateProject,
+  onStartGovernedProject,
   onInstallDemoProject,
   onOpenProject,
   onDeleteProject,
@@ -61,6 +62,9 @@ export default function ProjectListScreen({
             <button className="btn btn-secondary" onClick={onOpenSettings}>
               {t("global.actions.settings")}
             </button>
+            <button className="btn btn-secondary" onClick={onStartGovernedProject}>
+              {t("global.actions.governedProject")}
+            </button>
             <button className="btn btn-primary" onClick={onCreateProject}>
               {t("global.actions.newProject")}
             </button>
@@ -95,6 +99,9 @@ export default function ProjectListScreen({
               </button>
               <button className="btn btn-primary" onClick={onCreateProject}>
                 {t("global.actions.newProject")}
+              </button>
+              <button className="btn btn-secondary" onClick={onStartGovernedProject}>
+                {t("global.actions.governedProject")}
               </button>
             </div>
           </div>

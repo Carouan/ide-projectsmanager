@@ -16,6 +16,31 @@ navigateur et organise les informations en plusieurs espaces complémentaires.
 Le bouton **Nouvelle idée** sert à classer une idée apparue pendant un projet.
 Il ne crée pas automatiquement un autre projet et ne remplace pas le guide.
 
+## Préparer un projet gouverné
+
+**+ Nouveau projet** reste le parcours immédiat pour une idée purement locale.
+Choisir **Projet gouverné** lorsqu'un projet doit posséder un mandat explicite
+et un dépôt GitHub canonique compatible avec Project Steward :
+
+1. Renseigner le nom, l'objectif, le contexte et le dépôt prévu sous la forme
+   `propriétaire/dépôt` ou avec son URL GitHub HTTPS.
+2. Ajouter au moins un livrable et un critère de réussite mesurable, un par
+   ligne ; compléter si utile le périmètre inclus, exclu et les contraintes.
+3. Vérifier la visibilité déclarée, privée par défaut, puis ouvrir chaque
+   fichier dans **Fichiers prêts à relire**.
+4. Télécharger les fichiers individuellement ou exporter le paquet JSON
+   versionné avant toute publication.
+5. Choisir **Créer le projet local gouverné** pour ouvrir le projet ; les cinq
+   documents restent accessibles dans **Pièces jointes**.
+
+Les fichiers préparés sont `PROJECT_MANDATE.md`, `PROJECT_CONTEXT.md`,
+`PROJECT_STATUS.md`, `.project-steward.yml` et `README.md`. Le même identifiant
+stable figure dans le projet, le manifeste et le lien de dépôt.
+
+Aucun dépôt n'est créé ni modifié automatiquement. La visibilité est déclarative
+et l'existence réelle du dépôt reste à vérifier. **Annuler** revient au tableau
+de bord sans créer de projet.
+
 ## Organiser le tableau de bord
 
 La zone **À votre attention** conserve une vue globale des décisions,

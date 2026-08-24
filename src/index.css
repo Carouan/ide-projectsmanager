@@ -2301,7 +2301,82 @@ select:focus {
   margin: 14px 0;
 }
 
+.governed-bootstrap-navigation {
+  margin-bottom: 24px;
+}
+
+.governed-bootstrap-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.85fr);
+  align-items: start;
+  gap: 20px;
+}
+
+.governed-bootstrap-form,
+.governed-package-preview,
+.governed-package-files,
+.governed-package-identity {
+  display: grid;
+  gap: 15px;
+}
+
+.governed-bootstrap-form .panel-header h2,
+.governed-package-preview h2,
+.governed-package-preview > p {
+  margin: 0;
+}
+
+.governed-bootstrap-form .field small,
+.governed-package-identity dt {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.governed-bootstrap-actions {
+  margin-top: 8px;
+}
+
+.governed-no-remote {
+  border: 1px solid rgba(167, 139, 250, 0.42);
+  border-radius: 12px;
+  padding: 12px;
+  background: rgba(124, 58, 237, 0.11);
+}
+
+.governed-package-identity {
+  margin: 0;
+}
+
+.governed-package-identity dd {
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.governed-file-preview {
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  padding: 12px;
+  background: var(--bg-soft);
+}
+
+.governed-file-preview summary {
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+
+.governed-file-preview pre {
+  max-height: 280px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 0.78rem;
+}
+
 @media (max-width: 760px) {
+  .governed-bootstrap-layout {
+    grid-template-columns: 1fr;
+  }
+
   .workstream-summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

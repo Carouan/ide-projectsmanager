@@ -17,6 +17,31 @@ The **New idea** button classifies an idea that appears during a project. It
 does not automatically create a separate project and does not replace this
 guide.
 
+## Prepare a governed project
+
+**+ New project** remains the immediate path for a purely local idea. Choose
+**Governed project** when a project needs an explicit mandate and a canonical
+GitHub repository compatible with Project Steward:
+
+1. Enter the project name, objective, context, and intended repository as
+   `owner/repository` or its HTTPS GitHub URL.
+2. Add at least one deliverable and one measurable success criterion, one per
+   line; optionally describe included scope, exclusions, and constraints.
+3. Verify declared visibility, which defaults to private, then inspect every
+   document under **Files ready for review**.
+4. Download individual files or export the versioned JSON package before any
+   publication.
+5. Select **Create local governed project** to open the project; all five files
+   remain available under **Attachments**.
+
+The prepared files are `PROJECT_MANDATE.md`, `PROJECT_CONTEXT.md`,
+`PROJECT_STATUS.md`, `.project-steward.yml`, and `README.md`. One stable
+identifier connects the local project, manifest, and declared repository.
+
+No repository is created, modified, or published automatically. Visibility is
+only declared, and actual repository existence remains unverified. **Cancel**
+returns to the dashboard without creating a local project.
+
 ## Organize the dashboard
 
 **Needs your attention** remains a global view of decisions, validations, and
