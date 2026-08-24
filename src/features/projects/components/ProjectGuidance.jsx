@@ -4,7 +4,10 @@ import {
   getStageGuidanceKeys,
   getUserGuideUrl,
 } from "../../../constants/guidance.js";
-import { getStageDefinition } from "../../../constants/stages.js";
+import {
+  formatStageLabel,
+  getStageDefinition,
+} from "../../../constants/stages.js";
 import { useI18n } from "../../../i18n/useI18n";
 
 function GuideLink() {
@@ -60,7 +63,7 @@ export function StageGuidance({ stageKey }) {
       <summary>
         <strong>
           {t("guidance.stage.title", {
-            version: definition.shortTitle,
+            version: formatStageLabel(definition.key),
           })}
         </strong>
         <span>{t("guidance.stage.summary")}</span>

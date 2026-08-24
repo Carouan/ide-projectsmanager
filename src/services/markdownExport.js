@@ -1,3 +1,5 @@
+import { formatStageLabel } from "../constants/stages.js";
+
 function escapeLine(value) {
   return String(value ?? "").trim();
 }
@@ -19,7 +21,9 @@ export function projectToMarkdown(projectDoc) {
   lines.push("## Métadonnées");
   lines.push("");
   lines.push(`- Statut : ${escapeLine(project.status)}`);
-  lines.push(`- Étape actuelle : ${escapeLine(project.currentStage)}`);
+  lines.push(
+    `- Étape actuelle : ${escapeLine(formatStageLabel(project.currentStage))}`
+  );
   lines.push(`- Propriétaire : ${escapeLine(project.ownerId || "-")}`);
   lines.push(`- Créé le : ${escapeLine(project.createdAt)}`);
   lines.push(`- Dernière mise à jour : ${escapeLine(project.updatedAt)}`);
@@ -36,9 +40,10 @@ export function projectToMarkdown(projectDoc) {
   lines.push("");
 
   Object.entries(stages || {}).forEach(([stageKey, stage]) => {
-    lines.push(`### ${escapeLine(stage.version)} — ${escapeLine(stage.title)}`);
+    lines.push(
+      `### ${escapeLine(formatStageLabel(stageKey || stage.version))} — ${escapeLine(stage.title)}`
+    );
     lines.push("");
-    lines.push(`- Clé : ${stageKey}`);
     lines.push(`- Statut : ${escapeLine(stage.status)}`);
     lines.push("");
 
@@ -85,7 +90,9 @@ export function projectToMarkdown(projectDoc) {
       lines.push(`- Type : ${escapeLine(item.type)}`);
       lines.push(`- Priorité : ${escapeLine(item.priority)}`);
       lines.push(`- Source : ${escapeLine(item.source)}`);
-      lines.push(`- Étape liée : ${escapeLine(item.relatedStage)}`);
+      lines.push(
+        `- Étape liée : ${escapeLine(formatStageLabel(item.relatedStage))}`
+      );
       lines.push("");
       if (escapeLine(item.description)) {
         lines.push(escapeLine(item.description));
@@ -105,7 +112,7 @@ export function projectToMarkdown(projectDoc) {
       lines.push(`### ${escapeLine(entry.title || entry.type || "Entrée")}`);
       lines.push("");
       lines.push(`- Type : ${escapeLine(entry.type)}`);
-      lines.push(`- Étape : ${escapeLine(entry.stage)}`);
+      lines.push(`- Étape : ${escapeLine(formatStageLabel(entry.stage))}`);
       lines.push(`- Date : ${escapeLine(entry.createdAt)}`);
       lines.push("");
       lines.push(escapeLine(entry.content));
