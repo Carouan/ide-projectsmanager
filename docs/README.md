@@ -25,6 +25,7 @@ La wiki GitHub pourra éventuellement servir plus tard comme **miroir simplifié
 
 - [Roadmap produit canonique et mesurable](../ROADMAP.md)
 - [Guide utilisateur](user-guide.md) ([English](user-guide.en.md))
+- [Guide de sauvegarde autonome, dossier facultatif et matrice réelle](portable-backup-user-guide.md)
 - [A1 — Historique, cadrage et roadmap](project/a1-history-roadmap.md)
 - [A2 — Complétion méthodologique](project/a2-methodological-completion.md)
 - [B1 — Référence technique](project/b1-technical-reference.md)

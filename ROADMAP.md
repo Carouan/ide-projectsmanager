@@ -131,8 +131,8 @@ actuellement à l'étape `v.0.7`.
   - [ ] Vérifier Chrome/Edge sous Windows.
   - [ ] Vérifier Chrome Android sur les appareils réellement visés.
   - [ ] Vérifier un navigateur sans accès facultatif au dossier.
-  - [ ] Documenter un parcours autonome sans logiciel complémentaire.
-  - [ ] Documenter Syncthing comme transport externe facultatif.
+  - [x] Documenter un parcours autonome sans logiciel complémentaire.
+  - [x] Documenter Syncthing comme transport externe facultatif.
 
 ## Release D — cible `0.4.0` — Gouvernance avancée des projets liés
 
