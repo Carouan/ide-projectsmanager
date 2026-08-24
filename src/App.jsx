@@ -119,7 +119,11 @@ export default function App() {
 
   const rightPanel =
     view === "project" && settings?.markdownPreviewEnabled ? (
-      <MarkdownPreview content={projectToMarkdown(currentProject)} />
+      <MarkdownPreview
+        content={projectToMarkdown(currentProject, {
+          locale: settings?.language,
+        })}
+      />
     ) : null;
 
   return (

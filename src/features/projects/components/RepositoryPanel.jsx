@@ -1,4 +1,5 @@
 import { useI18n } from "../../../i18n/useI18n";
+import { formatDateTime } from "../../../services/dateTimePresentation";
 import { useRepositorySnapshot } from "../hooks/useRepositorySnapshot.js";
 import {
   REPOSITORY_ATTENTION,
@@ -15,16 +16,6 @@ const ATTENTION_LEVELS = [
   REPOSITORY_ATTENTION.BLOCKING_QUESTION,
 ];
 
-function formatDate(value, locale) {
-  const date = new Date(value || "");
-  if (Number.isNaN(date.getTime())) return null;
-
-  return new Intl.DateTimeFormat(locale === "fr" ? "fr-BE" : "en-GB", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
-}
-
 function formatCacheAge(ageMs, t) {
   if (!Number.isFinite(ageMs)) return t("repository.freshness.unknown");
   if (ageMs < 60_000) return t("repository.freshness.now");
@@ -35,7 +26,7 @@ function formatCacheAge(ageMs, t) {
 
 function StateMessage({ state, result, onRefresh }) {
   const { t, locale } = useI18n();
-  const retryAt = formatDate(result?.error?.retryAt, locale);
+  const retryAt = formatDateTime(result?.error?.retryAt, locale);
 
   return (
     <section className="panel repository-panel" aria-live="polite">
@@ -86,8 +77,8 @@ export default function RepositoryPanel({ projectDoc }) {
   const attention = summarizeRepositoryAttention(pullRequests);
   const isStale = panelState === "stale";
   const cacheAge = formatCacheAge(result.cache?.ageMs, t);
-  const lastActivity = formatDate(snapshot.lastActivityAt, locale);
-  const fetchedAt = formatDate(result.cache?.fetchedAt, locale);
+  const lastActivity = formatDateTime(snapshot.lastActivityAt, locale);
+  const fetchedAt = formatDateTime(result.cache?.fetchedAt, locale);
 
   return (
     <section className="panel repository-panel" aria-live="polite">

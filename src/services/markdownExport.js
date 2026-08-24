@@ -1,15 +1,23 @@
 import { formatStageLabel } from "../constants/stages.js";
+import {
+  formatCalendarDate,
+  formatDateTime,
+} from "./dateTimePresentation.js";
 
 function escapeLine(value) {
   return String(value ?? "").trim();
 }
 
-export function projectToMarkdown(projectDoc) {
+export function projectToMarkdown(projectDoc, options = {}) {
   if (!projectDoc || !projectDoc.project) {
     return "# Projet invalide";
   }
 
   const { project, stages, backlog, journal, decisions } = projectDoc;
+  const locale = options.locale || "fr";
+  const presentDateTime = (value) => formatDateTime(value, locale, options) || "-";
+  const presentCalendarDate = (value) =>
+    formatCalendarDate(value, locale, options) || "-";
 
   const lines = [];
 
@@ -25,8 +33,10 @@ export function projectToMarkdown(projectDoc) {
     `- Étape actuelle : ${escapeLine(formatStageLabel(project.currentStage))}`
   );
   lines.push(`- Propriétaire : ${escapeLine(project.ownerId || "-")}`);
-  lines.push(`- Créé le : ${escapeLine(project.createdAt)}`);
-  lines.push(`- Dernière mise à jour : ${escapeLine(project.updatedAt)}`);
+  lines.push(`- Créé le : ${escapeLine(presentDateTime(project.createdAt))}`);
+  lines.push(
+    `- Dernière mise à jour : ${escapeLine(presentDateTime(project.updatedAt))}`
+  );
   lines.push("");
 
   if (escapeLine(project.description)) {
@@ -113,7 +123,7 @@ export function projectToMarkdown(projectDoc) {
       lines.push("");
       lines.push(`- Type : ${escapeLine(entry.type)}`);
       lines.push(`- Étape : ${escapeLine(formatStageLabel(entry.stage))}`);
-      lines.push(`- Date : ${escapeLine(entry.createdAt)}`);
+      lines.push(`- Date : ${escapeLine(presentDateTime(entry.createdAt))}`);
       lines.push("");
       lines.push(escapeLine(entry.content));
       lines.push("");
@@ -130,7 +140,7 @@ export function projectToMarkdown(projectDoc) {
     decisions.forEach((decision) => {
       lines.push(`### ${escapeLine(decision.title)}`);
       lines.push("");
-      lines.push(`- Date : ${escapeLine(decision.date)}`);
+      lines.push(`- Date : ${escapeLine(presentCalendarDate(decision.date))}`);
       lines.push(`- Statut : ${escapeLine(decision.status)}`);
       lines.push("");
       lines.push(`**Contexte**`);

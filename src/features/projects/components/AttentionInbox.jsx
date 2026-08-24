@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useI18n } from "../../../i18n/useI18n";
+import { formatDateTime } from "../../../services/dateTimePresentation";
 import { useAttentionInbox } from "../hooks/useAttentionInbox.js";
 import {
   ATTENTION_FILTER,
@@ -15,16 +16,6 @@ const FILTERS = [
   ATTENTION_FILTER.VALIDATION_REQUIRED,
   ATTENTION_FILTER.INFORMATION,
 ];
-
-function formatDate(value, locale) {
-  const date = new Date(value || "");
-  if (Number.isNaN(date.getTime())) return null;
-
-  return new Intl.DateTimeFormat(locale === "fr" ? "fr-BE" : "en-GB", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
-}
 
 function filterTranslationKey(filter) {
   return filter === ATTENTION_FILTER.ALL
@@ -49,7 +40,7 @@ export default function AttentionInbox({ projects, onOpenProject }) {
   const linkedProjectCount = projects.filter(
     (projectDoc) => projectDoc?.repository
   ).length;
-  const lastRefresh = formatDate(refreshedAt, locale);
+  const lastRefresh = formatDateTime(refreshedAt, locale);
 
   return (
     <section className="attention-inbox" aria-labelledby="attention-inbox-title">

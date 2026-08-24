@@ -813,7 +813,9 @@ if (loaded.length > 0) {
 
     const slug = project.project.slug || project.project.title || "project";
     const safeSlug = slug.toLowerCase().replace(/\s+/g, "-");
-    const markdown = projectToMarkdown(project);
+    const markdown = projectToMarkdown(project, {
+      locale: settings?.language,
+    });
 
     downloadMarkdownFile(`${safeSlug}.md`, markdown);
   }

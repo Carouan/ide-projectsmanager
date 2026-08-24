@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { ATTACHMENT_TYPES } from "../services/attachments";
 import { useI18n } from "../i18n/useI18n";
+import { formatDateTime } from "../services/dateTimePresentation";
 
 const DEFAULT_FORM = {
   type: "note",
@@ -18,7 +19,7 @@ export default function AttachmentsPanel({
   onUpdateAttachment,
   onRemoveAttachment,
 }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [form, setForm] = useState(DEFAULT_FORM);
   const [editingId, setEditingId] = useState(null);
 
@@ -181,9 +182,8 @@ export default function AttachmentsPanel({
                   <p className="muted">
                     {t("attachments.item.type", { type: attachment.type })}
                     {" · "}
-                    {attachment.createdAt
-                      ? new Date(attachment.createdAt).toLocaleString()
-                      : t("attachments.item.unknownDate")}
+                    {formatDateTime(attachment.createdAt, locale) ||
+                      t("attachments.item.unknownDate")}
                   </p>
                 </div>
                 <span className="badge">{attachment.type}</span>
