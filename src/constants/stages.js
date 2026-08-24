@@ -110,3 +110,19 @@ export function ensureProjectStages(projectDoc) {
 export function getStageDefinition(stageKey) {
   return STAGE_DEFINITIONS.find((stage) => stage.key === stageKey) ?? null;
 }
+
+export function formatStageLabel(value) {
+  if (typeof value !== "string") return "";
+
+  const label = value.trim();
+  if (!label) return "";
+
+  const definition = STAGE_DEFINITIONS.find(
+    (stage) =>
+      stage.key === label ||
+      stage.version === label ||
+      stage.shortTitle === label
+  );
+
+  return definition?.version ?? label;
+}

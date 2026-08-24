@@ -20,7 +20,7 @@ import {
   projectToMarkdown,
   downloadMarkdownFile,
 } from "../services/markdownExport";
-import { ensureProjectStages } from "../constants/stages";
+import { ensureProjectStages, formatStageLabel } from "../constants/stages";
 import { BACKLOG_STATUS, normalizeBacklogStatus } from "../constants/backlog";
 import { DEFAULT_SETTINGS } from "../constants/settings";
 import {
@@ -685,9 +685,9 @@ if (loaded.length > 0) {
         decision: "Décision architecturale à évaluer / arbitrer",
         consequences: [
           sourceStageKey
-            ? `Idée capturée depuis l'étape ${sourceStageKey}`
+            ? `Idée capturée depuis l'étape ${formatStageLabel(sourceStageKey)}`
             : "Idée capturée sans étape source explicite",
-          "Repositionnement du projet vers v0.3",
+          `Repositionnement du projet vers ${formatStageLabel("v0_3")}`,
         ],
         stage: sourceStageKey || "v0_3",
       });
@@ -712,12 +712,12 @@ if (loaded.length > 0) {
       addDecision(projectId, {
         title: ideaTitle,
         context: ideaContent || "Le besoin initial doit être redéfini.",
-        decision: "Retour en v0.0 pour recadrage du besoin",
+        decision: `Retour en ${formatStageLabel("v0_0")} pour recadrage du besoin`,
         consequences: [
           sourceStageKey
-            ? `Idée capturée depuis l'étape ${sourceStageKey}`
+            ? `Idée capturée depuis l'étape ${formatStageLabel(sourceStageKey)}`
             : "Idée capturée sans étape source explicite",
-          "Repositionnement du projet vers v0.0",
+          `Repositionnement du projet vers ${formatStageLabel("v0_0")}`,
         ],
         stage: sourceStageKey || "v0_0",
       });

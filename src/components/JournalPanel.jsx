@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { STAGE_DEFINITIONS } from "../constants/stages";
+import { formatStageLabel, STAGE_DEFINITIONS } from "../constants/stages";
 import { useI18n } from "../i18n/useI18n";
 
 export default function JournalPanel({
@@ -68,7 +68,7 @@ export default function JournalPanel({
           <select value={stage} onChange={(e) => setStage(e.target.value)}>
             {STAGE_DEFINITIONS.map((stageDefinition) => (
               <option key={stageDefinition.key} value={stageDefinition.key}>
-                {stageDefinition.shortTitle}
+                {formatStageLabel(stageDefinition.key)}
               </option>
             ))}
           </select>
@@ -120,7 +120,7 @@ export default function JournalPanel({
                 <div>
                   <h3>{entry.title}</h3>
                   <p className="muted">
-                    {entry.type} · {entry.stage} ·{" "}
+                    {entry.type} · {formatStageLabel(entry.stage)} ·{" "}
                     {entry.createdAt
                       ? new Date(entry.createdAt).toLocaleString()
                       : t("journal.item.unknownDate")}

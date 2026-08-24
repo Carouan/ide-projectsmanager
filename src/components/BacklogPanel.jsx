@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BACKLOG_STATUS } from "../constants/backlog";
+import { formatStageLabel } from "../constants/stages";
 import { useI18n } from "../i18n/useI18n";
 
 export default function BacklogPanel({
@@ -86,6 +87,13 @@ export default function BacklogPanel({
                 <span>{t("backlog.item.type", { type: item.type })}</span>
                 <span>{t("backlog.item.priority", { priority: item.priority })}</span>
                 <span>{t("backlog.item.source", { source: item.source })}</span>
+                {item.relatedStage && (
+                  <span>
+                    {t("backlog.item.stage", {
+                      stage: formatStageLabel(item.relatedStage),
+                    })}
+                  </span>
+                )}
               </div>
 
               <div className="project-actions">

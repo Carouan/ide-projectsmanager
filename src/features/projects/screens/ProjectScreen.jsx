@@ -8,7 +8,7 @@ import DecisionTreeModal from "../../../components/DecisionTreeModal";
 import SyncStatusBadge from "../components/SyncStatusBadge";
 import RepositoryPanel from "../components/RepositoryPanel";
 import { ProjectStartGuide } from "../components/ProjectGuidance";
-import { getStageDefinition } from "../../../constants/stages";
+import { formatStageLabel, getStageDefinition } from "../../../constants/stages";
 import { useI18n } from "../../../i18n/useI18n";
 import {
   getNextStageDefinition,
@@ -124,7 +124,7 @@ export default function ProjectScreen({
 
           <div className="topbar-meta">
             <span className="badge">
-              {currentStageDefinition?.version || project.currentStage}
+              {formatStageLabel(currentStageKey)}
             </span>
             <SyncStatusBadge projectDoc={projectDoc} />
             <span className="muted">
@@ -272,7 +272,7 @@ export default function ProjectScreen({
                   <h2>{t("project.stage.navigation")}</h2>
                   <p className="muted">
                     {t("project.stage.active", {
-                      version: currentStageDefinition?.version,
+                      version: formatStageLabel(currentStageKey),
                       title: currentStageDefinition?.title,
                     })}
                   </p>
@@ -300,7 +300,7 @@ export default function ProjectScreen({
                       }
                     >
                       {t("project.stage.next", {
-                        version: nextStageDefinition.shortTitle,
+                        version: formatStageLabel(nextStageDefinition.key),
                       })}
                     </button>
                   )}
@@ -323,7 +323,7 @@ export default function ProjectScreen({
                       onClick={() => onSetCurrentStage(project.id, stageDef.key)}
                     >
                       <span className="stage-pill-version">
-                        {stageDef.shortTitle}
+                        {formatStageLabel(stageDef.key)}
                       </span>
                       <span className="stage-pill-title">{stageDef.title}</span>
                       <span className="stage-pill-status">

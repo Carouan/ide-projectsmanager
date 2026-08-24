@@ -1,4 +1,5 @@
 import { useI18n } from "../i18n/useI18n";
+import { formatStageLabel } from "../constants/stages";
 import { StageGuidance } from "../features/projects/components/ProjectGuidance";
 
 const STAGE_STATUS_OPTIONS = ["todo", "in_progress", "blocked", "done"];
@@ -26,11 +27,8 @@ export default function StageEditor({
       <div className="panel-header">
         <div>
           <h2>
-            {stage.version} — {stage.title}
+            {formatStageLabel(stageKey || stage.version)} — {stage.title}
           </h2>
-          <p className="muted">
-            {t("project.stage.technicalKey", { key: stageKey })}
-          </p>
         </div>
       </div>
 

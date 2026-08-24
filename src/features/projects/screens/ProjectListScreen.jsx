@@ -1,4 +1,5 @@
 import { useI18n } from "../../../i18n/useI18n";
+import { formatStageLabel } from "../../../constants/stages";
 import AttentionInbox from "../components/AttentionInbox";
 
 export default function ProjectListScreen({
@@ -64,7 +65,9 @@ export default function ProjectListScreen({
                     <h3>{p.project.title}</h3>
                     <p className="muted">{p.project.summary}</p>
                   </div>
-                  <span className="badge">{p.project.currentStage}</span>
+                  <span className="badge">
+                    {formatStageLabel(p.project.currentStage)}
+                  </span>
                 </div>
 
                 <div className="project-meta">

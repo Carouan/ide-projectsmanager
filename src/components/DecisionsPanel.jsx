@@ -1,4 +1,5 @@
 import { useI18n } from "../i18n/useI18n";
+import { formatStageLabel } from "../constants/stages";
 
 export default function DecisionsPanel({
   decisions = [],
@@ -31,7 +32,9 @@ export default function DecisionsPanel({
                   <p className="muted">
                     {t("decisions.item.date", { date: decision.date })}
                     {decision.stage
-                      ? ` • ${t("decisions.item.stage", { stage: decision.stage })}`
+                      ? ` • ${t("decisions.item.stage", {
+                          stage: formatStageLabel(decision.stage),
+                        })}`
                       : ""}
                   </p>
                 </div>
