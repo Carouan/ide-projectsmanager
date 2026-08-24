@@ -41,6 +41,28 @@ Aucun dépôt n'est créé ni modifié automatiquement. La visibilité est décl
 et l'existence réelle du dépôt reste à vérifier. **Annuler** revient au tableau
 de bord sans créer de projet.
 
+## Consulter un dépôt GitHub privé
+
+Un projet lié à un dépôt public ne demande aucun jeton. Pour un dépôt déclaré
+privé, ouvrir **Paramètres → Accès GitHub privé** :
+
+1. Utiliser **Configurer un jeton fine-grained sur GitHub** et choisir
+   explicitement les dépôts autorisés avec une expiration courte.
+2. Sélectionner `Metadata`, `Contents` et `Pull requests` en **lecture seule** ;
+   ajouter `Commit statuses` en lecture seule uniquement si nécessaire.
+3. Saisir ce jeton dans le champ masqué et choisir **Autoriser la lecture pour
+   cette session**.
+4. Revenir au projet ou au tableau de bord : la roadmap, les pull requests et
+   les validations disponibles apparaissent sans modifier le dépôt.
+5. Choisir **Déconnecter et effacer le cache privé** à la fin, puis supprimer
+   aussi le jeton dans GitHub pour le révoquer définitivement.
+
+Le jeton et les snapshots privés ne sont conservés que dans la mémoire de
+l'onglet. Ils ne figurent jamais dans les projets, IndexedDB, sauvegardes,
+exports ou journaux. Un rechargement, une déconnexion ou une expiration GitHub
+les supprime. Le mode local et les dépôts publics ne nécessitent jamais cette
+autorisation. Ne partage jamais ce jeton dans une conversation ou une capture.
+
 ## Organiser le tableau de bord
 
 La zone **À votre attention** conserve une vue globale des décisions,

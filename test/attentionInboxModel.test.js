@@ -181,6 +181,29 @@ test("repository failures remain explicit rather than appearing healthy", () => 
   assert.equal(item.stale, true);
 });
 
+test("private authorization requirements appear as honest warnings, not fabricated project blockers", () => {
+  const projectDoc = project({
+    repository: {
+      provider: "github",
+      fullName: "Carouan/private-project",
+      visibility: "private",
+    },
+  });
+
+  for (const [code, reason] of [
+    ["authorization_required", "repository_authorization_required"],
+    ["authorization_expired", "repository_authorization_expired"],
+  ]) {
+    const [item] = deriveAttentionItems([projectDoc], {
+      "project-1": { status: "unauthorized", snapshot: null, error: { code } },
+    });
+
+    assert.equal(item.category, "information");
+    assert.equal(item.severity, ATTENTION_SEVERITY.WARNING);
+    assert.equal(item.reason, reason);
+  }
+});
+
 test("project staleness is surfaced only when explicitly declared", () => {
   assert.equal(deriveAttentionItems([project()]).length, 0);
 

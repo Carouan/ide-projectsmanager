@@ -23,6 +23,7 @@ des exports JSON et Markdown.
 - interface française et anglaise
 - PWA installable
 - lien facultatif vers un dépôt GitHub public, lu sans jeton ni écriture
+- lecture facultative des dépôts GitHub privés avec autorisation fine-grained de session
 - suivi des pull requests, de la santé du dépôt et des validations humaines
 - inbox globale des décisions, blocages et validations réellement requis
 - avancement explicable : valeur manuelle, roadmap mesurable ou étape du projet
@@ -116,6 +117,34 @@ jamais copiée dans l'application.
 création effective du dépôt et la publication des fichiers nécessitent une
 action humaine distincte. Annuler ce parcours ne crée aucun projet local.
 
+## Lire un dépôt GitHub privé
+
+**Paramètres → Accès GitHub privé** active, si nécessaire, la lecture des dépôts
+déclarés privés ou internes dans les projets liés. L'accès public et les projets
+locaux restent disponibles sans autorisation.
+
+1. Créer dans GitHub un jeton personnel **fine-grained**, limité aux dépôts
+   choisis, avec expiration courte.
+2. Accorder uniquement `Metadata: Read-only`, `Contents: Read-only` et
+   `Pull requests: Read-only` ; `Commit statuses: Read-only` est facultatif.
+3. Coller le jeton dans le champ masqué de l'application et choisir
+   **Autoriser la lecture pour cette session**.
+4. Ouvrir le projet privé ou revenir au tableau de bord pour lire sa roadmap et
+   ses demandes de validation.
+5. Choisir **Déconnecter et effacer le cache privé** lorsque l'accès n'est plus
+   nécessaire ; supprimer également le jeton sur GitHub pour le révoquer.
+
+Le jeton reste exclusivement dans la mémoire de l'onglet et n'est envoyé que
+vers `https://api.github.com/repos/…` par des requêtes `GET`. Il n'apparaît ni
+dans IndexedDB, ni dans les projets, sauvegardes, exports, journaux ou build.
+Les snapshots privés sont eux aussi limités à la mémoire de session. Recharger
+la page, se déconnecter ou recevoir une réponse `401` efface l'autorisation et
+ces snapshots. Les dépôts publics ne reçoivent jamais le jeton.
+
+Les compromis, permissions minimales, limites XSS/appareil compromis et modèles
+écartés sont décrits dans
+[DR-005](docs/decisions/DR-005-private-github-session-read-access.md).
+
 ## Roadmap mesurable et releases
 
 - [x] Cible `0.1.0` : socle local-first, PWA, projets, exports et restauration.
@@ -127,6 +156,8 @@ action humaine distincte. Annuler ce parcours ne crée aucun projet local.
 Les objectifs détaillés, leurs cases vérifiables et leurs issues associées sont
 dans la [roadmap produit canonique](ROADMAP.md). Ces jalons organisent le
 travail ; ils ne prétendent pas qu'une release GitHub ou un tag a déjà été créé.
+Les fonctionnalités de gouvernance prévues pour `0.4.0` sont implémentées,
+mais la validation réelle Windows/Android de `0.3.0` reste distincte et ouverte.
 
 ## Données et sauvegarde
 

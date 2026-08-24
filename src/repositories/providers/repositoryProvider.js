@@ -3,6 +3,7 @@ export const REPOSITORY_SNAPSHOT_STATUS = Object.freeze({
   FRESH: "fresh",
   STALE: "stale",
   OFFLINE: "offline",
+  UNAUTHORIZED: "unauthorized",
   ERROR: "error",
   UNSUPPORTED: "unsupported",
 });

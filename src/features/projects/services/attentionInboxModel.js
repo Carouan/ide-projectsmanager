@@ -131,17 +131,27 @@ function deriveRepositoryAttention(projectDoc, repositoryResult) {
   const snapshot = repositoryResult.snapshot;
 
   if (!snapshot) {
+    const authorizationRequired =
+      repositoryResult.status === "unauthorized" ||
+      ["authorization_required", "authorization_expired"].includes(
+        repositoryResult.error?.code
+      );
+
     items.push(
       buildProjectItem(projectDoc, {
         id: `repository-unavailable:${projectDoc.project.id}`,
         category: REPOSITORY_ATTENTION.INFORMATION,
         severity:
-          repositoryResult.status === "unsupported"
+          repositoryResult.status === "unsupported" || authorizationRequired
             ? ATTENTION_SEVERITY.WARNING
             : ATTENTION_SEVERITY.CRITICAL,
         source: "repository",
         reason:
-          repositoryResult.error?.code === "rate_limited"
+          authorizationRequired
+            ? repositoryResult.error?.code === "authorization_expired"
+              ? "repository_authorization_expired"
+              : "repository_authorization_required"
+            : repositoryResult.error?.code === "rate_limited"
             ? "repository_rate_limited"
             : repositoryResult.status === "offline"
               ? "repository_offline"

@@ -467,6 +467,58 @@ h3 {
   gap: 18px;
 }
 
+.settings-github-access-panel,
+.github-access-form,
+.github-access-permissions {
+  display: grid;
+  gap: 14px;
+}
+
+.settings-github-access-panel > div:first-child .hero-text,
+.github-access-limits {
+  margin-bottom: 0;
+}
+
+.github-access-status {
+  display: grid;
+  gap: 7px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 15px;
+  background: var(--panel-2);
+}
+
+.github-access-status-authorized {
+  border-color: rgba(34, 197, 94, 0.48);
+}
+
+.github-access-status-expired {
+  border-color: rgba(245, 158, 11, 0.6);
+}
+
+.github-access-status span,
+.github-access-permissions li,
+.github-access-limits {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.github-access-permissions ul {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding-left: 22px;
+}
+
+.github-access-token-link {
+  width: fit-content;
+  color: #c4b5fd;
+}
+
+.github-access-limits {
+  margin-top: 0;
+}
+
 .settings-folder-panel .hero-text {
   margin-bottom: 0;
 }

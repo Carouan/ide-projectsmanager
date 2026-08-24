@@ -1,5 +1,6 @@
 import { RepositoryProviderError } from "./repositoryProvider.js";
 import { parseRoadmapProgress } from "../../services/roadmapProgress.js";
+import { githubAuthorizationSession } from "../../services/githubAuthorizationSession.js";
 
 const DEFAULT_API_BASE_URL = "https://api.github.com";
 const DEFAULT_MAX_PULL_REQUESTS = 20;
@@ -147,6 +148,7 @@ function decodeGitHubMarkdown(document) {
 export function createGitHubRepositoryProvider({
   fetchImpl = (...args) => globalThis.fetch(...args),
   apiBaseUrl = DEFAULT_API_BASE_URL,
+  authorizationSession = githubAuthorizationSession,
   maxPullRequests = DEFAULT_MAX_PULL_REQUESTS,
   maxEnrichedPullRequests = DEFAULT_MAX_ENRICHED_PULL_REQUESTS,
 } = {}) {
@@ -168,10 +170,15 @@ export function createGitHubRepositoryProvider({
     : DEFAULT_MAX_ENRICHED_PULL_REQUESTS;
 
   async function readRepository(repository) {
-    if (repository?.visibility === "private" || repository?.visibility === "internal") {
+    const requiresAuthorization =
+      repository?.visibility === "private" || repository?.visibility === "internal";
+
+    if (requiresAuthorization && !authorizationSession?.isAuthorized?.()) {
       throw new RepositoryProviderError(
-        "unsupported_visibility",
-        "Only public GitHub repositories are supported"
+        authorizationSession?.getSnapshot?.().status === "expired"
+          ? "authorization_expired"
+          : "authorization_required",
+        "Explicit session authorization is required for private GitHub repositories"
       );
     }
 
@@ -183,19 +190,30 @@ export function createGitHubRepositoryProvider({
       let response;
 
       try {
-        response = await fetchImpl(`${apiBaseUrl}${path}`, {
+        const requestOptions = {
           method: "GET",
           credentials: "omit",
           headers: {
             Accept: "application/vnd.github+json",
             "X-GitHub-Api-Version": "2022-11-28",
           },
-        });
+        };
+        const destination = `${apiBaseUrl}${path}`;
+
+        response = requiresAuthorization
+          ? await authorizationSession.request(destination, requestOptions)
+          : await fetchImpl(destination, requestOptions);
       } catch (cause) {
+        if (requiresAuthorization && cause?.code) {
+          throw new RepositoryProviderError(cause.code, cause.message);
+        }
+
         throw new RepositoryProviderError(
           "network",
           "GitHub could not be reached",
-          { cause: cause instanceof Error ? cause.message : String(cause) }
+          requiresAuthorization
+            ? {}
+            : { cause: cause instanceof Error ? cause.message : String(cause) }
         );
       }
 
@@ -232,10 +250,10 @@ export function createGitHubRepositoryProvider({
 
     const repositoryData = await requestJson(`/repos/${fullName}`);
 
-    if (repositoryData.private === true) {
+    if (repositoryData.private === true && !requiresAuthorization) {
       throw new RepositoryProviderError(
-        "unsupported_visibility",
-        "Only public GitHub repositories are supported"
+        "authorization_required",
+        "Private repositories require explicit visibility and session authorization"
       );
     }
 

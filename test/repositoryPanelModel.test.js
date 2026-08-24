@@ -122,6 +122,18 @@ test("panel states distinguish loading, empty, stale, rate limits and errors", (
   );
   assert.equal(
     getRepositoryPanelState({
+      result: { status: "unauthorized", error: { code: "authorization_required" } },
+    }),
+    "authorization_required"
+  );
+  assert.equal(
+    getRepositoryPanelState({
+      result: { status: "unauthorized", error: { code: "authorization_expired" } },
+    }),
+    "authorization_expired"
+  );
+  assert.equal(
+    getRepositoryPanelState({
       result: { status: "error", error: { code: "network" } },
     }),
     "error"
