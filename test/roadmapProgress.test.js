@@ -169,8 +169,18 @@ test("canonical IDE roadmap reflects delivered, planned and excluded scope", () 
     progress.objectives.some(
       (objective) =>
         objective.label.includes("depuis l'interface du backlog") &&
-        !objective.completed
+        objective.completed
     )
+  );
+  assert.ok(
+    progress.objectives.some(
+      (objective) =>
+        objective.label.includes("matrice synthétique étapes × chantiers") &&
+        objective.completed
+    )
+  );
+  assert.ok(
+    progress.nextObjectives[0]?.section.includes("Sauvegardes portables")
   );
   assert.equal(
     progress.objectives.some((objective) =>

@@ -36,7 +36,17 @@ import {
   normalizeProjectProgress,
   normalizeProjectProgressDocument,
 } from "../services/projectProgress";
-import { normalizeProjectWorkstreams } from "../services/projectWorkstreams";
+import {
+  createProjectWorkstream,
+  normalizeProjectWorkstreams,
+  suggestProjectWorkstreams,
+} from "../services/projectWorkstreams";
+import {
+  mergeSuggestedWorkstreams,
+  reorderProjectWorkstreams,
+  updateBacklogWorkstreamAssignment,
+  updateProjectWorkstream,
+} from "../features/projects/services/workstreamPlanningModel";
 import {
   IDE_DEMO_PROJECT_ID,
   installIdeDemoProject as prepareIdeDemoProjectInstall,
@@ -368,7 +378,7 @@ if (loaded.length > 0) {
       prev.map((p) => {
         if (p.project.id !== projectId) return p;
 
-        return {
+        const preparedProject = {
           ...p,
           project: {
             ...p.project,
@@ -376,6 +386,22 @@ if (loaded.length > 0) {
           },
           backlog: [backlogItem, ...p.backlog],
         };
+
+        if (
+          !Object.prototype.hasOwnProperty.call(backlogItem, "workstreamId") &&
+          !Object.prototype.hasOwnProperty.call(backlogItem, "stageKey")
+        ) {
+          return preparedProject;
+        }
+
+        return updateBacklogWorkstreamAssignment(
+          preparedProject,
+          backlogItem.id,
+          {
+            workstreamId: backlogItem.workstreamId || null,
+            stageKey: backlogItem.stageKey || null,
+          }
+        );
       })
     );
 
@@ -636,6 +662,73 @@ if (loaded.length > 0) {
     );
   }
 
+  function modifyProjectWorkstreams(projectId, transform) {
+    setProjects((previousProjects) =>
+      previousProjects.map((projectDoc) => {
+        if (projectDoc.project.id !== projectId) return projectDoc;
+
+        return {
+          ...projectDoc,
+          project: {
+            ...projectDoc.project,
+            updatedAt: new Date().toISOString(),
+          },
+          workstreams: transform(projectDoc.workstreams || []),
+        };
+      })
+    );
+  }
+
+  function addWorkstream(projectId, payload) {
+    modifyProjectWorkstreams(projectId, (workstreams) => [
+      ...workstreams,
+      createProjectWorkstream(payload, { existingWorkstreams: workstreams }),
+    ]);
+  }
+
+  function updateWorkstream(projectId, workstreamId, patch) {
+    modifyProjectWorkstreams(projectId, (workstreams) =>
+      updateProjectWorkstream(workstreams, workstreamId, patch)
+    );
+  }
+
+  function reorderWorkstream(projectId, workstreamId, direction) {
+    modifyProjectWorkstreams(projectId, (workstreams) =>
+      reorderProjectWorkstreams(workstreams, workstreamId, direction)
+    );
+  }
+
+  function applyWorkstreamTemplate(projectId, projectType, locale) {
+    modifyProjectWorkstreams(projectId, (workstreams) =>
+      mergeSuggestedWorkstreams(
+        workstreams,
+        suggestProjectWorkstreams(projectType, { locale })
+      )
+    );
+  }
+
+  function updateBacklogItemWorkstream(projectId, itemId, patch) {
+    setProjects((previousProjects) =>
+      previousProjects.map((projectDoc) => {
+        if (projectDoc.project.id !== projectId) return projectDoc;
+
+        const updatedProject = updateBacklogWorkstreamAssignment(
+          projectDoc,
+          itemId,
+          patch
+        );
+
+        return {
+          ...updatedProject,
+          project: {
+            ...updatedProject.project,
+            updatedAt: new Date().toISOString(),
+          },
+        };
+      })
+    );
+  }
+
   function handleDecisionTreeDestination(projectId, payload) {
     const { destinationKey, ideaTitle, ideaContent, sourceStageKey } = payload;
 
@@ -864,6 +957,11 @@ if (loaded.length > 0) {
     setCurrentStage,
     updateStageField,
     addBacklogItem,
+    addWorkstream,
+    updateWorkstream,
+    reorderWorkstream,
+    applyWorkstreamTemplate,
+    updateBacklogItemWorkstream,
     addJournalEntry,
     addDecision,
     addAttachment,

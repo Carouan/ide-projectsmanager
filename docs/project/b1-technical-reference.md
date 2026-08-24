@@ -126,7 +126,7 @@ Chaque étape versionnée peut porter :
 - `linkedBacklogIds`
 - `linkedJournalIds`
 
-### `workstreams` — modèle compatible livré
+### `workstreams` — modèle et interface compatibles livrés
 
 Les étapes décrivent la maturité temporelle ; les chantiers décrivent les
 fronts parallèles du projet. Un document existant sans collection est
@@ -153,9 +153,21 @@ reste vide ; seule la démonstration IDE, explicitement logicielle, présente
 trois chantiers exemples. La progression du projet ne dépend pas du nombre de
 chantiers.
 
+`workstreamPlanningModel.js` dérive une synthèse locale sans mutation : actions
+ouvertes, chantiers bloqués, prochain focus et cellules étapes × chantiers. Il
+gère également l'ordre, l'archivage, la fusion non destructive des suggestions
+et l'association backlog / chantier / étape. Changer l'étape d'une action met à
+jour `stageKey`, `relatedStage` et `linkedBacklogIds` de manière cohérente.
+
+L'onglet **Chantiers** expose les suggestions, le formulaire de gestion, une
+synthèse explicable, les cartes de chaque front et la matrice compacte. Le
+backlog fournit un filtre ainsi que des sélecteurs facultatifs par action. Sur
+mobile, seules les cellules réellement occupées sont présentées sous forme de
+cartes. Aucune progression artificielle ni dépendance entre tâches n'est créée.
+
 [DR-003](../decisions/DR-003-stages-workstreams-project-model.md) fixe le cadre
-du modèle. L'onglet de gestion, l'édition du backlog et la matrice étapes ×
-chantiers restent à construire dans #95.
+du modèle ; les issues #94 et #95 livrent respectivement les données et
+l'interface associée.
 
 ### `attachments`
 Types prévus :
@@ -346,12 +358,11 @@ Non fait :
   navigateurs cibles
 - transports facultatifs non encore comparés sous Windows et Android
 - gestion de vrais fichiers binaires pour attachments non encore traitée
-- interface de gestion et matrice des chantiers parallèles non encore livrées
 
 ## Roadmap technique courte recommandée
 
 1. conserver la progression mesurable et le dashboard livré (`#105`, `#93`)
-2. ajouter l'interface au modèle de chantiers déjà livré (`#95`)
+2. préserver le modèle, l'interface et la matrice des chantiers (`#94`, `#95`)
 3. introduire le fournisseur et le miroir de sauvegarde (`S1.1`, `S1.2`)
 4. écrire les instantanés et détecter les divergences (`S1.3`, `S1.4`)
 5. comparer les modes autonomes et transports facultatifs (`S1.5`)

@@ -23,6 +23,11 @@ export default function App() {
     setCurrentStage,
     updateStageField,
     addBacklogItem,
+    addWorkstream,
+    updateWorkstream,
+    reorderWorkstream,
+    applyWorkstreamTemplate,
+    updateBacklogItemWorkstream,
     addJournalEntry,
     handleDecisionTreeDestination,
     updateBacklogItemStatus,
@@ -96,6 +101,11 @@ export default function App() {
         onSetCurrentStage={setCurrentStage}
         onUpdateStageField={updateStageField}
         onAddBacklogItem={addBacklogItem}
+        onAddWorkstream={addWorkstream}
+        onUpdateWorkstream={updateWorkstream}
+        onReorderWorkstream={reorderWorkstream}
+        onApplyWorkstreamTemplate={applyWorkstreamTemplate}
+        onUpdateBacklogItemWorkstream={updateBacklogItemWorkstream}
         onAddJournalEntry={addJournalEntry}
         onHandleDecisionTreeDestination={handleDecisionTreeDestination}
         onUpdateBacklogItemStatus={updateBacklogItemStatus}

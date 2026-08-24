@@ -65,9 +65,30 @@ le parcours n'est pas une contrainte rigide.
 Les **chantiers** constituent une dimension différente : ils représentent les
 fronts pouvant avancer simultanément pendant une même étape. Par exemple, un
 projet scientifique à l'étape `v.0.2` peut préparer sa méthodologie, examiner
-les exigences réglementaires et organiser sa documentation en parallèle. Le
-modèle est déjà compatible avec les projets et exports existants ; son écran de
-gestion dédié sera livré dans une étape séparée.
+les exigences réglementaires et organiser sa documentation en parallèle.
+
+## Organiser des chantiers parallèles
+
+L'onglet **Chantiers** est facultatif : un projet simple peut continuer sans
+aucun front de travail séparé. Pour structurer un projet plus riche :
+
+1. Créer un chantier en lui donnant un nom et, si utile, une description, une
+   catégorie, une couleur, une icône ou un état.
+2. Utiliser éventuellement un modèle logiciel, scientifique, associatif ou
+   personnel ; seuls les fronts manquants sont ajoutés.
+3. Ouvrir le **Backlog** et associer chaque action à un chantier et/ou à une
+   étape. Ces deux informations restent facultatives.
+4. Filtrer le backlog pour voir un seul chantier ou les actions non attribuées.
+5. Revenir à l'onglet **Chantiers** pour consulter la prochaine action utile,
+   les fronts bloqués et la matrice étapes × chantiers.
+
+Les flèches déplacent un chantier sans modifier ses actions. L'archivage masque
+un front sans supprimer son historique ; afficher les archivés permet ensuite
+de le réactiver. Sur téléphone, la matrice se transforme en cartes synthétiques.
+
+Les cases vides de la matrice ne représentent pas du travail manquant : elles
+signifient simplement qu'aucune action n'est associée à ce couple chantier /
+étape. Les chantiers ne fabriquent jamais un pourcentage fictif.
 
 | Étape | Intention principale | Preuve de sortie possible |
 |---|---|---|
@@ -99,6 +120,7 @@ et honnête vaut mieux qu'une réponse artificiellement complète.
 
 - **Projet** : identité, besoin et description générale.
 - **Étapes** : maturité et livrables successifs.
+- **Chantiers** : fronts parallèles, prochaines actions et matrice de synthèse.
 - **Backlog** : actions, idées et questions à traiter plus tard.
 - **Journal** : notes datées, contexte et traces de travail.
 - **Décisions** : arbitrages qui doivent rester compréhensibles.

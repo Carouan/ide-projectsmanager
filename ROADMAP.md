@@ -94,16 +94,16 @@ actuellement à l'étape `v.0.7`.
   - [x] Afficher le nombre de résultats et réinitialiser les filtres.
   - [x] Conserver localement les préférences de présentation.
   - [x] Afficher le même avancement mesuré dans l'inbox et la collection.
-- [ ] Structurer les fronts de travail parallèles (#94, #95)
+- [x] Structurer les fronts de travail parallèles (#94, #95)
   - [x] Ajouter des chantiers facultatifs aux anciens et nouveaux projets (#94).
   - [x] Permettre des chantiers logiciels, scientifiques, associatifs ou personnels (#94).
-  - [ ] Créer, modifier, ordonner, archiver et réactiver un chantier.
-  - [ ] Associer une action du backlog à un chantier et à une étape
+  - [x] Créer, modifier, ordonner, archiver et réactiver un chantier (#95).
+  - [x] Associer une action du backlog à un chantier et à une étape
     - [x] Conserver des références facultatives et diagnostiquer les liens invalides (#94).
-    - [ ] Modifier ces associations depuis l'interface du backlog (#95).
-  - [ ] Filtrer le backlog par chantier.
-  - [ ] Présenter une matrice synthétique étapes × chantiers.
-  - [ ] Adapter cette synthèse aux écrans mobiles.
+    - [x] Modifier ces associations depuis l'interface du backlog (#95).
+  - [x] Filtrer le backlog par chantier (#95).
+  - [x] Présenter une matrice synthétique étapes × chantiers (#95).
+  - [x] Adapter cette synthèse aux écrans mobiles (#95).
   - [x] Préserver les exports/imports et projets historiques (#94).
 
 ## Release C — cible `0.3.0` — Sauvegardes portables et continuité personnelle
