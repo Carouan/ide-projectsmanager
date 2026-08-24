@@ -96,9 +96,9 @@ Exemples :
 
 Un chantier répond à la question : **sur quel domaine travaille-t-on ?** Il est
 facultatif et personnalisable. #94 a livré le modèle compatible, les suggestions
-multi-domaines et les références backlog/étape ; #95 ajoutera l'onglet de
-gestion et la matrice visuelle. Un ancien projet sans `workstreams` continue à
-fonctionner normalement.
+multi-domaines et les références backlog/étape ; #95 ajoute l'onglet de gestion,
+le filtrage du backlog et la matrice visuelle. Un ancien projet sans
+`workstreams` continue à fonctionner normalement.
 
 ## Jalon
 

@@ -8,6 +8,7 @@ import DecisionTreeModal from "../../../components/DecisionTreeModal";
 import SyncStatusBadge from "../components/SyncStatusBadge";
 import RepositoryPanel from "../components/RepositoryPanel";
 import ProjectProgressSummary from "../components/ProjectProgressSummary";
+import WorkstreamsPanel from "../components/WorkstreamsPanel";
 import { ProjectStartGuide } from "../components/ProjectGuidance";
 import { formatStageLabel, getStageDefinition } from "../../../constants/stages";
 import { useI18n } from "../../../i18n/useI18n";
@@ -29,6 +30,11 @@ export default function ProjectScreen({
   onSetCurrentStage,
   onUpdateStageField,
   onAddBacklogItem,
+  onAddWorkstream,
+  onUpdateWorkstream,
+  onReorderWorkstream,
+  onApplyWorkstreamTemplate,
+  onUpdateBacklogItemWorkstream,
   onUpdateBacklogItemStatus,
   onAddJournalEntry,
   onHandleDecisionTreeDestination,
@@ -44,11 +50,12 @@ export default function ProjectScreen({
   onToggleStageJourney,
 }) {
   const [tab, setTab] = useState("project");
+  const [backlogWorkstreamFilter, setBacklogWorkstreamFilter] = useState("all");
   const [isDecisionTreeOpen, setIsDecisionTreeOpen] = useState(false);
   const fileInputRef = useRef(null);
   const { t, locale } = useI18n();
 
-  const { project, stages, backlog, journal, decisions, attachments } =
+  const { project, stages, backlog, journal, decisions, attachments, workstreams } =
     projectDoc || {};
   const currentStageKey = project?.currentStage || "v0_0";
   const currentStage = stages?.[currentStageKey];
@@ -198,6 +205,12 @@ export default function ProjectScreen({
             onClick={() => setTab("stage")}
           >
             {t("project.tabs.stages")}
+          </button>
+          <button
+            className={`tab ${tab === "workstreams" ? "tab-active" : ""}`}
+            onClick={() => setTab("workstreams")}
+          >
+            {t("project.tabs.workstreams")}
           </button>
           <button
             className={`tab ${tab === "backlog" ? "tab-active" : ""}`}
@@ -412,12 +425,31 @@ export default function ProjectScreen({
           </>
         )}
 
+        {tab === "workstreams" && (
+          <WorkstreamsPanel
+            projectDoc={projectDoc}
+            onAddWorkstream={onAddWorkstream}
+            onUpdateWorkstream={onUpdateWorkstream}
+            onReorderWorkstream={onReorderWorkstream}
+            onApplyTemplate={onApplyWorkstreamTemplate}
+            onOpenBacklog={(workstreamId) => {
+              setBacklogWorkstreamFilter(workstreamId || "all");
+              setTab("backlog");
+            }}
+          />
+        )}
+
         {tab === "backlog" && (
           <BacklogPanel
             projectId={project.id}
             backlog={backlog}
+            workstreams={workstreams}
+            currentStageKey={currentStageKey}
+            workstreamFilter={backlogWorkstreamFilter}
+            onChangeWorkstreamFilter={setBacklogWorkstreamFilter}
             onAddBacklogItem={onAddBacklogItem}
             onUpdateBacklogItemStatus={onUpdateBacklogItemStatus}
+            onUpdateBacklogItemWorkstream={onUpdateBacklogItemWorkstream}
           />
         )}
 

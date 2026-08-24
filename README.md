@@ -27,7 +27,8 @@ des exports JSON et Markdown.
 - inbox globale des décisions, blocages et validations réellement requis
 - avancement explicable : valeur manuelle, roadmap mesurable ou étape du projet
 - même progression visible dans l'inbox, la collection et chaque fiche projet
-- modèle facultatif de chantiers parallèles compatible avec les anciens projets
+- chantiers parallèles facultatifs, suggestions multi-domaines et matrice étapes
+- actions du backlog associables et filtrables par chantier
 - projet de démonstration facultatif relié au dépôt GitHub public de l'application
 
 ## Piloter le portefeuille
@@ -69,16 +70,25 @@ Une **étape** indique la maturité globale du projet, par exemple `v.0.2`. Un
 - association : juridique, finances, opérations, communication et partenariats ;
 - projet personnel : planification, achats, production et documentation.
 
+L'onglet **Chantiers** permet de créer, modifier, ordonner, archiver et
+réactiver ces fronts. Des modèles facultatifs proposent des suggestions selon
+la nature du projet sans remplacer les chantiers déjà existants.
+
+Chaque action du backlog peut être associée à un chantier, à une étape, aux
+deux ou à aucun. Le backlog se filtre par chantier ; la matrice **étapes ×
+chantiers** n'affiche que les associations réelles et devient une liste de
+cartes lisibles sur mobile. Une synthèse, les blocages et la prochaine action
+utile rendent le pilotage plus immédiat sans inventer de pourcentage de
+progression par chantier.
+
 Les chantiers restent facultatifs, personnalisables et indépendants des dépôts
-GitHub. Leur modèle est compatible avec les projets existants, les exports
-JSON/Markdown et les actions du backlog. Le projet IDE de démonstration montre
-trois exemples concrets ; l'onglet de gestion et la matrice étapes × chantiers
-seront ajoutés séparément par l'issue #95.
+GitHub. Les projets historiques, les exports JSON/Markdown et le projet IDE de
+démonstration restent compatibles.
 
 ## Roadmap mesurable et releases
 
 - [x] Cible `0.1.0` : socle local-first, PWA, projets, exports et restauration.
-- [ ] Cible `0.2.0` : cockpit portefeuille, progression et chantiers parallèles.
+- [x] Cible `0.2.0` : cockpit portefeuille, progression et chantiers parallèles.
 - [ ] Cible `0.3.0` : sauvegardes portables et continuité Windows/Android.
 - [ ] Cible `0.4.0` : gouvernance des projets liés et accès GitHub avancé.
 - [ ] Horizon `1.0.0` : explorations ultérieures, `.ipm` et transports directs.
