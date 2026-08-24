@@ -42,6 +42,28 @@ No repository is created, modified, or published automatically. Visibility is
 only declared, and actual repository existence remains unverified. **Cancel**
 returns to the dashboard without creating a local project.
 
+## Read a private GitHub repository
+
+A linked public repository never requires a token. For a repository declared
+private, open **Settings → Private GitHub access**:
+
+1. Choose **Configure a fine-grained token on GitHub**, explicitly select the
+   allowed repositories, and choose a short expiration period.
+2. Set `Metadata`, `Contents`, and `Pull requests` to **read-only**; add
+   `Commit statuses` as read-only only when detailed checks are needed.
+3. Enter the token in the concealed field and choose **Authorize read access
+   for this session**.
+4. Return to the project or dashboard to view available roadmap objectives,
+   pull requests, and validation requests without modifying the repository.
+5. Choose **Disconnect and clear private cache** when finished, then delete
+   the token on GitHub as well to revoke it permanently.
+
+The token and private snapshots remain only in tab memory. They never appear in
+projects, IndexedDB, backups, exports, or application logs. Reloading,
+disconnecting, or GitHub expiration clears them. Local-only projects and
+public repositories never require authorization. Never share this token in a
+conversation or screenshot.
+
 ## Organize the dashboard
 
 **Needs your attention** remains a global view of decisions, validations, and

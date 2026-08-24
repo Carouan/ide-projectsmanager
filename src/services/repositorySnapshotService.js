@@ -6,9 +6,11 @@ import {
 } from "../repositories/providers/repositoryProvider.js";
 import { createGitHubRepositoryProvider } from "../repositories/providers/githubRepositoryProvider.js";
 import {
+  createMemoryRepositorySnapshotCache,
   persistentRepositorySnapshotCache,
   repositorySnapshotCacheKey,
 } from "../repositories/repositorySnapshotCache.js";
+import { githubAuthorizationSession } from "./githubAuthorizationSession.js";
 
 export const DEFAULT_REPOSITORY_CACHE_MAX_AGE_MS = 15 * 60 * 1000;
 
@@ -51,6 +53,8 @@ export function createRepositorySnapshotService({
     createGitHubRepositoryProvider(),
   ]),
   cache = persistentRepositorySnapshotCache,
+  privateCache = createMemoryRepositorySnapshotCache(),
+  authorizationSession = githubAuthorizationSession,
   now = () => Date.now(),
   isOnline = defaultIsOnline,
   maxAgeMs = DEFAULT_REPOSITORY_CACHE_MAX_AGE_MS,
@@ -76,11 +80,28 @@ export function createRepositorySnapshotService({
       }
 
       const key = repositorySnapshotCacheKey(repository);
+      const isPrivateRepository = ["private", "internal"].includes(repository.visibility);
+      const activeCache = isPrivateRepository ? privateCache : cache;
+
+      if (isPrivateRepository && !authorizationSession?.isAuthorized?.()) {
+        privateCache.clear?.();
+        const expired = authorizationSession?.getSnapshot?.().status === "expired";
+
+        return buildResult({
+          status: REPOSITORY_SNAPSHOT_STATUS.UNAUTHORIZED,
+          cache: { key, fetchedAt: null, ageMs: null, stale: true },
+          error: {
+            code: expired ? "authorization_expired" : "authorization_required",
+            message: "Explicit private GitHub authorization is required for this session",
+          },
+        });
+      }
+
       let cachedEntry = null;
       let cacheReadError = null;
 
       try {
-        cachedEntry = await cache.get(key);
+        cachedEntry = await activeCache.get(key);
       } catch (error) {
         cacheReadError = normalizeRepositoryProviderError(error);
       }
@@ -131,7 +152,7 @@ export function createRepositorySnapshotService({
         let cacheWriteError = null;
 
         try {
-          await cache.set(key, entry);
+          await activeCache.set(key, entry);
         } catch (error) {
           cacheWriteError = normalizeRepositoryProviderError(error);
         }
@@ -145,6 +166,19 @@ export function createRepositorySnapshotService({
         });
       } catch (error) {
         const providerError = normalizeRepositoryProviderError(error);
+        const authorizationFailure =
+          providerError.code === "authorization_required" ||
+          providerError.code === "authorization_expired";
+
+        if (authorizationFailure) {
+          if (isPrivateRepository) privateCache.clear?.();
+
+          return buildResult({
+            status: REPOSITORY_SNAPSHOT_STATUS.UNAUTHORIZED,
+            cache: { key, fetchedAt: null, ageMs: null, stale: true },
+            error: providerError,
+          });
+        }
 
         if (cachedEntry?.snapshot) {
           return buildResult({
@@ -172,4 +206,12 @@ export function createRepositorySnapshotService({
   });
 }
 
-export const repositorySnapshotService = createRepositorySnapshotService();
+const privateRepositorySnapshotCache = createMemoryRepositorySnapshotCache();
+
+githubAuthorizationSession.subscribe(() => {
+  privateRepositorySnapshotCache.clear();
+});
+
+export const repositorySnapshotService = createRepositorySnapshotService({
+  privateCache: privateRepositorySnapshotCache,
+});

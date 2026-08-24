@@ -72,6 +72,14 @@ export function getRepositoryPanelState({ isLoading = false, result } = {}) {
   if (result.snapshot && result.status === "stale") return "stale";
   if (result.snapshot) return "success";
   if (result.error?.code === "rate_limited") return "rate_limited";
+  if (
+    result.status === "unauthorized" ||
+    ["authorization_required", "authorization_expired"].includes(result.error?.code)
+  ) {
+    return result.error?.code === "authorization_expired"
+      ? "authorization_expired"
+      : "authorization_required";
+  }
   if (result.status === "offline") return "offline";
   if (result.status === "unsupported") return "unsupported";
   return "error";

@@ -176,9 +176,11 @@ test("provider failures without a cache return an error state", async () => {
   assert.equal(result.error.status, 404);
 });
 
-test("declared private repositories return an unsupported state", async () => {
+test("declared private repositories require explicit authorization before provider reads", async () => {
+  let providerCalls = 0;
   const service = createService({
     readRepository: async () => {
+      providerCalls += 1;
       throw new RepositoryProviderError(
         "unsupported_visibility",
         "Only public repositories are supported"
@@ -188,6 +190,7 @@ test("declared private repositories return an unsupported state", async () => {
 
   const result = await service.read({ ...REPOSITORY, visibility: "private" });
 
-  assert.equal(result.status, REPOSITORY_SNAPSHOT_STATUS.UNSUPPORTED);
-  assert.equal(result.error.code, "unsupported_visibility");
+  assert.equal(result.status, REPOSITORY_SNAPSHOT_STATUS.UNAUTHORIZED);
+  assert.equal(result.error.code, "authorization_required");
+  assert.equal(providerCalls, 0);
 });

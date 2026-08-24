@@ -2,6 +2,7 @@ import { useI18n } from "../../../i18n/useI18n";
 import ProjectBundleRestorePanel from "../components/ProjectBundleRestorePanel";
 import SelectedBackupFolderPanel from "../components/SelectedBackupFolderPanel";
 import BackupSnapshotReviewPanel from "../components/BackupSnapshotReviewPanel";
+import GitHubPrivateAccessPanel from "../components/GitHubPrivateAccessPanel";
 
 export default function SettingsScreen({
   settings,
@@ -80,6 +81,8 @@ export default function SettingsScreen({
             </label>
           </div>
         </section>
+
+        <GitHubPrivateAccessPanel />
 
         <section className="panel settings-backup-panel">
           <div>

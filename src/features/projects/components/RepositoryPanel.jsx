@@ -64,7 +64,16 @@ export default function RepositoryPanel({ repositoryState }) {
   const { isLoading, result, refresh } = repositoryState;
   const panelState = getRepositoryPanelState({ isLoading, result });
 
-  if (["loading", "unlinked", "rate_limited", "offline", "unsupported", "error"].includes(panelState)) {
+  if ([
+    "loading",
+    "unlinked",
+    "rate_limited",
+    "offline",
+    "unsupported",
+    "authorization_required",
+    "authorization_expired",
+    "error",
+  ].includes(panelState)) {
     return <StateMessage state={panelState} result={result} onRefresh={refresh} />;
   }
 

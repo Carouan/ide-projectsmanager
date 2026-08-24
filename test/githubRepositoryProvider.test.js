@@ -217,7 +217,7 @@ test("GitHub provider reports public API rate limits deterministically", async (
   );
 });
 
-test("GitHub provider refuses declared non-public repositories before fetching", async () => {
+test("GitHub provider requires explicit session authorization for non-public repositories", async () => {
   let fetchCount = 0;
   const provider = createGitHubRepositoryProvider({
     fetchImpl: async () => {
@@ -232,7 +232,7 @@ test("GitHub provider refuses declared non-public repositories before fetching",
       fullName: "owner/private-repo",
       visibility: "private",
     }),
-    (error) => error.code === "unsupported_visibility"
+    (error) => error.code === "authorization_required"
   );
   assert.equal(fetchCount, 0);
 });

@@ -22,6 +22,9 @@ export function createMemoryRepositorySnapshotCache(initialEntries = {}) {
       entries.set(key, entry);
       return entry;
     },
+    clear() {
+      entries.clear();
+    },
   };
 }
 

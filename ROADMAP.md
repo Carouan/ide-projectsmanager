@@ -141,11 +141,11 @@ actuellement à l'étape `v.0.7`.
   - [x] Préparer un mandat et un identifiant de projet explicites.
   - [x] Générer un ensemble de fichiers relisibles avant toute création de dépôt.
   - [x] Relier explicitement le dépôt canonique et Project Steward.
-- [ ] Concevoir l'accès en lecture aux dépôts privés (#69)
-  - [ ] Comparer les modèles de confiance et documenter la décision de sécurité.
-  - [ ] Exclure tout secret du code, du build, des exports et des logs.
-  - [ ] Permettre une autorisation explicite, minimale et révocable.
-  - [ ] Conserver l'usage public et hors ligne sans authentification.
+- [x] Concevoir l'accès en lecture aux dépôts privés (#69)
+  - [x] Comparer les modèles de confiance et documenter la décision de sécurité.
+  - [x] Exclure tout secret du code, du build, des exports et des logs.
+  - [x] Permettre une autorisation explicite, minimale et révocable.
+  - [x] Conserver l'usage public et hors ligne sans authentification.
 
 <!-- roadmap-progress:end -->
 
