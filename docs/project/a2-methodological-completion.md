@@ -4,7 +4,7 @@ Ce document joue le rôle d’**annexe méthodologique**. Il ne remplace pas le 
 
 ## Rôle
 
-Il sert à enrichir le cycle `v0.0 → v1.0` avec :
+Il sert à enrichir le cycle `v.0.0 → v.1.0` avec :
 
 - des livrables par étape
 - des critères de sortie
@@ -16,17 +16,17 @@ Il sert à enrichir le cycle `v0.0 → v1.0` avec :
 
 Versionnement recommandé :
 
-- `v0.0` : besoin initial
-- `v0.1` : analyse exploratoire
-- `v0.2` : cadrage produit et MVP
-- `v0.3` : conception et préparation delivery
-- `v0.4` : assemblage / intégration
-- `v0.5` : POC / alpha
-- `v0.6` : correction des bugs
-- `v0.7` : beta
-- `v0.8` : stabilisation / corrections post-beta
-- `v0.9` : release candidate / recette
-- `v1.0` : première release publique
+- `v.0.0` : besoin initial
+- `v.0.1` : analyse exploratoire
+- `v.0.2` : cadrage produit et MVP
+- `v.0.3` : conception et préparation delivery
+- `v.0.4` : assemblage / intégration
+- `v.0.5` : POC / alpha
+- `v.0.6` : correction des bugs
+- `v.0.7` : bêta
+- `v.0.8` : stabilisation / corrections post-bêta
+- `v.0.9` : release candidate / recette
+- `v.1.0` : première livraison du projet suivi
 
 ## Ce que cette annexe apporte
 

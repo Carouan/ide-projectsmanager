@@ -145,29 +145,34 @@ Implémentation livrée :
 Fournir un guide court qui commence par le parcours autonome :
 
 - [ ] Tester export et restauration manuels sans installation (#86).
-- [ ] Tester la sélection d'un dossier dans l'IDE (#86).
+- [x] Tester la sélection d'un dossier et l'écriture sous Windows et Android (#86).
 - [ ] Tester une restauration sur un deuxième appareil (#86).
 - [ ] Tester le renouvellement des permissions (#86).
 - [ ] Tester un scénario de divergence ou de conflit (#86).
 - [ ] Tester la désactivation et le retour à l'import/export manuel (#86).
 - [x] Documenter séparément un transport facultatif, par exemple Syncthing (#86).
-- [ ] Publier la matrice réelle Chrome/Edge Windows et Chrome Android (#86).
+- [x] Publier la matrice réelle Windows/Android et signaler Edge comme reporté (#86).
 
 Le [guide de sauvegarde et sa matrice de validation](../portable-backup-user-guide.md)
 documentent le parcours autonome sans installation, le dossier facultatif, les
 permissions, les conflits et le transport externe optionnel. Ils distinguent
-explicitement les scénarios déjà couverts par les tests automatisés des essais
-sur appareils physiques qui restent à réaliser. L'issue #86 demeure ouverte
-tant que ces résultats réels ne sont pas observés.
+explicitement les scénarios couverts automatiquement, le choix du dossier et
+l'écriture observés sous Windows et Android, et les essais physiques restants.
+L'issue #86 demeure ouverte pour les autres navigateurs, la reconnexion, les
+divergences et la restauration physique entre appareils.
 
 La validation doit inclure une matrice Chrome/Edge Windows, Chrome Android, un
 navigateur sans File System Access, le parcours sans installation et au moins
 un transport facultatif.
 
-### S2.1 — Définir le format `.ipm` avec pièces jointes
+### S2.1 — Évaluer un conteneur `.ipm` seulement si les binaires l'exigent
 
-Étape ultérieure, après retour d'expérience sur la synchronisation JSON : conteneur versionné, manifeste, projets, blobs identifiés par hash et migrations. Ne pas commencer avant stabilisation de S1.
+Étape facultative, après retour d'expérience sur le JSON : vérifier d'abord
+qu'une archive ZIP standard est réellement nécessaire pour des pièces jointes
+binaires. Si oui, conserver un ZIP ouvert et documenté avec manifeste,
+projets, fichiers identifiés par hash et stratégie de migration.
 
+- [ ] Confirmer qu'un besoin binaire réel ne peut pas être couvert par le JSON.
 - [ ] Définir un manifeste versionné et une stratégie de migration.
 - [ ] Inclure projets JSON et pièces jointes binaires identifiées par hash.
 - [ ] Vérifier l'intégrité et la compatibilité ascendante avant import.

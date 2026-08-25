@@ -68,16 +68,16 @@ C’est :
 
 ## Stages
 
-Les **stages** sont les étapes `v0.0 → v1.0`.
+Les **stages** sont les étapes `v.0.0 → v.1.0`.
 
 Elles servent à suivre l’avancement avec une logique de cycle.
 
 Exemples :
 
-- `v0.0` = problème initial
-- `v0.2` = formalisation du MVP
-- `v0.4` = assemblage
-- `v1.0` = première release fonctionnelle
+- `v.0.0` = problème initial
+- `v.0.2` = formalisation du MVP
+- `v.0.4` = assemblage
+- `v.1.0` = première livraison fonctionnelle du projet suivi
 
 Une étape répond à la question : **où en est le projet dans son cycle ?** Elle
 ne décrit pas à elle seule tous les domaines qui avancent en parallèle.
@@ -180,7 +180,9 @@ Les **settings** sont les préférences d’interface et de comportement.
 Exemples :
 
 - langue
-- thème
+- thème système, sombre ou clair
+- taille du texte et contraste
+- préférence de réduction des animations
 - preview Markdown
 - densité UI
 - format d’export
@@ -292,10 +294,14 @@ n'est ni la recommandation par défaut ni une dépendance de l'IDE.
 
 ## Format `.ipm`
 
-`.ipm` est le nom réservé à un futur paquet portable d'IDE Project Manager. Il
-pourra regrouper un manifeste, des projets et de vraies pièces jointes binaires.
-Le format n'est pas encore spécifié et ne doit pas bloquer la première
-synchronisation basée sur le bundle JSON global.
+`.ipm` désigne éventuellement un futur conteneur portable d'IDE Project Manager.
+Il ne constitue ni un format propriétaire obligatoire, ni une nécessité pour
+les sauvegardes actuelles : le JSON ouvert reste le format par défaut.
+
+Si de vraies pièces jointes binaires justifient un regroupement, `.ipm` pourra
+être une archive **ZIP standard documentée**, contenant un manifeste, les
+projets JSON et les fichiers référencés. Cette extension facultative ne doit
+pas bloquer la release `1.0.0` ni la continuité basée sur les bundles JSON.
 
 ## Readiness ops
 

@@ -119,17 +119,18 @@ non promises comme fonctionnalités déjà intégrées.
 
 ## 5. Matrice de validation réelle
 
-État au **25 août 2026**. Les tests automatisés ne remplacent pas une exécution
-sur Windows, sur un Samsung Galaxy S23 ou avec un synchroniseur réel.
+État au **25 août 2026**, après les résultats communiqués par l'utilisateur sur
+ses propres appareils. Une réussite observée pour le choix du dossier ne prouve
+pas, à elle seule, l'existence d'un transport entre appareils.
 
 | Environnement / scénario | Résultat réel | Action restante |
 |---|---|---|
-| Chrome sous Windows : choix du dossier, écriture, relecture | Échec observé le 25 août 2026 avant ouverture du sélecteur : identifiant interne de 36 caractères, alors que l'API en autorise 32 au maximum. Correctif préparé. | Retester le choix, l'écriture et la relecture après déploiement du correctif. |
-| Edge sous Windows : permissions, reconnexion, déconnexion | Non exécuté sur appareil réel | Vérifier le renouvellement et le retour au mode manuel. |
-| Chrome Android sur Samsung Galaxy S23 | Même échec observé le 25 août 2026 avant que la capacité réelle d'Android puisse être déterminée. Correctif préparé. | Retester après déploiement ; si le sélecteur reste indisponible, valider le repli manuel. |
-| Navigateur sans accès direct au dossier | Non exécuté sur navigateur réel | Vérifier le message d'incompatibilité et l'export/import JSON. |
-| Deux appareils : restauration et divergence | Non exécuté avec deux appareils réels | Produire deux instantanés et tester copie, conservation et restauration confirmée. |
-| Syncthing ou autre transport externe | Non exécuté avec un transport réel | Vérifier facultativement le transfert des dossiers sans rendre ce logiciel obligatoire. |
+| Chrome / PWA sous Windows : choix du dossier et écriture | **Réussite confirmée** : dossier sélectionné et fichier `snapshots/<device-id>/latest.json` effectivement créé. | Vérifier ultérieurement la reconnexion, le renouvellement de permission et la restauration complète. |
+| Chrome sous Android : choix du dossier et écriture | **Réussite confirmée** sur l'appareil de l'utilisateur : choix du dossier et création de l'instantané local. | Tester ultérieurement la reconnexion et un scénario avec dossier effectivement partagé. |
+| Edge ou autre navigateur Windows | Essai physique explicitement reporté. | Vérifier plus tard la compatibilité, les permissions et le retour au mode manuel. |
+| Navigateur sans accès direct au dossier | Couvert automatiquement ; essai physique reporté. | Vérifier ultérieurement le message d'incompatibilité et l'export/import JSON. |
+| Deux appareils : restauration et divergence | Non observé physiquement : les deux dossiers locaux ne se partagent pas d'eux-mêmes. | Configurer un transport commun puis tester copie, conservation et restauration confirmée. |
+| Syncthing, partage natif ou autre transport externe | Non configuré et non testé entre les deux appareils. | Choisir puis vérifier facultativement le transfert des instantanés ; aucun outil n'est imposé. |
 
 ### Ce qui a été effectivement vérifié automatiquement
 
@@ -142,7 +143,8 @@ sur Windows, sur un Samsung Galaxy S23 ou avec un synchroniseur réel.
   divergence et modifications locales non sauvegardées.
 - Fichiers corrompus, erreurs d'écriture, confirmations obligatoires et import
   comme copies sans écrasement local.
-- Suite de **249 tests automatisés réussis** et compilation PWA réussie.
+- Suite automatisée complète exécutée avec `npm test` et compilation PWA
+  réussie ; le nombre exact de tests évolue avec les fonctionnalités.
 
 ### Protocole court de recette réelle
 
@@ -166,5 +168,7 @@ le résultat de chaque étape :
 9. Si un transport externe déjà choisi est disponible, vérifier son rôle sans
    modifier le parcours autonome.
 
-La release de continuité personnelle ne doit pas être déclarée complètement
-validée tant que ces lignes matérielles n'ont pas de résultats observés.
+La release `1.0.0` peut décrire honnêtement les sauvegardes locales Windows et
+Android confirmées. La continuité physique entre appareils, les transports et
+les essais sur d'autres navigateurs restent des validations distinctes : ils ne
+doivent pas être présentés comme déjà réalisés.

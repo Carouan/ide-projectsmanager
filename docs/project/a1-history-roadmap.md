@@ -8,7 +8,7 @@ L’outil vise à éviter qu’un projet personnel dérive en notes éparses, id
 
 L’application doit permettre de :
 
-- cadrer un projet par étapes versionnées `v0.0 → v1.0`
+- cadrer un projet par étapes versionnées `v.0.0 → v.1.0`
 - capturer les nouvelles idées sans casser le flux
 - documenter backlog, journal, décisions et pièces jointes
 - rouvrir un projet proprement plus tard
@@ -63,26 +63,33 @@ Le dépôt a déjà dépassé le MVP initial.
 - backlog filtrable et associable aux chantiers ainsi qu'aux étapes
 - matrice étapes × chantiers, synthèse et cartes adaptées au mobile
 - frontière de sauvegarde portable et repli manuel JSON indépendant du transport
+- dossier choisi explicitement, permissions expliquées et miroir JSON par appareil
+- revue des sauvegardes externes, filiation, divergences et restauration confirmée
+- création guidée de projets gouvernés et lecture privée GitHub limitée à la session
+- tableau de bord élargi sur grands écrans sans pénaliser la navigation mobile
+- thèmes système, sombre et clair appliqués et mémorisés
+- taille de texte, contraste, réduction des animations et navigation clavier
+- lint global, tests automatisés et compilation de production exécutables
 
 ### Partiellement réalisé
 
-- thème personnalisable présent mais incomplètement branché
 - arbre de décision présent mais encore à mieux cadrer fonctionnellement
-- synchronisation personnelle réelle non encore active ; le transport par
-  instantanés de dossier est décidé mais pas implémenté
-- comportement PWA sur Android à clarifier
+- continuité entre appareils : instantanés locaux implémentés, mais aucun
+  transport partagé ni rapprochement automatique champ par champ
+- choix du dossier validé physiquement sous Windows et Android ; autres
+  navigateurs et restauration physique entre appareils reportés
 
 ### Encore manquant à court terme
 
-- fournisseur de sauvegarde portable
-- accès facultatif à un dossier choisi par l'utilisateur
-- instantanés propres à chaque appareil
-- détection d'une sauvegarde plus récente et des divergences
-- guide et tests des modes de sauvegarde sous Windows et Android
+- publication de la première release `v1.0.0` et de son archive statique
+- publication du wiki utilisateur dérivé de la documentation versionnée
+- partage natif facultatif et réconciliation sûre des projets divergents
+- intégration progressive de projets existants : pilotes UFI et SUMP
+- parcours adaptatifs et organisation post-`v.1.0` des projets suivis
 - chemin de travail par défaut / nominal
 - switch preview étape vs export complet
 - désactivation par défaut de la preview sur mobile
-- continuité post-`v1.0` via cycle lié ou sous-projet
+- continuité post-`v.1.0` via cycle lié ou sous-projet
 - splash screen
 - édition bidirectionnelle preview ↔ formulaire
 - formats d’édition / export supplémentaires
@@ -120,6 +127,12 @@ Merges récents confirmés dans le dépôt :
   backlog associé et matrice responsive étapes × chantiers
 - 2026-08-24 : fournisseur de sauvegarde portable abstrait ; capacités,
   permissions, erreurs et repli téléchargement/import JSON normalisés
+- 2026-08-25 : dossiers et instantanés propres à chaque appareil, revue des
+  différences, projets gouvernés et lecture GitHub privée livrés
+- 2026-08-25 : sélection de dossier et écriture réellement confirmées sous
+  Windows et Android ; transport entre appareils et autre navigateur reportés
+- 2026-08-25 : dashboard élargi, lint assaini, thèmes système/sombre/clair et
+  préférences d'accessibilité livrés avant la première release
 
 ## Arborescence de travail locale recommandée
 
@@ -139,19 +152,17 @@ La [roadmap produit canonique](../../ROADMAP.md) est la source mesurable des
 objectifs livrés et ouverts. La suite logique du produit est définie par
 [DR-002](../decisions/DR-002-local-first-syncthing-backup-architecture.md),
 [DR-003](../decisions/DR-003-stages-workstreams-project-model.md),
-[DR-004](../decisions/DR-004-measurable-roadmap-effective-progress.md) et la
-[roadmap de sauvegarde portable](../roadmaps/local-first-syncthing-roadmap.md) :
+[DR-004](../decisions/DR-004-measurable-roadmap-effective-progress.md),
+[DR-006](../decisions/DR-006-first-release-and-post-release-evolution.md) et la
+[roadmap détaillée après la v1.0](../roadmaps/post-v1-evolution-roadmap.md) :
 
-1. conserver IndexedDB et la restauration JSON sûre déjà disponibles ;
-2. expliquer l'avancement avec priorité manuel / roadmap / étape (#105) ;
-3. conserver le dashboard filtrable et la progression cohérente livrés (#93) ;
-4. conserver l'interface, le backlog lié et la matrice des chantiers (#95) ;
-5. conserver le fournisseur de sauvegarde portable interchangeable livré (#82) ;
-6. proposer facultativement un dossier et des instantanés par appareil (#83, #84) ;
-7. détecter explicitement les restaurations et divergences (#85) ;
-8. valider Windows, Android et les transports facultatifs (#86) ;
-9. traiter séparément projets gouvernés et accès aux dépôts privés (#68, #69) ;
-10. reporter `.ipm`, binaires et explorations directes après stabilisation.
+1. conserver IndexedDB, les sauvegardes JSON et les garanties anti-écrasement ;
+2. publier la documentation utilisateur, le wiki et la release `v1.0.0` ;
+3. axe A : réconciliation sûre, partage natif puis transports facultatifs ;
+4. axe B : import GitHub lu et validé humainement, pilotes UFI et SUMP ;
+5. axe C : personnalisation progressive, densité et disposition des panneaux ;
+6. reprendre plus tard les validations physiques reportées de l'issue #86 ;
+7. n'étudier un conteneur ZIP documenté `.ipm` qu'en présence d'un besoin réel.
 
 ## Audit historique de l'aide utilisateur
 
@@ -165,4 +176,5 @@ Les issues #90 et #91 doivent donc restaurer l'intention de guidage sans
 prétendre réactiver une interface qui aurait déjà existé.
 
 Le travail continue par petites issues et PR atomiques. La documentation du
-dépôt reste la source maîtresse ; la wiki GitHub demeure un miroir éventuel.
+dépôt reste la source maîtresse ; le wiki GitHub en constitue le miroir destiné
+aux utilisateurs.

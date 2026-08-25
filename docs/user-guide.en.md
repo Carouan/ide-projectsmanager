@@ -83,6 +83,20 @@ The selected view and sorting are remembered locally. Temporary searches and
 filters are not saved. Filtering never triggers additional GitHub requests or
 hides global attention signals.
 
+## Adjust appearance and accessibility
+
+Open **Settings** and choose **Follow system**, **Dark**, or **Light**. System
+mode also follows browser or device appearance changes without reloading. Under
+**Accessibility and comfort**, choose:
+
+- normal, large, or extra-large text;
+- standard or increased contrast;
+- system motion settings or explicitly reduced animations.
+
+These preferences stay local to the current device. Keyboard navigation also
+reveals a **Skip to main content** link at the first tab stop, and interactive
+elements retain a visible focus outline.
+
 ## Understand and adjust project progress
 
 The dashboard and **Project** tab show a percentage together with its source:
@@ -112,9 +126,27 @@ is not a rigid gate system.
 **Workstreams** are a separate dimension: they describe parallel fronts that
 can advance during the same stage. For example, a research project at `v.0.2`
 can prepare its methodology, review regulatory requirements, and organize its
-documentation at the same time. The underlying model already preserves
-existing projects and exports; its dedicated management screen will arrive in
-a separate increment.
+documentation at the same time.
+
+## Organize parallel workstreams
+
+The **Workstreams** tab is optional: simple projects need no additional fronts.
+For a richer project:
+
+1. Create a workstream with a name and, optionally, a description, category,
+   color, icon, or status.
+2. Optionally apply software, research, nonprofit, or personal templates;
+   only missing workstreams are added.
+3. Open **Backlog** and optionally associate actions with a workstream, a
+   stage, or both.
+4. Filter the backlog by workstream or show unassigned actions.
+5. Return to **Workstreams** to inspect the next useful action, blocked fronts,
+   and the stages-by-workstreams matrix.
+
+Reordering does not change existing actions. Archiving hides a front while
+preserving its history; archived fronts can later be restored. On a phone, the
+matrix becomes a compact set of occupied cells. Empty cells do not represent
+missing work, and workstreams never manufacture an artificial progress value.
 
 | Stage | Main intent | Possible exit evidence |
 |---|---|---|
@@ -146,6 +178,7 @@ useful than artificially complete text.
 
 - **Project**: identity, need, and overall description.
 - **Stages**: maturity and successive deliverables.
+- **Workstreams**: parallel fronts, next actions, and the planning matrix.
 - **Backlog**: actions, ideas, and questions for later.
 - **Journal**: dated notes, context, and work history.
 - **Decisions**: choices that must remain understandable.
@@ -166,4 +199,6 @@ confirmation.
 
 The [personal-backup guide and validation matrix](portable-backup-user-guide.md)
 documents standalone use, folder permissions, conflict handling, optional
-external transport, and hardware validation that still requires real devices.
+external transport, and folder selection already confirmed on real Windows and
+Android devices. Another browser, physical cross-device restoration, and an
+actual shared transport remain separate deferred checks.
