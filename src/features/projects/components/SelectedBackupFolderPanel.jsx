@@ -16,10 +16,15 @@ function translatedError(t, error) {
     PORTABLE_BACKUP_ERROR_CODE.PERMISSION_DENIED,
     PORTABLE_BACKUP_ERROR_CODE.PERMISSION_REQUIRED,
     PORTABLE_BACKUP_ERROR_CODE.PROVIDER_UNAVAILABLE,
+    PORTABLE_BACKUP_ERROR_CODE.SELECTION_ABORTED,
+    PORTABLE_BACKUP_ERROR_CODE.SECURITY_RESTRICTION,
+    PORTABLE_BACKUP_ERROR_CODE.INVALID_PICKER_OPTIONS,
     PORTABLE_BACKUP_ERROR_CODE.WRITE_FAILED,
   ]);
   const code = knownCodes.has(error?.code) ? error.code : "generic";
-  return t(`settings.backup.folder.errors.${code}`);
+  return t(`settings.backup.folder.errors.${code}`, {
+    cause: error?.causeCode || error?.name || "UnknownError",
+  });
 }
 
 export default function SelectedBackupFolderPanel({
@@ -55,9 +60,7 @@ export default function SelectedBackupFolderPanel({
         });
       }
     } catch (error) {
-      if (error?.name !== "AbortError") {
-        setFeedback({ kind: "error", message: translatedError(t, error) });
-      }
+      setFeedback({ kind: "error", message: translatedError(t, error) });
     } finally {
       setPendingAction("");
     }

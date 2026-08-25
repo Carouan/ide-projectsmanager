@@ -89,6 +89,7 @@ function configuredProvider(directory, options = {}) {
     isSecureContext: true,
     async showDirectoryPicker(input) {
       picks.push(input);
+      if (options.pickerError) throw options.pickerError;
       return directory.handle;
     },
   };
@@ -166,9 +167,10 @@ test("an explicit user action chooses and safely remembers a readable/writable f
   await provider.connect();
 
   assert.deepEqual(picks, [{
-    id: "ide-projectsmanager-portable-backups",
+    id: "ide-projectsmanager-backups",
     mode: "readwrite",
   }]);
+  assert.ok(picks[0].id.length <= 32);
   assert.equal(saved[0], directory.handle);
   assert.deepEqual(await provider.connectionDetails(), {
     isSupported: true,
@@ -177,6 +179,27 @@ test("an explicit user action chooses and safely remembers a readable/writable f
     isRemembered: true,
   });
   assert.equal(directory.calls.request.length, 0);
+});
+
+test("folder-picker failures retain an actionable diagnostic", async () => {
+  const directory = mockDirectory();
+  const scenarios = [
+    ["AbortError", PORTABLE_BACKUP_ERROR_CODE.SELECTION_ABORTED],
+    ["SecurityError", PORTABLE_BACKUP_ERROR_CODE.SECURITY_RESTRICTION],
+    ["NotAllowedError", PORTABLE_BACKUP_ERROR_CODE.PERMISSION_DENIED],
+    ["TypeError", PORTABLE_BACKUP_ERROR_CODE.INVALID_PICKER_OPTIONS],
+  ];
+
+  for (const [name, code] of scenarios) {
+    const pickerError = new Error(`Simulated ${name}`);
+    pickerError.name = name;
+    const { provider } = configuredProvider(directory, { pickerError });
+
+    await assert.rejects(
+      provider.connect(),
+      (error) => error.code === code && error.causeCode === name
+    );
+  }
 });
 
 test("persisted folder handles are reopened without silently renewing permission", async () => {
