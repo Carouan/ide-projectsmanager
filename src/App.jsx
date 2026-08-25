@@ -182,7 +182,7 @@ export default function App() {
 
   return (
     <I18nProvider locale={settings?.language}>
-      <ThemeController preference={settings?.theme} />
+      <ThemeController preference={settings?.theme} accessibility={settings} />
       <AppShell main={activeScreen} rightPanel={rightPanel} />
       <PwaPrompt />
     </I18nProvider>
