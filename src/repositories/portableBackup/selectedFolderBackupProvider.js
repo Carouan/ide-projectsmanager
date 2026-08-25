@@ -19,6 +19,54 @@ import {
 export const SELECTED_FOLDER_BACKUP_PROVIDER_ID = "selected-folder";
 
 const DIRECTORY_PERMISSION_OPTIONS = Object.freeze({ mode: "readwrite" });
+// File System Access limits picker identifiers to 32 characters.
+const DIRECTORY_PICKER_ID = "ide-projectsmanager-backups";
+
+function directoryPickerError(error) {
+  const causeCode = typeof error?.name === "string" ? error.name : "UnknownError";
+  const details = {
+    providerId: SELECTED_FOLDER_BACKUP_PROVIDER_ID,
+    causeCode,
+  };
+
+  if (causeCode === "AbortError") {
+    return new PortableBackupProviderError(
+      PORTABLE_BACKUP_ERROR_CODE.SELECTION_ABORTED,
+      "Folder selection was cancelled or the selected location was restricted.",
+      details
+    );
+  }
+
+  if (causeCode === "SecurityError") {
+    return new PortableBackupProviderError(
+      PORTABLE_BACKUP_ERROR_CODE.SECURITY_RESTRICTION,
+      "The browser blocked folder selection because of its security context.",
+      details
+    );
+  }
+
+  if (causeCode === "NotAllowedError") {
+    return new PortableBackupProviderError(
+      PORTABLE_BACKUP_ERROR_CODE.PERMISSION_DENIED,
+      "The browser denied access to the selected folder.",
+      details
+    );
+  }
+
+  if (causeCode === "TypeError") {
+    return new PortableBackupProviderError(
+      PORTABLE_BACKUP_ERROR_CODE.INVALID_PICKER_OPTIONS,
+      "The folder picker received an invalid internal option.",
+      { ...details, recoverable: false }
+    );
+  }
+
+  return new PortableBackupProviderError(
+    PORTABLE_BACKUP_ERROR_CODE.UNKNOWN,
+    error instanceof Error ? error.message : "Unknown folder picker error.",
+    details
+  );
+}
 
 export function isSelectedFolderBackupSupported(environment = globalThis) {
   return (
@@ -165,10 +213,16 @@ export function createSelectedFolderBackupProvider(options = {}) {
       );
     }
 
-    const selectedHandle = await environment.showDirectoryPicker({
-      id: "ide-projectsmanager-portable-backups",
-      mode: "readwrite",
-    });
+    let selectedHandle;
+
+    try {
+      selectedHandle = await environment.showDirectoryPicker({
+        id: DIRECTORY_PICKER_ID,
+        mode: "readwrite",
+      });
+    } catch (error) {
+      throw directoryPickerError(error);
+    }
 
     if (!validDirectoryHandle(selectedHandle)) {
       throw new PortableBackupProviderError(

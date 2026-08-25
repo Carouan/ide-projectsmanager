@@ -40,6 +40,13 @@ navigateur, du système, du contexte sécurisé et des permissions effectives. S
 affichage ne signifie pas que tous les navigateurs ou tous les appareils Android
 permettent réellement la sélection d'un dossier.
 
+Si le sélecteur échoue, l'IDE distingue désormais une annulation ou un dossier
+sensible (`AbortError`), un blocage du contexte de sécurité (`SecurityError`),
+un refus de permission (`NotAllowedError`) et un paramètre interne invalide
+(`TypeError`). Dans tous les cas, l'export et la restauration JSON manuels
+restent disponibles. Sous Chrome, choisir un sous-dossier dédié dans
+**Documents** ou **Téléchargements** plutôt qu'une racine ou un dossier système.
+
 1. Vérifier que le panneau indique **Aucun dossier connecté**, et non **Dossier
    direct non pris en charge**.
 2. Sélectionner **Choisir un dossier**, puis désigner volontairement un dossier.
@@ -112,14 +119,14 @@ non promises comme fonctionnalités déjà intégrées.
 
 ## 5. Matrice de validation réelle
 
-État au **24 août 2026**. Les tests automatisés ne remplacent pas une exécution
+État au **25 août 2026**. Les tests automatisés ne remplacent pas une exécution
 sur Windows, sur un Samsung Galaxy S23 ou avec un synchroniseur réel.
 
 | Environnement / scénario | Résultat réel | Action restante |
 |---|---|---|
-| Chrome sous Windows : choix du dossier, écriture, relecture | Non exécuté sur appareil réel | Exécuter le protocole ci-dessous et noter navigateur, version et résultat. |
+| Chrome sous Windows : choix du dossier, écriture, relecture | Échec observé le 25 août 2026 avant ouverture du sélecteur : identifiant interne de 36 caractères, alors que l'API en autorise 32 au maximum. Correctif préparé. | Retester le choix, l'écriture et la relecture après déploiement du correctif. |
 | Edge sous Windows : permissions, reconnexion, déconnexion | Non exécuté sur appareil réel | Vérifier le renouvellement et le retour au mode manuel. |
-| Chrome Android sur Samsung Galaxy S23 | Non exécuté sur appareil réel | Vérifier si le choix de dossier est réellement proposé ; sinon valider le repli manuel. |
+| Chrome Android sur Samsung Galaxy S23 | Même échec observé le 25 août 2026 avant que la capacité réelle d'Android puisse être déterminée. Correctif préparé. | Retester après déploiement ; si le sélecteur reste indisponible, valider le repli manuel. |
 | Navigateur sans accès direct au dossier | Non exécuté sur navigateur réel | Vérifier le message d'incompatibilité et l'export/import JSON. |
 | Deux appareils : restauration et divergence | Non exécuté avec deux appareils réels | Produire deux instantanés et tester copie, conservation et restauration confirmée. |
 | Syncthing ou autre transport externe | Non exécuté avec un transport réel | Vérifier facultativement le transfert des dossiers sans rendre ce logiciel obligatoire. |
@@ -135,7 +142,7 @@ sur Windows, sur un Samsung Galaxy S23 ou avec un synchroniseur réel.
   divergence et modifications locales non sauvegardées.
 - Fichiers corrompus, erreurs d'écriture, confirmations obligatoires et import
   comme copies sans écrasement local.
-- Suite de **215 tests automatisés réussis** et compilation PWA réussie.
+- Suite de **249 tests automatisés réussis** et compilation PWA réussie.
 
 ### Protocole court de recette réelle
 
