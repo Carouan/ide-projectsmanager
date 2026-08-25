@@ -8,6 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "test": "node --test",
+    "package:release": "node scripts/release/create-release-archive.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -268,6 +268,24 @@ Déploiement
 
 Le dépôt est prévu pour être publié via GitHub Pages avec GitHub Actions.
 
+## Première release et archive téléchargeable
+
+La release GitHub **`v1.0.0`** fournit une archive web statique et son empreinte
+SHA-256 :
+
+```bash
+npm run build
+npm run package:release
+cd release
+sha256sum -c ide-projectsmanager-v1.0.0-web.zip.sha256
+```
+
+Le fichier `ide-projectsmanager-v1.0.0-web.zip` contient la PWA compilée et un
+guide `INSTALLATION.md`. Il doit être servi par un serveur web sous
+`/ide-projectsmanager/` ; il ne constitue pas un installateur Windows ou
+Android natif. Les [notes de version](docs/releases/v1.0.0.md) distinguent les
+capacités disponibles des transports et validations volontairement reportés.
+
 ## Documentation et wiki
 
 L'[index de `/docs`](docs/README.md) explique le rôle de chaque guide,
