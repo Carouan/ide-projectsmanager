@@ -141,7 +141,7 @@ test("canonical IDE roadmap reflects delivered, planned and excluded scope", () 
 
   assert.ok(progress.total >= 70);
   assert.ok(progress.completed >= 35);
-  assert.ok(progress.percent > 0 && progress.percent < 100);
+  assert.ok(progress.percent > 0 && progress.percent <= 100);
   assert.ok(
     progress.objectives.some((objective) =>
       objective.label.includes("valeur manuelle")
@@ -180,7 +180,9 @@ test("canonical IDE roadmap reflects delivered, planned and excluded scope", () 
     )
   );
   assert.ok(
-    progress.nextObjectives[0]?.section.includes("Sauvegardes portables")
+    progress.nextObjectives.every((objective) =>
+      objective.section.includes("première release")
+    )
   );
   assert.equal(
     progress.objectives.some((objective) =>
@@ -190,6 +192,18 @@ test("canonical IDE roadmap reflects delivered, planned and excluded scope", () 
   );
   assert.equal(
     progress.objectives.some((objective) => objective.label.includes("UFI")),
+    true
+  );
+  assert.equal(
+    progress.objectives.some((objective) =>
+      objective.label.includes("relais Raspberry Pi")
+    ),
+    false
+  );
+  assert.equal(
+    progress.objectives.some((objective) =>
+      objective.label.includes("navigateur sans sélection de dossier")
+    ),
     false
   );
 });

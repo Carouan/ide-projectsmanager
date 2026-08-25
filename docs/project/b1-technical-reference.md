@@ -14,8 +14,8 @@ Principes structurants :
 - JSON comme support d’échange principal
 - export Markdown comme sortie documentaire lisible
 - persistance locale robuste
-- architecture prête à accueillir des sauvegardes portables, une synchronisation
-  personnelle par dossier et des extensions métier
+- sauvegardes portables, miroir de dossier facultatif et revue des divergences
+  déjà disponibles ; transport inter-appareils et extensions métier progressifs
 
 ## Stack actuelle
 
@@ -289,8 +289,10 @@ fichier choisi. Il sait écrire et lire, mais ne prétend pas pouvoir lister les
 fichiers téléchargés par le navigateur. Les boutons de sauvegarde et de
 restauration existants passent désormais par ce contrat.
 
-Cette étape n'ajoute aucun accès à `showDirectoryPicker`, aucune persistance de
-handle et aucun transport Syncthing : ces responsabilités commencent en S1.2.
+Historiquement, l'issue #82 seule n'ajoutait pas `showDirectoryPicker` ni de
+handle persistant. Les incréments #83, #84 et #85 ont ensuite livré le dossier
+choisi, l'instantané propre à chaque appareil et la revue explicite des
+différences. Aucun transport Syncthing, cloud ou réseau n'est intégré.
 
 ## État réel d’implémentation
 
@@ -321,6 +323,10 @@ Implémenté :
 - chantiers facultatifs, suggestions multi-domaines et références backlog/étape
 - exports JSON/Markdown compatibles et diagnostic des références inconnues
 - fournisseur de sauvegarde portable indépendant avec repli JSON manuel
+- accès explicite au dossier, permissions détaillées et handle IndexedDB
+- instantanés versionnés par appareil et comparaison de leur filiation
+- revue des différences, import comme copies et restauration confirmée
+- projets gouvernés et consultation privée GitHub limitée à la session
 
 Le bundle de sauvegarde globale utilise le format suivant sans modifier le
 schéma de chaque projet :
@@ -350,13 +356,16 @@ Implémenté :
 - persistance du toggle preview Markdown
 - structure de settings globale
 - persistance locale de la vue et du tri du tableau de bord
+- thèmes système, sombre et clair appliqués et mémorisés
+- taille de texte, contraste renforcé et réduction des animations
+- lien d'évitement clavier et focus visible
 
 Encore incomplet :
 
-- thème réellement appliqué partout
 - densité UI réellement exploitée
 - formats d’export multiples réellement branchés
 - chemins par défaut import / export / attachments
+- positionnement et redimensionnement persistants des panneaux
 
 ### Persistances
 Implémenté :
@@ -376,33 +385,37 @@ Implémenté / préparé :
 - squelette `syncEngine`
 - calcul explicite de conflit minimal
 - badge UI d’état de sync
+- dossiers choisis, instantanés distincts et comparaison de leur filiation
+- revue explicite des projets ajoutés, remplacés ou absents
+- import comme copies et restauration complète après confirmation
 
 Non fait :
 
 - push réel distant
 - pull réel distant
 - politique de fusion avancée
-- résolution de conflit assistée par UI
+- fusion automatique champ par champ ou réconciliation fine des projets
 - stockage / transport distant réel
+- partage natif intégré, relais Pi/WebDAV, QR/WebRTC et fournisseurs cloud
 
 ## Limites connues
 
-- comportement de mise à jour / réinstallation PWA à clarifier sur Android
+- comportement de mise à jour / réinstallation PWA à approfondir sur Android
 - besoin d’un switch `stage preview` ↔ `full export`
-- settings présents dans le modèle mais encore partiellement branchés
-- accès au dossier sélectionné et persistance des permissions à valider sur les
-  navigateurs cibles
-- transports facultatifs non encore comparés sous Windows et Android
+- densité, formats d'export additionnels et placement libre non encore branchés
+- choix du dossier et écriture confirmés sous Windows et Android ; renouvellement
+  des permissions et essai d'un autre navigateur reportés
+- aucun transport partagé configuré entre les appareils pour le moment
 - gestion de vrais fichiers binaires pour attachments non encore traitée
 
 ## Roadmap technique courte recommandée
 
-1. conserver la progression mesurable et le dashboard livré (`#105`, `#93`)
-2. préserver le modèle, l'interface et la matrice des chantiers (`#94`, `#95`)
-3. introduire le fournisseur et le miroir de sauvegarde (`S1.1`, `S1.2`)
-4. écrire les instantanés et détecter les divergences (`S1.3`, `S1.4`)
-5. comparer les modes autonomes et transports facultatifs (`S1.5`)
-6. traiter `.ipm` et les pièces jointes binaires plus tard (`S2.1`)
+1. publier le wiki, l'identité applicative `1.0.0` et l'archive de release ;
+2. axe A : réconciliation sûre puis transport partagé facultatif ;
+3. axe B : import GitHub lu et validé, pilotes UFI et SUMP ;
+4. axe C : préférences avancées, densité et placement des panneaux ;
+5. reprendre séparément les validations matérielles reportées (`#86`) ;
+6. ne traiter `.ipm` et les binaires qu'en cas de besoin documenté.
 
 Les migrations de modèle restent séparées des PR d'interface. Chaque incrément
 doit préserver les projets et bundles existants.

@@ -4,10 +4,15 @@ Outil local-first et PWA pour cadrer, suivre, enrichir et rouvrir des projets de
 manière structurée, sans perdre la souplesse de notes éditables ni la portabilité
 des exports JSON et Markdown.
 
+La première version publique préparée est **`1.0.0`** ; son tag GitHub prévu
+est **`v1.0.0`**. Cette version logicielle est distincte des étapes de projet
+affichées sous la forme `v.0.0 → v.1.0`.
+
 ## Fonctionnalités actuelles
 
 - gestion multi-projets
 - cockpit portefeuille en grille ou en liste, avec recherche, filtres et tris
+- tableau de bord responsive élargi lorsqu'aucun aperçu latéral n'est affiché
 - étapes versionnées `v.0.0 → v.1.0`, avec parcours focalisé et aide contextuelle
 - backlog
 - journal de projet
@@ -21,6 +26,9 @@ des exports JSON et Markdown.
 - export Markdown
 - aperçu Markdown complet
 - interface française et anglaise
+- thèmes système, sombre et clair réellement appliqués et mémorisés
+- taille de texte adaptable, contraste renforcé et réduction des animations
+- navigation clavier et accès direct au contenu principal
 - PWA installable
 - lien facultatif vers un dépôt GitHub public, lu sans jeton ni écriture
 - lecture facultative des dépôts GitHub privés avec autorisation fine-grained de session
@@ -91,6 +99,21 @@ Les chantiers restent facultatifs, personnalisables et indépendants des dépôt
 GitHub. Les projets historiques, les exports JSON/Markdown et le projet IDE de
 démonstration restent compatibles.
 
+## Apparence et accessibilité
+
+Dans **Paramètres**, choisir **Suivre le système**, **Sombre** ou **Clair**.
+Le mode système réagit également aux changements d'apparence du navigateur ou
+de l'appareil pendant l'utilisation.
+
+La section **Accessibilité et confort** propose :
+
+- trois tailles de texte : normale, grande et très grande ;
+- un contraste standard ou renforcé pour chaque thème ;
+- le respect du réglage système ou la réduction explicite des animations ;
+- un lien d'accès direct au contenu principal lors de la navigation au clavier.
+
+Ces préférences sont mémorisées localement sans modifier les documents projet.
+
 ## Préparer un projet gouverné
 
 Le bouton **+ Nouveau projet** conserve la création locale immédiate. Le bouton
@@ -147,17 +170,26 @@ Les compromis, permissions minimales, limites XSS/appareil compromis et modèles
 
 ## Roadmap mesurable et releases
 
-- [x] Cible `0.1.0` : socle local-first, PWA, projets, exports et restauration.
-- [x] Cible `0.2.0` : cockpit portefeuille, progression et chantiers parallèles.
-- [ ] Cible `0.3.0` : sauvegardes portables et continuité Windows/Android.
-- [ ] Cible `0.4.0` : gouvernance des projets liés et accès GitHub avancé.
-- [ ] Horizon `1.0.0` : explorations ultérieures, `.ipm` et transports directs.
+La [roadmap produit canonique](ROADMAP.md) mesure exclusivement le périmètre de
+la première release `1.0.0` : socle local-first, cockpit et progression,
+sauvegardes JSON, gouvernance, apparence, accessibilité et diffusion.
 
-Les objectifs détaillés, leurs cases vérifiables et leurs issues associées sont
-dans la [roadmap produit canonique](ROADMAP.md). Ces jalons organisent le
-travail ; ils ne prétendent pas qu'une release GitHub ou un tag a déjà été créé.
-Les fonctionnalités de gouvernance prévues pour `0.4.0` sont implémentées,
-mais la validation réelle Windows/Android de `0.3.0` reste distincte et ouverte.
+Les lots historiques A à D ne correspondent pas à des releases GitHub déjà
+publiées. Une case cochée décrit un comportement disponible ; une case vide
+reste un objectif réel et vérifiable de cette première livraison.
+
+Après `1.0.0`, trois axes distincts sont planifiés :
+
+1. **A — Continuité entre appareils** : réconciliation sûre, partage natif,
+   relais facultatif, WebRTC/QR et fournisseurs cloud optionnels.
+2. **B — Méthode et projets existants** : import GitHub en lecture seule,
+   prévisualisation humaine, projets pilotes UFI/SUMP et parcours adaptatifs.
+3. **C — Interface et personnalisation** : densité, disposition et
+   redimensionnement progressifs des panneaux.
+
+La [roadmap détaillée après la v1.0](docs/roadmaps/post-v1-evolution-roadmap.md)
+garde ces objectifs visibles sans réduire artificiellement le pourcentage de
+la release actuellement préparée.
 
 ## Données et sauvegarde
 
@@ -188,18 +220,25 @@ mais la validation réelle Windows/Android de `0.3.0` reste distincte et ouverte
   ajoutés, remplacés ou retirés. Importer comme copies préserve les données ;
   restaurer exige une confirmation explicite. Il n'existe aucune restauration
   automatique.
-- Syncthing ou un autre transport pourra synchroniser ce dossier, sans devenir
-  une dépendance de l'application.
+- Un dossier local ne se synchronise jamais seul : un partage, une copie ou un
+  transport séparé doit effectivement déplacer les fichiers entre appareils.
+- Syncthing, un partage natif ou un futur relais pourront assurer ce transport
+  sans devenir des dépendances obligatoires de l'application.
 
 Le [guide pratique des sauvegardes personnelles](docs/portable-backup-user-guide.md)
-commence par le parcours autonome sans installation et distingue les tests
-automatisés des validations Windows, Galaxy S23 et transports externes encore
-à réaliser sur des appareils réels.
+commence par le parcours autonome sans installation et distingue les validations
+Windows et Android effectivement observées des tests de navigateur
+supplémentaire, restauration physique et transport externe encore reportés.
 
 La décision complète et l'ordre d'implémentation sont documentés dans
 [DR-002](docs/decisions/DR-002-local-first-syncthing-backup-architecture.md),
 [DR-003](docs/decisions/DR-003-stages-workstreams-project-model.md) et la
 [roadmap de sauvegarde portable](docs/roadmaps/local-first-syncthing-roadmap.md).
+
+Le périmètre de release, les conflits d'instantanés, les pistes de transport,
+le futur import UFI/SUMP et le rôle facultatif d'un conteneur ZIP `.ipm` sont
+documentés dans
+[DR-006](docs/decisions/DR-006-first-release-and-post-release-evolution.md).
 
 Les comptes applicatifs distants, la collaboration multi-utilisateur et un
 service de synchronisation obligatoire ne font pas partie du périmètre retenu.
@@ -215,6 +254,7 @@ service de synchronisation obligatoire ne font pas partie du périmètre retenu.
 ```bash
 npm install
 npm run dev
+npm run lint
 npm test
 ```
 
@@ -227,3 +267,10 @@ npm run preview
 Déploiement
 
 Le dépôt est prévu pour être publié via GitHub Pages avec GitHub Actions.
+
+## Documentation et wiki
+
+L'[index de `/docs`](docs/README.md) explique le rôle de chaque guide,
+décision, contrat, roadmap et document historique. Le dépôt principal reste la
+source de vérité versionnée ; le wiki GitHub en présente un miroir utilisateur
+en français, sans remplacer la documentation technique complète.

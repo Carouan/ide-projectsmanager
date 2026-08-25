@@ -6,27 +6,27 @@ case vide décrit un objectif accepté mais non encore livré. Les groupes serve
 à organiser le travail : seules leurs cases les plus détaillées entrent dans le
 calcul. Les références `#N` pointent vers les issues de ce dépôt.
 
-Le calcul porte uniquement sur les releases A à D, qui correspondent au périmètre
-produit accepté. Les explorations non engagées de la release E sont visibles
-pour mémoire mais ne dégradent pas artificiellement le pourcentage.
+Le calcul porte uniquement sur le périmètre accepté de la **première release
+applicative `1.0.0`**. Les lots A à D décrivent des familles de capacités, pas
+d'anciennes releases publiques qui auraient réellement existé. Les transports
+entre appareils, l'import intelligent de dépôts et la personnalisation avancée
+forment une roadmap ultérieure distincte.
 
-Les releases ci-dessous sont des **cibles de livraison semver planifiées**, pas
-des tags Git ni des releases GitHub déjà publiées. Le cycle méthodologique d'un
-projet `v.0.0 → v.1.0` reste distinct de la version distribuée de
-l'application : par exemple, une application `0.2.0` peut piloter un projet
-actuellement à l'étape `v.0.7`.
+Le tag de distribution prévu est `v1.0.0`. Il ne faut pas le confondre avec les
+étapes méthodologiques d'un projet `v.0.0 → v.1.0`. L'absence d'un tag ou d'une
+release publiée ne doit jamais être présentée comme une publication déjà faite.
 
-| Cible applicative | Jalon | Critère principal |
+| Périmètre | État | Critère principal |
 |---|---|---|
-| `0.1.0` | Release A | Socle local-first, PWA, projets et sauvegarde JSON sûre. |
-| `0.2.0` | Release B | Dashboard exploitable, progression vérifiable et chantiers parallèles. |
-| `0.3.0` | Release C | Sauvegardes portables et continuité Windows / Android. |
-| `0.4.0` | Release D | Projets gouvernés et stratégie sûre pour les dépôts privés. |
-| `1.0.0` | Horizon E | Stabilisation ultérieure après arbitrage des explorations. |
+| Lots A–D | Inclus dans `1.0.0` | Socle local-first, cockpit, sauvegardes et gouvernance. |
+| Stabilisation | Incluse dans `1.0.0` | Thèmes, accessibilité, documentation, wiki et archive. |
+| Axe A | Après `1.0.0` | Réconciliation sûre et transports facultatifs. |
+| Axe B | Après `1.0.0` | Compréhension de projets, UFI/SUMP et méthode adaptable. |
+| Axe C | Après `1.0.0` | Densité, disposition et personnalisation avancée. |
 
 <!-- roadmap-progress:start -->
 
-## Release A — cible `0.1.0` — Socle local-first exploitable
+## Lot A — Socle local-first exploitable
 
 - [x] Gouvernance et architecture frontend
   - [x] Règle une issue, une branche et une pull request (#1).
@@ -59,7 +59,7 @@ actuellement à l'étape `v.0.7`.
   - [x] Installer l'application comme PWA et conserver l'usage hors ligne.
   - [x] Préparer les métadonnées, conflits et badge de continuité (#23, #24, #25, #26).
 
-## Release B — cible `0.2.0` — Cockpit de pilotage et avancement vérifiable
+## Lot B — Cockpit de pilotage et avancement vérifiable
 
 - [x] Relier un projet à son dépôt public
   - [x] Définir les responsabilités IDE / dépôt / Project Steward (#61).
@@ -106,7 +106,7 @@ actuellement à l'étape `v.0.7`.
   - [x] Adapter cette synthèse aux écrans mobiles (#95).
   - [x] Préserver les exports/imports et projets historiques (#94).
 
-## Release C — cible `0.3.0` — Sauvegardes portables et continuité personnelle
+## Lot C — Sauvegardes portables et continuité personnelle
 
 - [x] Isoler un fournisseur de sauvegarde portable (#82)
   - [x] Définir les capacités de lecture, écriture et diagnostic (#82).
@@ -127,14 +127,13 @@ actuellement à l'étape `v.0.7`.
   - [x] Distinguer un descendant d'un état divergent.
   - [x] Expliquer l'origine, la date et l'impact avant application.
   - [x] Restaurer, importer comme copie ou ignorer explicitement.
-- [ ] Valider Windows, Android et les replis (#86)
-  - [ ] Vérifier Chrome/Edge sous Windows.
-  - [ ] Vérifier Chrome Android sur les appareils réellement visés.
-  - [ ] Vérifier un navigateur sans accès facultatif au dossier.
+- [x] Vérifier les appareils prioritaires et documenter les limites (#86)
+  - [x] Confirmer le choix de dossier et l'écriture JSON sous Windows/PWA.
+  - [x] Confirmer le choix de dossier et l'écriture JSON sous Android.
   - [x] Documenter un parcours autonome sans logiciel complémentaire.
-  - [x] Documenter Syncthing comme transport externe facultatif.
+  - [x] Expliquer qu'un dossier ne se synchronise pas seul entre appareils.
 
-## Release D — cible `0.4.0` — Gouvernance avancée des projets liés
+## Lot D — Gouvernance avancée des projets liés
 
 - [x] Préparer un projet gouverné depuis AI Project Template (#68)
   - [x] Conserver la création immédiate d'une idée purement locale.
@@ -147,18 +146,50 @@ actuellement à l'étape `v.0.7`.
   - [x] Permettre une autorisation explicite, minimale et révocable.
   - [x] Conserver l'usage public et hors ligne sans authentification.
 
+## Stabilisation de la première release `1.0.0`
+
+- [x] Offrir un tableau de bord lisible sur grand écran (#118)
+  - [x] Supprimer la colonne vide lorsque l'aperçu Markdown est absent.
+  - [x] Élargir uniquement le tableau de bord et conserver le comportement mobile.
+- [x] Garantir une qualité vérifiable avant distribution (#120)
+  - [x] Exclure les fichiers PWA générés des contrôles de code.
+  - [x] Exécuter sans erreur le lint global, les tests et le build.
+- [x] Rendre les thèmes réellement fonctionnels (#122)
+  - [x] Choisir automatiquement le thème du système.
+  - [x] Appliquer explicitement le thème sombre ou clair.
+  - [x] Conserver les préférences historiques et les libellés français/anglais.
+- [x] Proposer les réglages essentiels d'accessibilité (#124)
+  - [x] Ajuster la taille du texte sans dépasser les limites prévues.
+  - [x] Renforcer le contraste des deux thèmes.
+  - [x] Respecter ou réduire explicitement les animations.
+  - [x] Proposer un accès direct clavier au contenu principal.
+- [x] Aligner la documentation et les preuves disponibles (#126)
+  - [x] Décrire la structure et l'autorité de chaque famille documentaire.
+  - [x] Distinguer les validations Windows/Android observées des tests reportés.
+  - [x] Séparer les axes A, B et C de la release `1.0.0`.
+  - [x] Définir les cas pilotes UFI et SUMP sans modifier leurs dépôts.
+- [ ] Préparer la diffusion publique
+  - [ ] Publier un miroir wiki utilisateur depuis les documents canoniques.
+  - [ ] Identifier l'application distribuée sous son nom et sa version `1.0.0`.
+  - [ ] Produire une archive statique téléchargeable et son contrôle SHA-256.
+
 <!-- roadmap-progress:end -->
 
-## Horizon E — cible `1.0.0` — Explorations ultérieures non engagées
+## Après `1.0.0` — objectifs visibles hors périmètre mesuré
 
-- [ ] Définir un conteneur `.ipm` versionné après stabilisation de S1.
-- [ ] Intégrer des pièces jointes binaires avec manifeste et intégrité.
-- [ ] Étudier WebDAV ou un fournisseur de fichiers cloud facultatif.
-- [ ] Étudier un transfert direct entre appareils sans service obligatoire.
-- [ ] Évaluer séparément WebRTC, QR animés ou un outil de partage local.
-- [ ] Définir la continuité d'un projet après son étape `v.1.0`.
-- [ ] Clarifier les niveaux de complexité et les parcours hors informatique.
-- [ ] Capturer UFI comme projet distinct sans l'implémenter dans l'IDE.
+- [ ] **A — Réconciliation et transports** : partage natif Windows/Android,
+  relais Raspberry Pi/WebDAV, QR/WebRTC puis connecteurs cloud facultatifs.
+- [ ] **B — Méthode et compréhension de projets** : import public en lecture
+  seule, cas pilotes UFI et SUMP, profils et cycles après `v.1.0`.
+- [ ] **C — Interface et personnalisation** : densité, placement contrôlé,
+  redimensionnement des panneaux et accessibilité complémentaire.
+- [ ] **Validation différée** : navigateur sans sélection de dossier, scénario
+  physique de divergence et transfert réel entre deux appareils.
+- [ ] **Conteneur `.ipm` facultatif** : ZIP ouvert et documenté uniquement si
+  de vraies pièces jointes binaires rendent le JSON insuffisant.
+
+Le détail mesurable de chaque front se trouve dans la
+[roadmap après la version 1.0](docs/roadmaps/post-v1-evolution-roadmap.md).
 
 ## Méthode de mesure
 

@@ -10,7 +10,7 @@ The agent must behave like a disciplined implementation agent, not like a broad 
 
 ## Absolute rules
 1. Never work directly on `main`.
-2. One run = one GitHub issue.
+2. One implementation unit = one GitHub issue.
 3. One branch = one GitHub issue.
 4. One PR = one GitHub issue.
 5. Never mix structural refactor and business feature in the same PR if they can be separated.
@@ -25,22 +25,21 @@ The agent must behave like a disciplined implementation agent, not like a broad 
 
 ## Mandatory order of work
 
-The original front, storage and sync-foundation sequence is complete. The
-accepted UX and project-model sequence now precedes optional folder transport:
+The original product, workstream and portable-backup foundation is implemented.
+The accepted first-release sequence is now:
 
-1. repository-backed demonstration project (`#88`)
-2. focused stage navigation and contextual guidance (`#90`, `#91`)
-3. declared progress, measurable-roadmap estimates and dashboard controls
-   (`#92`, `#105`, `#93`)
-4. generic workstream model and UI (`#94`, `#95`)
-5. portable backup-provider abstraction (`S1.1`)
-6. selected-folder adapter, snapshots and divergence handling (`S1.2`–`S1.4`)
-7. standalone and optional-transport validation matrix (`S1.5`)
-8. versioned `.ipm` package with binary attachments, later (`S2.1`)
+1. preserve the responsive dashboard and a clean repository-wide quality gate;
+2. preserve functional system/light/dark themes and essential accessibility;
+3. align the canonical documentation and measurable `1.0.0` release scope;
+4. publish a user-facing wiki mirror sourced from repository documentation;
+5. version, validate, package and publish the first `v1.0.0` release;
+6. continue post-release work in the order defined by DR-006 and
+   `docs/roadmaps/post-v1-evolution-roadmap.md`.
 
-Follow DR-003 for stages and workstreams, DR-004 for measurable progress, plus
-`docs/roadmaps/local-first-syncthing-roadmap.md` for portable backups. Do not
-revive the old generic remote-backend sequence as the current product roadmap.
+Future work remains separated into A: reconciliation and optional transport,
+B: project understanding/import and methodology, and C: interface evolution.
+Do not revive the obsolete generic remote-backend sequence or make an optional
+transport mandatory.
 
 ## Product scope boundaries
 
@@ -67,8 +66,9 @@ When an issue is explicitly requested:
 
 - implement exactly that issue and nothing else
 - do not anticipate future issues unless strictly necessary to unblock the current issue
-- do not batch multiple issues in one run
-- if multiple issues are requested together, refuse batching and execute only one issue
+- never batch multiple issues into the same implementation unit, branch or PR
+- if the user explicitly authorizes continuous work, complete multiple units
+  sequentially; fully validate and integrate one issue before starting the next
 - if the issue is ambiguous, choose the narrowest safe interpretation
 - if blocked, stop and explain the blocker clearly
 
@@ -174,12 +174,12 @@ If a data model change is necessary:
 ## Current project priorities
 This repository is being upgraded in a controlled way.
 The immediate priority is not random cleanup.
-The global bundle restore is implemented by issue `#81` / `R1.7`. Finish the
-repository-backed demo, then execute `#90` through `#95` in dependency order,
-inserting measurable progression `#105` before dashboard controls `#93`.
-Resume `S1.1` through `S1.5` afterward. The active decisions are DR-002 for
-portable backup, DR-003 for the professional stages × workstreams model, and
-DR-004 for measurable roadmaps and effective project progress.
+The first public `1.0.0` release is the active priority. Keep the measured
+release scope honest: Windows and Android folder writing have been confirmed,
+while another-browser validation and real cross-device transport remain
+explicitly deferred. The active decisions are DR-002 for portable backup,
+DR-003 for stages and workstreams, DR-004 for measurable progress, DR-005 for
+private GitHub reads, and DR-006 for first-release and post-release boundaries.
 
 ## If no issue is specified
 Do not perform broad refactors.
@@ -195,8 +195,8 @@ If the requested issue appears already implemented:
 - report that it appears complete
 - identify the next missing issue only if explicitly asked
 
-## Definition of done for a run
-A run is complete only if:
+## Definition of done for an implementation unit
+An implementation unit is complete only if:
 - exactly one issue was implemented
 - relevant validation was run successfully
 - changes were committed
@@ -204,3 +204,5 @@ A run is complete only if:
 - a PR was opened
 - the PR body is structured correctly
 - the PR closes the issue when appropriate
+- when continuous work is authorized, the next issue starts only after the
+  current PR is validated and integrated

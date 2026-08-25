@@ -11,6 +11,10 @@
 > - PR #31
 > - PR #32
 > - PR #33
+>
+> Historical review archive: findings must be checked against current `main`.
+> Active priorities are `ROADMAP.md`, `AGENTS.md`, decision `DR-006`, and the
+> post-v1 evolution roadmap.
 
 ---
 
@@ -24,10 +28,9 @@ Each finding is classified as one of:
 - **do-not-act-now**: valid observation, but outside the current phase
 
 This file is **not** the roadmap source of truth.
-The roadmap remains:
-- `AGENTS.md`
-- `docs/codex-master-plan.md`
-- GitHub Issues
+Current scope remains in `ROADMAP.md`, `AGENTS.md`, accepted architecture
+decisions, and explicitly prioritized GitHub issues. The former
+`docs/codex-master-plan.md` is historical background, not an active backlog.
 
 ---
 

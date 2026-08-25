@@ -1,5 +1,8 @@
 # 📦 EPIC F0 — Setup & Governance
 
+> Archive historique des premières issues. Les priorités actives figurent dans
+> `ROADMAP.md`, `AGENTS.md`, la décision `DR-006` et la roadmap post-v1.0.
+
 ---
 
 ## ISSUE #1 — Setup project governance docs

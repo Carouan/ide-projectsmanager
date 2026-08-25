@@ -1,71 +1,50 @@
-# Releases, Deployments, Packages — différences exactes
+# Release, déploiement et archive — différences utiles
 
-Ces trois notions parlent toutes de sortie ou de publication, mais elles ne désignent pas la même chose.
+Ces notions se complètent mais ne décrivent pas la même livraison.
 
-## Release
+## Release GitHub
 
-Une **release** est une **version publiée du projet**, côté produit / distribution.
+Une **release GitHub** publie une version officielle du projet à partir d'un
+tag Git, par exemple **`v1.0.0`**. Elle présente des notes de version et peut
+proposer un ou plusieurs fichiers téléchargeables.
 
-Elle sert à :
+La version logicielle `1.0.0` ne doit pas être confondue avec l'étape `v.1.0`
+d'un projet suivi dans l'IDE : la première identifie l'application publiée, la
+seconde décrit la maturité d'un document projet.
 
-- marquer un jalon stable
-- publier des notes de version
-- proposer éventuellement des fichiers à télécharger
+## Déploiement GitHub Pages
 
-Exemples utiles pour ce projet :
+Un **déploiement** met une compilation en ligne sur un environnement
+d'exécution. Ici, GitHub Pages publie l'application web et sa PWA.
 
-- `v0.4.0` : preview Markdown + settings + i18n
-- `v0.5.0` : attachments + user profile + storage layer
-- `v0.6.0` : sync metadata + sync UI
+Un déploiement peut intervenir sans release. Inversement, une release archive
+un état précis du projet mais ne remplace pas le déploiement web.
 
-Règle simple : **release = version officielle publiée**.
+## Archive de distribution
 
-## Deployment
+Une **archive de release** est un fichier ZIP téléchargeable joint à la release.
+Pour ce projet, elle contient l'application statique compilée et permet de
+l'héberger soi-même sur un serveur web compatible.
 
-Un **deployment** est une **mise en ligne technique** vers un environnement d’exécution.
+Une somme **SHA-256** jointe permet de vérifier que le fichier téléchargé n'a
+pas été altéré. L'archive n'est ni un installateur Windows, ni une application
+Android native, ni une synchronisation automatique entre appareils.
 
-Exemples :
+## Registre de packages
 
-- `production`
-- `staging`
-- `preview`
-- `github-pages`
+Un **package de registre** est distribué via npm, Docker/OCI, NuGet, Maven ou
+un système équivalent. Ce mode n'est nécessaire que si l'IDE devient une
+bibliothèque réutilisable ou si une image serveur doit être publiée.
 
-Dans ce dépôt, GitHub Pages correspond à cette logique de deployment.
+L'archive ZIP de la release suffit pour la première version publique.
 
-Règle simple : **deployment = mise en ligne technique**.
-
-## Package
-
-Un **package** est un **artefact publié dans un registre de paquets**.
-
-Exemples classiques :
-
-- package npm
-- image Docker / OCI
-- package NuGet
-- package Maven
-
-Pour une app Vite/React publiée sur GitHub Pages, cette notion n’est pas centrale pour l’instant.
-
-Règle simple : **package = artefact réutilisable par d’autres systèmes**.
-
-## Vue synthétique
-
-| Notion | Rôle | Exemple ici |
+| Élément | Fonction | Première version prévue |
 |---|---|---|
-| Release | version officielle publiée | `v0.5.0` avec notes de version |
-| Deployment | mise en ligne technique | build déployé sur `github-pages` |
-| Package | artefact publié dans un registre | pas prioritaire pour l’instant |
+| Release GitHub | Identifier officiellement une livraison stable | `v1.0.0` et ses notes |
+| GitHub Pages | Exécuter l'application en ligne | Déploiement de la branche `main` |
+| Archive ZIP | Télécharger les fichiers web compilés | Archive statique `1.0.0` |
+| Somme SHA-256 | Vérifier l'intégrité de l'archive | Fichier de contrôle associé |
+| Registre npm / Docker | Distribuer un package à d'autres systèmes | Non nécessaire pour la v1.0 |
 
-## Recommandation pour ce dépôt
-
-À faire :
-
-1. protéger `main`
-2. continuer à utiliser GitHub Pages pour les déploiements
-3. commencer à créer des releases à chaque gros jalon fonctionnel
-
-Pas nécessaire immédiatement :
-
-- packages, sauf si le projet devient un composant npm, une image Docker ou une librairie réutilisable
+L'application statique doit être servie par un serveur web ; ouvrir simplement
+`index.html` avec `file://` ne constitue pas un déploiement PWA supporté.

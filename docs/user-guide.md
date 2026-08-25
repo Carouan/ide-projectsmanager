@@ -82,6 +82,20 @@ La présentation et le tri sont mémorisés localement. La recherche et les filt
 ne le sont pas. Filtrer les projets n'effectue aucune lecture GitHub
 supplémentaire et ne masque jamais les alertes globales.
 
+## Adapter l'apparence et l'accessibilité
+
+Ouvrir **Paramètres** pour choisir **Suivre le système**, **Sombre** ou **Clair**.
+Le thème système suit aussi les changements du navigateur ou de l'appareil sans
+rechargement. Dans **Accessibilité et confort**, adapter ensuite :
+
+- la taille du texte : normale, grande ou très grande ;
+- le contraste : standard ou renforcé ;
+- les animations : préférence système ou réduction explicite.
+
+Ces choix sont mémorisés uniquement sur cet appareil. La navigation au clavier
+affiche également un lien **Aller au contenu principal** dès la première
+tabulation ; les éléments actifs conservent un contour de focus visible.
+
 ## Comprendre et ajuster l'avancement
 
 Le tableau de bord et l'onglet **Projet** affichent un pourcentage accompagné de
@@ -188,4 +202,6 @@ importées comme copies ou restaurées après confirmation explicite.
 
 Le [guide complet des sauvegardes personnelles](portable-backup-user-guide.md)
 détaille le parcours autonome, les permissions, les divergences, le transport
-externe facultatif et les validations sur appareils réels encore attendues.
+externe facultatif ainsi que les essais Windows et Android réellement confirmés.
+Les vérifications sur un autre navigateur, la restauration physique entre deux
+appareils et un transport partagé restent des validations distinctes, reportées.

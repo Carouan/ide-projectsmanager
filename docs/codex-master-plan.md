@@ -1,7 +1,9 @@
 # IDE Project Manager — Master instructions for Codex
 
-> Single source of truth for the next implementation phase.
-> This document supersedes the two earlier notes and merges them into one stricter operating framework.
+> Historical implementation plan. It preserves the original delivery intent,
+> but is no longer the active source of truth. Current scope and priorities are
+> defined by `ROADMAP.md`, `AGENTS.md`, decision `DR-006`, and
+> `docs/roadmaps/post-v1-evolution-roadmap.md`.
 
 ---
 
