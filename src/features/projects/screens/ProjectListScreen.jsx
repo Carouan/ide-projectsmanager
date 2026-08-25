@@ -50,7 +50,7 @@ export default function ProjectListScreen({
 
   return (
     <div className="page-shell">
-      <div className="page-container">
+      <div className="page-container page-container-dashboard">
         <div className="hero">
           <div>
             <div className="eyebrow">{t("global.hero.eyebrow")}</div>
