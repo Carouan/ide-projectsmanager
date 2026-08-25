@@ -23,6 +23,7 @@
   --accent-text: #c4b5fd;
   --surface-strong: rgba(15, 23, 42, 0.54);
   --surface-soft: rgba(255, 255, 255, 0.035);
+  --focus-ring: #bca6ff;
   color-scheme: dark;
 }
 
@@ -43,11 +44,35 @@
   --accent-text: #6234a7;
   --surface-strong: rgba(255, 253, 250, 0.92);
   --surface-soft: rgba(41, 50, 46, 0.045);
+  --focus-ring: #6032a2;
   color-scheme: light;
+}
+
+:root[data-contrast="high"] {
+  --border: #b6c4db;
+  --text: #ffffff;
+  --muted: #e1e9f5;
+  --accent-text: #e5d9ff;
+  --surface-strong: #131d31;
+  --focus-ring: #ffe48a;
+}
+
+:root[data-theme="light"][data-contrast="high"] {
+  --border: #343d39;
+  --text: #101714;
+  --muted: #27322d;
+  --accent-text: #482081;
+  --surface-strong: #ffffff;
+  --focus-ring: #2d1160;
 }
 
 * {
   box-sizing: border-box;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
 }
 
 html,
@@ -85,6 +110,24 @@ body {
 
 .app-shell-main {
   min-width: 0;
+}
+
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  z-index: 100;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 15px;
+  background: var(--panel);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  transform: translate(-50%, -180%);
+}
+
+.skip-link:focus {
+  transform: translate(-50%, 0);
 }
 
 .app-shell-right-panel {
@@ -488,6 +531,10 @@ h3 {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
+}
+
+.settings-accessibility-panel {
+  margin-top: 18px;
 }
 
 .settings-backup-panel .hero-text {
@@ -2380,6 +2427,26 @@ select:focus {
 
 :root[data-theme="light"] .workstream-status-completed {
   color: #40504c;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+:root[data-motion="reduced"] *,
+:root[data-motion="reduced"] *::before,
+:root[data-motion="reduced"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+  transition-duration: 0.01ms !important;
 }
 
 .workstream-matrix-title-dot {

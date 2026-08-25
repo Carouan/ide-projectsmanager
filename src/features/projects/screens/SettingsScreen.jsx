@@ -83,6 +83,66 @@ export default function SettingsScreen({
           </div>
         </section>
 
+        <section className="panel settings-accessibility-panel">
+          <h2>{t("settings.accessibility.title")}</h2>
+          <p className="hero-text">{t("settings.accessibility.description")}</p>
+          <div className="form-grid">
+            <label className="field">
+              <span>{t("settings.accessibility.fontScale")}</span>
+              <select
+                value={safeSettings.fontScale || "standard"}
+                onChange={(event) =>
+                  onUpdateSettings({ fontScale: event.target.value })
+                }
+              >
+                <option value="standard">
+                  {t("settings.accessibility.fontScale.standard")}
+                </option>
+                <option value="large">
+                  {t("settings.accessibility.fontScale.large")}
+                </option>
+                <option value="extra-large">
+                  {t("settings.accessibility.fontScale.extraLarge")}
+                </option>
+              </select>
+            </label>
+
+            <label className="field">
+              <span>{t("settings.accessibility.contrast")}</span>
+              <select
+                value={safeSettings.contrast || "standard"}
+                onChange={(event) =>
+                  onUpdateSettings({ contrast: event.target.value })
+                }
+              >
+                <option value="standard">
+                  {t("settings.accessibility.contrast.standard")}
+                </option>
+                <option value="high">
+                  {t("settings.accessibility.contrast.high")}
+                </option>
+              </select>
+            </label>
+
+            <label className="field">
+              <span>{t("settings.accessibility.motion")}</span>
+              <select
+                value={safeSettings.motionPreference || "system"}
+                onChange={(event) =>
+                  onUpdateSettings({ motionPreference: event.target.value })
+                }
+              >
+                <option value="system">
+                  {t("settings.accessibility.motion.system")}
+                </option>
+                <option value="reduced">
+                  {t("settings.accessibility.motion.reduced")}
+                </option>
+              </select>
+            </label>
+          </div>
+        </section>
+
         <GitHubPrivateAccessPanel />
 
         <section className="panel settings-backup-panel">

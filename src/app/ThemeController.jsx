@@ -5,8 +5,15 @@ import {
   resolveThemePreference,
   THEME_PREFERENCE,
 } from "../services/themePreference.js";
+import {
+  normalizeAccessibilityPreferences,
+  resolveRootFontSize,
+} from "../services/accessibilityPreferences.js";
 
-export default function ThemeController({ preference }) {
+export default function ThemeController({ preference, accessibility }) {
+  const { fontScale, contrast, motionPreference } =
+    normalizeAccessibilityPreferences(accessibility);
+
   useEffect(() => {
     const normalizedPreference = normalizeThemePreference(preference);
     const mediaQuery =
@@ -48,6 +55,12 @@ export default function ThemeController({ preference }) {
 
     return undefined;
   }, [preference]);
+
+  useEffect(() => {
+    document.documentElement.style.fontSize = resolveRootFontSize(fontScale);
+    document.documentElement.dataset.contrast = contrast;
+    document.documentElement.dataset.motion = motionPreference;
+  }, [fontScale, contrast, motionPreference]);
 
   return null;
 }
