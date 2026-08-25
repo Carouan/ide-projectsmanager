@@ -20,6 +20,30 @@
   --secondary-2: #475569;
   --badge: #243247;
   --shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  --accent-text: #c4b5fd;
+  --surface-strong: rgba(15, 23, 42, 0.54);
+  --surface-soft: rgba(255, 255, 255, 0.035);
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg: #f6f4ef;
+  --bg-soft: #fffdfa;
+  --panel: #fffdfa;
+  --panel-2: #efede7;
+  --border: #d8d5cd;
+  --text: #18221f;
+  --muted: #5d6963;
+  --primary: #7040bd;
+  --primary-2: #8251d0;
+  --secondary: #40504c;
+  --secondary-2: #52635e;
+  --badge: #ebe8e1;
+  --shadow: 0 12px 30px rgba(33, 40, 36, 0.08);
+  --accent-text: #6234a7;
+  --surface-strong: rgba(255, 253, 250, 0.92);
+  --surface-soft: rgba(41, 50, 46, 0.045);
+  color-scheme: light;
 }
 
 * {
@@ -104,7 +128,7 @@ select {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #b79cff;
+  color: var(--accent-text);
   margin-bottom: 8px;
 }
 
@@ -191,7 +215,7 @@ h3 {
   padding: 20px;
   border: 1px solid var(--border);
   border-radius: 18px;
-  background: rgba(15, 23, 42, 0.42);
+  background: var(--surface-strong);
 }
 
 .dashboard-controls-header {
@@ -290,7 +314,9 @@ h3 {
 .panel,
 .empty-state,
 .backlog-item {
-  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015)),
+    var(--panel);
   border: 1px solid var(--border);
   border-radius: 18px;
   box-shadow: var(--shadow);
@@ -372,7 +398,7 @@ h3 {
 }
 
 .project-progress-source a {
-  color: #c4b5fd;
+  color: var(--accent-text);
   text-decoration: none;
 }
 
@@ -862,7 +888,7 @@ select:focus {
   gap: 8px;
   background: var(--badge);
   border: 1px solid var(--border);
-  color: #dce7f7;
+  color: var(--text);
   border-radius: 999px;
   padding: 7px 12px;
   font-size: 0.9rem;
@@ -921,7 +947,8 @@ select:focus {
   border-radius: 20px;
   background:
     linear-gradient(145deg, rgba(124, 58, 237, 0.1), transparent 46%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015));
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015)),
+    var(--panel);
   box-shadow: var(--shadow);
 }
 
@@ -980,7 +1007,7 @@ select:focus {
   border-radius: 15px;
   padding: 14px;
   color: var(--text);
-  background: rgba(15, 23, 42, 0.58);
+  background: var(--surface-strong);
   text-align: left;
   cursor: pointer;
   transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
@@ -1096,7 +1123,7 @@ select:focus {
   border-left-width: 4px;
   border-radius: 15px;
   padding: 16px;
-  background: rgba(15, 23, 42, 0.52);
+  background: var(--surface-strong);
 }
 
 .attention-item-information {
@@ -1121,7 +1148,7 @@ select:focus {
 
 .attention-project-name {
   margin-bottom: 4px;
-  color: #c4b5fd;
+  color: var(--accent-text);
   font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.055em;
@@ -1964,7 +1991,7 @@ select:focus {
   padding: 16px;
   border: 1px solid var(--border);
   border-radius: 14px;
-  background: rgba(15, 23, 42, 0.54);
+  background: var(--surface-strong);
 }
 
 .workstream-summary-card::before {
@@ -2186,7 +2213,7 @@ select:focus {
   border: 1px solid var(--border);
   border-radius: 15px;
   padding: 16px;
-  background: rgba(15, 23, 42, 0.5);
+  background: var(--surface-strong);
 }
 
 .workstream-card {
@@ -2306,7 +2333,53 @@ select:focus {
 }
 
 .workstream-matrix-current-stage {
-  color: #c4b5fd;
+  color: var(--accent-text);
+}
+
+:root[data-theme="light"] :is(
+  .attention-severity-information,
+  .workstream-status-planned
+) {
+  color: #1d4f91;
+}
+
+:root[data-theme="light"] :is(
+  .attention-severity-action,
+  .repository-badge-validation_required,
+  .workstream-matrix-cell-active .workstream-matrix-cell-count
+) {
+  color: #6234a7;
+}
+
+:root[data-theme="light"] :is(
+  .project-progress-stale,
+  .attention-severity-warning,
+  .repository-notice-stale,
+  .repository-badge-unknown,
+  .workstream-status-paused
+) {
+  color: #875300;
+}
+
+:root[data-theme="light"] :is(
+  .attention-severity-critical,
+  .repository-badge-blocking_question,
+  .workstream-status-blocked,
+  .workstream-form-error
+) {
+  color: #a12a36;
+}
+
+:root[data-theme="light"] :is(
+  .repository-badge-information,
+  .workstream-status-active,
+  .workstream-matrix-cell-completed .workstream-matrix-cell-count
+) {
+  color: #176542;
+}
+
+:root[data-theme="light"] .workstream-status-completed {
+  color: #40504c;
 }
 
 .workstream-matrix-title-dot {

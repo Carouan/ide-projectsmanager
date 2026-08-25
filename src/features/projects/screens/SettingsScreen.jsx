@@ -61,9 +61,10 @@ export default function SettingsScreen({
             <label className="field">
               <span>{t("settings.theme")}</span>
               <select
-                value={safeSettings.theme || "dark"}
+                value={safeSettings.theme || "system"}
                 onChange={(e) => onUpdateSettings({ theme: e.target.value })}
               >
+                <option value="system">{t("settings.theme.system")}</option>
                 <option value="dark">{t("settings.theme.dark")}</option>
                 <option value="light">{t("settings.theme.light")}</option>
               </select>

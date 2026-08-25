@@ -1,6 +1,6 @@
 export const DEFAULT_SETTINGS = {
   language: "fr",
-  theme: "dark",
+  theme: "system",
   markdownPreviewEnabled: true,
   uiDensity: "comfortable",
   exportFormat: "markdown",
