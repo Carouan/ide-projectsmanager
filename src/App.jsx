@@ -7,6 +7,7 @@ import SettingsScreen from "./features/projects/screens/SettingsScreen";
 import MarkdownPreview from "./features/markdown/components/MarkdownPreview";
 import PwaPrompt from "./components/PwaPrompt";
 import AppShell from "./app/AppShell";
+import ThemeController from "./app/ThemeController";
 import { I18nProvider } from "./i18n/useI18n";
 import { projectToMarkdown } from "./services/markdownExport";
 import { useRepositorySnapshot } from "./features/projects/hooks/useRepositorySnapshot.js";
@@ -181,6 +182,7 @@ export default function App() {
 
   return (
     <I18nProvider locale={settings?.language}>
+      <ThemeController preference={settings?.theme} />
       <AppShell main={activeScreen} rightPanel={rightPanel} />
       <PwaPrompt />
     </I18nProvider>

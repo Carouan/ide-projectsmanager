@@ -11,6 +11,7 @@
   "settings.language.en": "English",
   "settings.theme.dark": "Dark",
   "settings.theme.light": "Light",
+  "settings.theme.system": "Follow system",
   "settings.github.eyebrow": "Optional authorization",
   "settings.github.title": "Private GitHub access",
   "settings.github.description": "Explicitly authorize read-only access to linked private repositories for this browser session only.",

@@ -11,6 +11,7 @@
   "settings.language.en": "English",
   "settings.theme.dark": "Sombre",
   "settings.theme.light": "Clair",
+  "settings.theme.system": "Suivre le système",
   "settings.github.eyebrow": "Autorisation facultative",
   "settings.github.title": "Accès GitHub privé",
   "settings.github.description": "Autorise explicitement la lecture des dépôts privés déjà liés, uniquement pour cette session du navigateur.",
