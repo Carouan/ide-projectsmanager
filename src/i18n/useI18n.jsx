@@ -4,7 +4,7 @@ import en from "./en.json";
 
 const I18nContext = createContext({
   locale: "fr",
-  t: (key, params = {}) => key,
+  t: (key) => key,
 });
 
 const TRANSLATIONS = {
@@ -46,6 +46,8 @@ export function I18nProvider({ locale, children }) {
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
 
+// The context hook intentionally remains alongside its matching provider.
+// eslint-disable-next-line react-refresh/only-export-components
 export function useI18n() {
   return useContext(I18nContext);
 }

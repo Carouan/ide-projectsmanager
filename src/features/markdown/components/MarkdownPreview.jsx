@@ -2,7 +2,7 @@ import { Fragment } from "react";
 
 function renderInlineMarkdown(text) {
   const segments = [];
-  const pattern = /(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\([^\)]+\))/g;
+  const pattern = /(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\([^)]+\))/g;
   let cursor = 0;
   let match;
 
@@ -20,7 +20,7 @@ function renderInlineMarkdown(text) {
     } else if (token.startsWith("`") && token.endsWith("`")) {
       segments.push(<code key={`${match.index}-code`}>{token.slice(1, -1)}</code>);
     } else {
-      const linkMatch = token.match(/^\[([^\]]+)\]\(([^\)]+)\)$/);
+      const linkMatch = token.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
       if (linkMatch) {
         segments.push(
           <a
