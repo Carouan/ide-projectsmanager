@@ -89,6 +89,13 @@ comme **miroir utilisateur en français** : accueil, démarrage, progression,
 chantiers, sauvegardes, thèmes/accessibilité et limites connues. Les références
 techniques détaillées restent liées au dépôt principal.
 
+- [`wiki/Home.md`](wiki/Home.md) : accueil synthétique du wiki utilisateur.
+- [`wiki/_Sidebar.md`](wiki/_Sidebar.md) : navigation latérale du wiki.
+- `scripts/wiki/build-wiki.mjs` : génération des pages depuis leurs documents
+  canoniques et adaptation des liens relatifs.
+- `.github/workflows/sync-wiki.yml` : publication automatique vers le dépôt
+  wiki séparé après modification de la documentation sur `main`.
+
 ## Création assistée d'issues GitHub
 
 Le workflow manuel **Seed GitHub Issues** utilise :

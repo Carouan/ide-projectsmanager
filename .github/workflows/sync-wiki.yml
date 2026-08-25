@@ -1,0 +1,59 @@
+name: Publish user wiki
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - README.md
+      - ROADMAP.md
+      - docs/**
+      - scripts/wiki/**
+      - .github/workflows/sync-wiki.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: user-wiki
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout canonical documentation
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Generate user wiki pages
+        run: node scripts/wiki/build-wiki.mjs
+
+      - name: Synchronize separate GitHub wiki repository
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          wiki_directory="${RUNNER_TEMP}/ide-projectsmanager-wiki"
+          wiki_url="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git"
+
+          if ! git clone --quiet "$wiki_url" "$wiki_directory"; then
+            echo "::error::The wiki must be enabled and initialized, and GitHub Actions must have write access."
+            exit 1
+          fi
+
+          cp .wiki-build/*.md "$wiki_directory/"
+          git -C "$wiki_directory" config user.name "github-actions[bot]"
+          git -C "$wiki_directory" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C "$wiki_directory" add -- '*.md'
+
+          if git -C "$wiki_directory" diff --cached --quiet; then
+            echo "The user wiki is already synchronized."
+            exit 0
+          fi
+
+          git -C "$wiki_directory" commit -m "docs: synchronize user wiki from ${GITHUB_SHA}"
+          git -C "$wiki_directory" push
