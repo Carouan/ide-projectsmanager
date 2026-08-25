@@ -15,8 +15,8 @@ export default defineConfig({
       ],
       manifest: {
         id: "/ide-projectsmanager/",
-        name: "IDE de projet personnel",
-        short_name: "IDE Projet",
+        name: "IDE Projects Manager",
+        short_name: "IDE Projects",
         description:
           "Application personnelle de cadrage, suivi et structuration de projets.",
         theme_color: "#0f172a",

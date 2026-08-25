@@ -1,4 +1,5 @@
 import { useI18n } from "../../../i18n/useI18n";
+import { version as applicationVersion } from "../../../../package.json";
 import ProjectBundleRestorePanel from "../components/ProjectBundleRestorePanel";
 import SelectedBackupFolderPanel from "../components/SelectedBackupFolderPanel";
 import BackupSnapshotReviewPanel from "../components/BackupSnapshotReviewPanel";
@@ -186,6 +187,37 @@ export default function SettingsScreen({
           onInspectProjectBundle={onInspectProjectBundle}
           onRestoreProjectBundle={onRestoreProjectBundle}
         />
+
+        <section className="panel settings-about-panel">
+          <div>
+            <div className="eyebrow">{t("settings.about.eyebrow")}</div>
+            <h2>{t("settings.about.title")}</h2>
+            <p className="hero-text">{t("settings.about.description")}</p>
+            <p>
+              <strong>IDE Projects Manager</strong>
+              {" · "}
+              {t("settings.about.version", { version: applicationVersion })}
+            </p>
+          </div>
+          <div className="project-actions">
+            <a
+              className="btn btn-secondary"
+              href="https://github.com/Carouan/ide-projectsmanager"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {t("settings.about.repository")}
+            </a>
+            <a
+              className="btn btn-secondary"
+              href="https://github.com/Carouan/ide-projectsmanager/wiki"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {t("settings.about.wiki")}
+            </a>
+          </div>
+        </section>
       </div>
     </div>
   );
