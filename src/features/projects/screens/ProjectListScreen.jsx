@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { version as applicationVersion } from "../../../../package.json";
 import { useI18n } from "../../../i18n/useI18n";
 import { formatStageLabel } from "../../../constants/stages";
 import { formatDateTime } from "../../../services/dateTimePresentation";
@@ -53,7 +54,9 @@ export default function ProjectListScreen({
       <div className="page-container page-container-dashboard">
         <div className="hero">
           <div>
-            <div className="eyebrow">{t("global.hero.eyebrow")}</div>
+            <div className="eyebrow">
+              {t("global.hero.eyebrow", { version: applicationVersion })}
+            </div>
             <h1>{t("global.hero.title")}</h1>
             <p className="hero-text">{t("global.hero.description")}</p>
           </div>
