@@ -56,6 +56,13 @@ Seul le périmètre explicitement délimité dans `ROADMAP.md` détermine le
 pourcentage de la release en cours. Les objectifs futurs restent visibles sans
 diminuer artificiellement ce pourcentage.
 
+## `releases/` — versions et distribution
+
+- [Release `v1.0.0`](releases/v1.0.0.md) : notes de première publication,
+  fonctionnalités, fichiers distribués et limites connues.
+- [Guide d'installation statique](releases/INSTALLATION.md) : intégrité SHA-256,
+  extraction, hébergement et précautions sur les données locales.
+
 ## `contracts/` — échanges et compatibilité
 
 - [Contrat Dashboard–Project Steward v1](contracts/project-steward-dashboard-contract-v1.md).
