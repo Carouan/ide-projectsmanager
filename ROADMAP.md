@@ -169,7 +169,7 @@ release publiée ne doit jamais être présentée comme une publication déjà f
   - [x] Séparer les axes A, B et C de la release `1.0.0`.
   - [x] Définir les cas pilotes UFI et SUMP sans modifier leurs dépôts.
 - [ ] Préparer la diffusion publique
-  - [ ] Publier un miroir wiki utilisateur depuis les documents canoniques.
+  - [ ] Publier un miroir wiki utilisateur depuis les documents canoniques (#128).
   - [ ] Identifier l'application distribuée sous son nom et sa version `1.0.0`.
   - [ ] Produire une archive statique téléchargeable et son contrôle SHA-256.
 
