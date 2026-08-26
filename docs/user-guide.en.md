@@ -205,6 +205,11 @@ You can then select a compatible decision for each project and review the
 expected portfolio result. The complete plan is written only after explicit
 confirmation; cancelling it or closing the view changes no local data.
 
+The **Share or receive a snapshot** panel uses the Windows or Android share
+sheet only when the browser confirms file support. JSON download always remains
+available. On the other device, **Inspect a received snapshot** opens the same
+comparison flow. This transfers one file once; it does not keep devices in sync.
+
 The [personal-backup guide and validation matrix](portable-backup-user-guide.md)
 documents standalone use, folder permissions, conflict handling, optional
 external transport, and folder selection already confirmed on real Windows and

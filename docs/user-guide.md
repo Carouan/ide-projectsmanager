@@ -209,6 +209,12 @@ chaque projet et de vérifier le résultat global attendu. Le plan complet n'est
 écrit qu'après une confirmation explicite ; l'annuler, ou fermer la vue, ne
 modifie aucune donnée locale.
 
+Le panneau **Partager ou recevoir un instantané** utilise la feuille de partage
+Windows ou Android seulement si le navigateur confirme la prise en charge des
+fichiers. Le téléchargement JSON reste toujours proposé. Sur l'autre appareil,
+**Examiner un instantané reçu** ouvre ce même parcours de comparaison. Ce geste
+transfère un fichier une fois ; il ne maintient pas les appareils synchronisés.
+
 Le [guide complet des sauvegardes personnelles](portable-backup-user-guide.md)
 détaille le parcours autonome, les permissions, les divergences, le transport
 externe facultatif ainsi que les essais Windows et Android réellement confirmés.

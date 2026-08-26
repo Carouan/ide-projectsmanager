@@ -473,20 +473,22 @@ export default function BackupSnapshotReviewPanel({
         <p className="hero-text">{t("settings.backup.review.description")}</p>
       </div>
 
-      <div className="folder-actions">
-        <button
-          className="btn btn-secondary"
-          type="button"
-          disabled={!canInspect || isBusy}
-          onClick={inspect}
-        >
-          {t(
-            isBusy
-              ? "settings.backup.review.actions.inspecting"
-              : "settings.backup.review.actions.inspect"
-          )}
-        </button>
-      </div>
+      {canInspect && (
+        <div className="folder-actions">
+          <button
+            className="btn btn-secondary"
+            type="button"
+            disabled={isBusy}
+            onClick={inspect}
+          >
+            {t(
+              isBusy
+                ? "settings.backup.review.actions.inspecting"
+                : "settings.backup.review.actions.inspect"
+            )}
+          </button>
+        </div>
+      )}
 
       {feedback && (
         <div

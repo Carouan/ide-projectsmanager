@@ -53,6 +53,9 @@ export default function App() {
     reauthorizeBackupFolder,
     disconnectBackupFolder,
     exportAllProjectsToBackupFolder,
+    shareCurrentPortableSnapshot,
+    downloadCurrentPortableSnapshot,
+    inspectSharedPortableSnapshot,
     inspectBackupSnapshots,
     resolveBackupSnapshot,
   } = useAppStore();
@@ -163,6 +166,9 @@ export default function App() {
         onReauthorizeBackupFolder={reauthorizeBackupFolder}
         onDisconnectBackupFolder={disconnectBackupFolder}
         onExportAllProjectsToBackupFolder={exportAllProjectsToBackupFolder}
+        onSharePortableSnapshot={shareCurrentPortableSnapshot}
+        onDownloadPortableSnapshot={downloadCurrentPortableSnapshot}
+        onImportPortableSnapshot={inspectSharedPortableSnapshot}
         onInspectBackupSnapshots={inspectBackupSnapshots}
         onResolveBackupSnapshot={resolveBackupSnapshot}
         onInspectProjectBundle={inspectProjectBundleFile}

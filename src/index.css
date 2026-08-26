@@ -631,6 +631,37 @@ h3 {
   border-color: rgba(245, 158, 11, 0.52);
 }
 
+.settings-native-transfer-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.settings-native-transfer-panel .hero-text {
+  margin-bottom: 0;
+}
+
+.native-transfer-status {
+  display: grid;
+  gap: 7px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--panel-2);
+}
+
+.native-transfer-status span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.native-transfer-status-available {
+  border-color: rgba(34, 197, 94, 0.48);
+}
+
+.native-transfer-status-fallback {
+  border-color: rgba(245, 158, 11, 0.52);
+}
+
 .folder-actions {
   display: flex;
   flex-wrap: wrap;
@@ -958,6 +989,11 @@ h3 {
 .bundle-restore-success {
   border: 1px solid rgba(34, 197, 94, 0.55);
   background: rgba(21, 128, 61, 0.18);
+}
+
+.bundle-restore-info {
+  border: 1px solid rgba(59, 130, 246, 0.55);
+  background: rgba(29, 78, 216, 0.16);
 }
 
 .visually-hidden {
