@@ -18,7 +18,7 @@ La décision de référence est
   - [x] Distinguer les champs modifiés et leur provenance dans l'analyse (#134).
   - [x] Reconnaître explicitement les suppressions vérifiables (#134).
   - [x] Comparer les éléments du backlog, du journal et des décisions (#134).
-  - [ ] Prévisualiser toutes les décisions avant application.
+  - [x] Prévisualiser toutes les décisions avant application (#136).
   - [ ] Garantir une annulation sans modification locale.
 - [ ] A2 — Partage natif Windows / Android
   - [ ] Détecter les capacités réelles de partage du navigateur.
