@@ -7,6 +7,7 @@ import AttentionInbox from "../components/AttentionInbox";
 import ProjectDashboardControls from "../components/ProjectDashboardControls";
 import ProjectProgressMigrationPreview from "../components/ProjectProgressMigrationPreview";
 import ProjectProgressSummary from "../components/ProjectProgressSummary";
+import PublicRepositoryImportPanel from "../components/PublicRepositoryImportPanel";
 import { useAttentionInbox } from "../hooks/useAttentionInbox.js";
 import {
   DEFAULT_DASHBOARD_FILTERS,
@@ -27,6 +28,7 @@ export default function ProjectListScreen({
   onMigrateKnownPortfolioProgress,
   settings,
   onUpdateSettings,
+  onImportPublicRepository,
 }) {
   const { t, locale } = useI18n();
   const attentionInbox = useAttentionInbox(projects);
@@ -73,6 +75,8 @@ export default function ProjectListScreen({
             </button>
           </div>
         </div>
+
+        <PublicRepositoryImportPanel onConfirm={onImportPublicRepository} />
 
         {projects.length > 0 && (
           <>

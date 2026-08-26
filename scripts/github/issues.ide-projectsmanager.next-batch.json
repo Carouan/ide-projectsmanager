@@ -1,6 +1,0 @@
-[
-  {
-    "title": "S2.1 - Define the versioned .ipm package with binary attachments",
-    "body": "## Objective\nDefine a portable, versioned `.ipm` package able to carry the project portfolio and real binary attachments after the JSON snapshot synchronization flow is stable.\n\n## Prerequisites\n- R1.7 and S1.1 through S1.5 are complete\n- real Windows and Android feedback is available\n- the global JSON bundle schema remains supported\n\n## Design scope\n- package manifest and explicit format version\n- embedded portfolio bundle\n- blobs identified by content hash\n- attachment metadata and project references\n- safe import validation and migration strategy\n- forward/unknown-version behavior\n\n## Constraints\n- do not start implementation before S1 is validated\n- preserve plain JSON import/export as a fallback\n- do not silently extract or overwrite files\n- no multi-user or access-control model\n\n## Validation\n- a written format specification exists\n- corrupted or unknown packages fail safely\n- duplicate blobs have deterministic handling\n- rollback and migration paths are documented\n\n## Rollback\n- revert the format specification; no runtime or user data changes are included"
-  }
-]

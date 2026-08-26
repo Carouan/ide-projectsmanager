@@ -7,6 +7,10 @@ import {
   createPublicGitHubProjectImportProvider,
   normalizePublicGitHubRepositoryUrl,
 } from "../src/services/repositoryImportAnalysis.js";
+import {
+  createPublicRepositoryImportDraft,
+  materializePublicRepositoryProject,
+} from "../src/services/publicRepositoryProjectImport.js";
 
 const SUMP_CHECKLIST = `
 - [X] 1. Download this script on GitHub.
@@ -223,4 +227,85 @@ test("a formal roadmap takes precedence while private repositories stop before c
     (error) => error.code === "public_repository_required"
   );
   assert.equal(privateCalls, 1);
+});
+
+test("an analyzed repository remains a draft until explicitly materialized", () => {
+  const analysis = {
+    repository: {
+      provider: "github",
+      fullName: "Carouan/example",
+      owner: "Carouan",
+      name: "example",
+      url: "https://github.com/Carouan/example",
+      visibility: "public",
+      defaultBranch: "main",
+      archived: false,
+    },
+    suggested: { title: "Example", summary: "Summary", description: "Description" },
+    primaryObjectives: {
+      sourcePath: "ROADMAP.md",
+      objectiveAnalysis: analyzeMarkdownObjectives(`# Roadmap
+
+- [ ] Product
+  - [x] Shipped capability
+  - [ ] Next capability
+`, {
+        sourcePath: "ROADMAP.md",
+        sourceUrl: "https://github.com/Carouan/example/blob/main/ROADMAP.md",
+      }),
+    },
+  };
+
+  const draft = createPublicRepositoryImportDraft(analysis);
+  assert.equal(draft.currentStage, "v0_2");
+  assert.equal(draft.workstreams.length, 1);
+  assert.equal(draft.tasks.length, 2);
+  assert.equal(draft.tasks[0].provenance.line, 4);
+
+  draft.title = "Corrected title";
+  draft.workstreams[0].title = "Corrected workstream";
+  const project = materializePublicRepositoryProject(draft);
+
+  assert.equal(project.project.title, "Corrected title");
+  assert.equal(project.repository.url, "https://github.com/Carouan/example");
+  assert.equal(project.workstreams[0].title, "Corrected workstream");
+  assert.equal(project.backlog.length, 2);
+  assert.deepEqual(
+    project.backlog.map(({ status }) => status),
+    ["done", "open"]
+  );
+  assert.deepEqual(project.backlog[0].source, {
+    kind: "github_markdown_objective",
+    sourcePath: "ROADMAP.md",
+    sourceUrl: "https://github.com/Carouan/example/blob/main/ROADMAP.md",
+    line: 4,
+    confidence: "high",
+  });
+});
+
+test("the SUMP preview proposes one root workstream and 22 traceable leaf tasks", () => {
+  const objectiveAnalysis = analyzeMarkdownObjectives(SUMP_CHECKLIST, {
+    sourcePath: "README.md",
+    sourceUrl: "https://github.com/Carouan/SetUpMyPi---SUMP/blob/main/README.md",
+  });
+  const draft = createPublicRepositoryImportDraft({
+    repository: {
+      provider: "github",
+      fullName: "Carouan/SetUpMyPi---SUMP",
+      owner: "Carouan",
+      name: "SetUpMyPi---SUMP",
+      url: "https://github.com/Carouan/SetUpMyPi---SUMP",
+      visibility: "public",
+      archived: false,
+    },
+    suggested: { title: "SUMP", summary: "Set up a Raspberry Pi", description: "" },
+    primaryObjectives: { sourcePath: "README.md", objectiveAnalysis },
+  });
+
+  assert.equal(draft.currentStage, "v0_1");
+  assert.equal(draft.workstreams.length, 1);
+  assert.equal(draft.workstreams[0].title, "Main Script [SUMP.sh]");
+  assert.equal(draft.tasks.length, 22);
+  assert.equal(draft.tasks.filter(({ status }) => status === "done").length, 17);
+  assert.ok(draft.tasks.every(({ provenance }) => provenance.sourcePath === "README.md"));
 });

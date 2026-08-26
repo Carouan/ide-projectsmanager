@@ -273,6 +273,10 @@ export function buildPublicRepositoryImportAnalysis({
         repository.description ||
         firstMarkdownParagraph(readmeMarkdown) ||
         `Existing project from ${identity.fullName}`,
+      description:
+        firstMarkdownParagraph(readmeMarkdown) ||
+        repository.description ||
+        `Existing project from ${identity.fullName}`,
     },
     documents,
     primaryObjectives,

@@ -17,6 +17,7 @@ export default function App() {
     projects,
     currentProject,
     createProject,
+    importPublicRepositoryProject,
     createGovernedProject,
     installIdeDemoProject,
     openProject,
@@ -81,6 +82,11 @@ export default function App() {
     setView("project");
   }
 
+  function handleImportPublicRepository(draft) {
+    importPublicRepositoryProject(draft);
+    setView("project");
+  }
+
   function handleOpenProject(projectId) {
     openProject(projectId);
     setView("project");
@@ -112,6 +118,7 @@ export default function App() {
         onMigrateKnownPortfolioProgress={migrateKnownPortfolioProgress}
         settings={settings}
         onUpdateSettings={updateSettings}
+        onImportPublicRepository={handleImportPublicRepository}
       />
     ) : view === "governed" ? (
       <GovernedProjectBootstrapScreen

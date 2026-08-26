@@ -41,6 +41,18 @@ Aucun dépôt n'est créé ni modifié automatiquement. La visibilité est décl
 et l'existence réelle du dépôt reste à vérifier. **Annuler** revient au tableau
 de bord sans créer de projet.
 
+## Importer un dépôt GitHub public existant
+
+Depuis le tableau de bord, choisir **Importer un dépôt public**, saisir son URL
+GitHub canonique puis lancer l'analyse. L'aperçu indique la source et la
+confiance des objectifs, la progression mesurée, l'étape proposée, les
+chantiers et les tâches avec leur ligne d'origine. Corriger les champs et les
+intitulés utiles avant de choisir **Confirmer et créer le projet**.
+
+L'analyse, les corrections et **Annuler sans créer** ne modifient ni le dépôt
+GitHub ni les projets locaux. Seule la confirmation finale ajoute le projet au
+stockage de ce navigateur.
+
 ## Consulter un dépôt GitHub privé
 
 Un projet lié à un dépôt public ne demande aucun jeton. Pour un dépôt déclaré

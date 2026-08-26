@@ -42,6 +42,18 @@ No repository is created, modified, or published automatically. Visibility is
 only declared, and actual repository existence remains unverified. **Cancel**
 returns to the dashboard without creating a local project.
 
+## Import an existing public GitHub repository
+
+From the dashboard, choose **Import a public repository**, enter its canonical
+GitHub URL, and run the analysis. The preview shows the objective source and
+confidence, measured progress, suggested stage, workstreams, and tasks with
+their original line. Correct the useful fields and labels before choosing
+**Confirm and create project**.
+
+Analysis, corrections, and **Cancel without creating** modify neither GitHub
+nor local projects. Only the final confirmation adds the project to this
+browser's storage.
+
 ## Read a private GitHub repository
 
 A linked public repository never requires a token. For a repository declared
