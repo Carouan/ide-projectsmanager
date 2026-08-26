@@ -12,12 +12,12 @@ La décision de référence est
 ## A — Continuité entre appareils et transports facultatifs
 
 - [ ] A1 — Réconciliation sûre des instantanés
-  - [ ] Identifier les projets identiques par leur identifiant stable.
-  - [ ] Détecter les projets ajoutés sur un seul appareil.
-  - [ ] Distinguer une modification unilatérale d'un conflit réel.
-  - [ ] Afficher les champs modifiés et leur provenance.
-  - [ ] Reconnaître explicitement les suppressions.
-  - [ ] Comparer les éléments du backlog, du journal et des décisions.
+  - [x] Identifier les projets identiques par leur identifiant stable (#134).
+  - [x] Détecter les projets ajoutés sur un seul appareil (#134).
+  - [x] Distinguer une modification unilatérale d'un conflit réel (#134).
+  - [x] Distinguer les champs modifiés et leur provenance dans l'analyse (#134).
+  - [x] Reconnaître explicitement les suppressions vérifiables (#134).
+  - [x] Comparer les éléments du backlog, du journal et des décisions (#134).
   - [ ] Prévisualiser toutes les décisions avant application.
   - [ ] Garantir une annulation sans modification locale.
 - [ ] A2 — Partage natif Windows / Android
