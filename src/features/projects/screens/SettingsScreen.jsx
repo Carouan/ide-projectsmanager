@@ -3,6 +3,7 @@ import { version as applicationVersion } from "../../../../package.json";
 import ProjectBundleRestorePanel from "../components/ProjectBundleRestorePanel";
 import SelectedBackupFolderPanel from "../components/SelectedBackupFolderPanel";
 import BackupSnapshotReviewPanel from "../components/BackupSnapshotReviewPanel";
+import NativeSnapshotTransferPanel from "../components/NativeSnapshotTransferPanel";
 import GitHubPrivateAccessPanel from "../components/GitHubPrivateAccessPanel";
 
 export default function SettingsScreen({
@@ -20,6 +21,9 @@ export default function SettingsScreen({
   onReauthorizeBackupFolder,
   onDisconnectBackupFolder,
   onExportAllProjectsToBackupFolder,
+  onSharePortableSnapshot,
+  onDownloadPortableSnapshot,
+  onImportPortableSnapshot,
   onInspectBackupSnapshots,
   onResolveBackupSnapshot,
 }) {
@@ -174,7 +178,14 @@ export default function SettingsScreen({
           onWrite={onExportAllProjectsToBackupFolder}
         />
 
-        {backupFolderStatus?.isConnected && (
+        <NativeSnapshotTransferPanel
+          projectCount={projectCount}
+          onShare={onSharePortableSnapshot}
+          onDownload={onDownloadPortableSnapshot}
+          onImport={onImportPortableSnapshot}
+        />
+
+        {(backupFolderStatus?.isConnected || backupSnapshotReview) && (
           <BackupSnapshotReviewPanel
             status={backupFolderStatus}
             review={backupSnapshotReview}

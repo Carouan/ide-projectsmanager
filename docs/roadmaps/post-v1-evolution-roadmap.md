@@ -20,12 +20,12 @@ La décision de référence est
   - [x] Comparer les éléments du backlog, du journal et des décisions (#134).
   - [x] Prévisualiser toutes les décisions avant application (#136).
   - [x] Garantir une annulation sans modification locale (#138).
-- [ ] A2 — Partage natif Windows / Android
-  - [ ] Détecter les capacités réelles de partage du navigateur.
-  - [ ] Partager manuellement un instantané depuis Windows.
-  - [ ] Partager manuellement un instantané depuis Android.
-  - [ ] Importer le fichier partagé dans le parcours de réconciliation.
-  - [ ] Documenter les limites de transfert et l'absence de synchronisation implicite.
+- [x] A2 — Partage natif Windows / Android (#140)
+  - [x] Détecter les capacités réelles de partage du navigateur (#140).
+  - [x] Partager manuellement un instantané depuis Windows lorsque l'API de fichiers est annoncée (#140).
+  - [x] Partager manuellement un instantané depuis Android lorsque l'API de fichiers est annoncée (#140).
+  - [x] Importer le fichier partagé dans le parcours de réconciliation (#140).
+  - [x] Documenter les limites de transfert et l'absence de synchronisation implicite (#140).
 - [ ] A3 — Relais Raspberry Pi / WebDAV facultatif
   - [ ] Décrire l'architecture minimale et les frontières de confiance.
   - [ ] Définir la découverte ou configuration explicite du relais.

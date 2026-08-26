@@ -65,7 +65,12 @@ import { createPortableBackupService } from "../services/portableBackupService";
 import {
   acknowledgePortableBackupSnapshot,
   normalizePortableBackupDevice,
+  validatePortableBackupSnapshot,
 } from "../services/portableBackupSnapshots";
+import {
+  createNativeSnapshotTransfer,
+  shareNativeSnapshotTransfer,
+} from "../services/nativeSnapshotTransfer";
 import {
   applyPortableBackupSnapshotDecision,
   PORTABLE_SNAPSHOT_DECISION,
@@ -1106,6 +1111,84 @@ if (loaded.length > 0) {
     }
   }
 
+  async function rememberTransferredSnapshot(device, snapshot) {
+    const updatedDevice = normalizePortableBackupDevice({
+      ...device,
+      lastSnapshotId: snapshot.snapshotId,
+    });
+    await savePersistedPortableBackupDevice(updatedDevice);
+    setBackupDevice(updatedDevice);
+    return updatedDevice;
+  }
+
+  async function preparePortableTransferDevice() {
+    if (backupDevice) return backupDevice;
+    const storedDevice = await loadPersistedPortableBackupDevice();
+    return normalizePortableBackupDevice(storedDevice);
+  }
+
+  async function shareCurrentPortableSnapshot() {
+    const device = await preparePortableTransferDevice();
+    const transfer = createNativeSnapshotTransfer(projects, device);
+    const result = await shareNativeSnapshotTransfer(transfer);
+    await rememberTransferredSnapshot(device, transfer.snapshot);
+    return result;
+  }
+
+  async function downloadCurrentPortableSnapshot() {
+    const device = await preparePortableTransferDevice();
+    const transfer = createNativeSnapshotTransfer(projects, device);
+    downloadJsonFile(transfer.filename, transfer.snapshot);
+    await rememberTransferredSnapshot(device, transfer.snapshot);
+    return {
+      snapshotId: transfer.snapshot.snapshotId,
+      filename: transfer.filename,
+      deviceId: transfer.snapshot.device.id,
+    };
+  }
+
+  async function findReadableLocalFolderSnapshot(device) {
+    if (
+      backupFolderStatus?.isConnected !== true ||
+      backupFolderStatus?.permission !== "granted"
+    ) return null;
+
+    try {
+      const listed = await portableBackupService.listSnapshots(
+        SELECTED_FOLDER_BACKUP_PROVIDER_ID
+      );
+      const localEntry = listed.find((entry) =>
+        !entry.unreadable && entry.deviceId === device.id
+      );
+      if (!localEntry) return null;
+
+      const result = await portableBackupService.readPortfolioSnapshot(
+        SELECTED_FOLDER_BACKUP_PROVIDER_ID,
+        localEntry.reference
+      );
+      return result.snapshot;
+    } catch {
+      return null;
+    }
+  }
+
+  async function inspectSharedPortableSnapshot(file) {
+    const imported = validatePortableBackupSnapshot(await readJsonFile(file));
+    const device = await ensureBackupDevice();
+    const localSnapshot = await findReadableLocalFolderSnapshot(device);
+    const review = reviewPortableBackupSnapshots({
+      localDevice: device,
+      localProjects: projects,
+      localSnapshot,
+      externalSnapshots: [{
+        reference: file?.name || "shared-snapshot.json",
+        snapshot: imported,
+      }],
+    });
+    setBackupSnapshotReview(review);
+    return review;
+  }
+
   async function resolveBackupSnapshot(candidate, action, options = {}) {
     const normalizedSnapshot = {
       ...candidate.snapshot,
@@ -1290,6 +1373,9 @@ if (loaded.length > 0) {
     reauthorizeBackupFolder,
     disconnectBackupFolder,
     exportAllProjectsToBackupFolder,
+    shareCurrentPortableSnapshot,
+    downloadCurrentPortableSnapshot,
+    inspectSharedPortableSnapshot,
     inspectBackupSnapshots,
     resolveBackupSnapshot,
     inspectProjectBundleFile,

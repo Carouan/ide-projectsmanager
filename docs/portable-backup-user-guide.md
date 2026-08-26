@@ -106,7 +106,28 @@ case de confirmation et le bouton d'application sont obligatoires. **Annuler
 sans rien modifier** referme la confirmation sans acquitter l'instantané, sans
 changer l'identité d'appareil et sans enregistrer de projet.
 
-## 4. Transport externe facultatif : exemple Syncthing
+## 4. Transfert manuel natif Windows / Android
+
+Le panneau **Partager ou recevoir un instantané** prépare le même format JSON
+versionné que le dossier local. Si le navigateur confirme à la fois l'API de
+partage et l'acceptation de fichiers, **Partager un instantané** ouvre la feuille
+de partage Windows ou Android. L'IDE ne choisit ni le destinataire ni
+l'application de transport.
+
+Si cette capacité n'est pas annoncée, ou si le système la refuse,
+**Télécharger l'instantané JSON** reste disponible. Après transfert volontaire
+du fichier, l'appareil destinataire utilise **Examiner un instantané reçu** : le
+fichier entre alors dans le parcours de comparaison et de réconciliation décrit
+plus haut. Annuler la feuille de partage ne marque pas l'instantané comme
+transféré et ne change aucun projet.
+
+Ce parcours réalise une copie ponctuelle. Il ne surveille aucun dossier, ne
+répète pas le transfert et ne crée aucune synchronisation implicite. La prise en
+charge logicielle Windows et Android est couverte automatiquement ; l'ouverture
+réelle des feuilles de partage doit encore être confirmée sur les appareils de
+recette.
+
+## 5. Transport externe facultatif : exemple Syncthing
 
 Syncthing n'est pas une fonctionnalité intégrée, une dépendance ni une condition
 d'utilisation d'IDE-projectsmanager. L'application ne l'installe pas, ne le
@@ -128,7 +149,7 @@ Un autre synchroniseur de dossiers peut remplir le même rôle. Les fournisseurs
 cloud, WebDAV et le transfert direct entre appareils restent des pistes futures,
 non promises comme fonctionnalités déjà intégrées.
 
-## 5. Matrice de validation réelle
+## 6. Matrice de validation réelle
 
 État au **25 août 2026**, après les résultats communiqués par l'utilisateur sur
 ses propres appareils. Une réussite observée pour le choix du dossier ne prouve
@@ -138,6 +159,7 @@ pas, à elle seule, l'existence d'un transport entre appareils.
 |---|---|---|
 | Chrome / PWA sous Windows : choix du dossier et écriture | **Réussite confirmée** : dossier sélectionné et fichier `snapshots/<device-id>/latest.json` effectivement créé. | Vérifier ultérieurement la reconnexion, le renouvellement de permission et la restauration complète. |
 | Chrome sous Android : choix du dossier et écriture | **Réussite confirmée** sur l'appareil de l'utilisateur : choix du dossier et création de l'instantané local. | Tester ultérieurement la reconnexion et un scénario avec dossier effectivement partagé. |
+| Partage natif de fichier Windows / Android | Détection, création du fichier, annulation et erreurs couvertes automatiquement ; feuille système non encore essayée physiquement. | Essayer **Partager un instantané** sur chaque appareil compatible puis importer le fichier reçu. |
 | Edge ou autre navigateur Windows | Essai physique explicitement reporté. | Vérifier plus tard la compatibilité, les permissions et le retour au mode manuel. |
 | Navigateur sans accès direct au dossier | Couvert automatiquement ; essai physique reporté. | Vérifier ultérieurement le message d'incompatibilité et l'export/import JSON. |
 | Deux appareils : restauration et divergence | Non observé physiquement : les deux dossiers locaux ne se partagent pas d'eux-mêmes. | Configurer un transport commun puis tester copie, conservation et restauration confirmée. |
@@ -156,6 +178,8 @@ pas, à elle seule, l'existence d'un transport entre appareils.
   comme copies sans écrasement local.
 - Comparaison champ par champ, choix par projet, réunion des modifications
   indépendantes, refus atomique des plans obsolètes et annulation sans écriture.
+- Détection du partage natif de fichiers, génération d'un instantané transférable,
+  annulation sûre, téléchargement de secours et import dans la comparaison.
 - Suite automatisée complète exécutée avec `npm test` et compilation PWA
   réussie ; le nombre exact de tests évolue avec les fonctionnalités.
 
@@ -180,7 +204,9 @@ le résultat de chaque étape :
    projets de test ; annuler une première fois et vérifier qu'aucune donnée n'a
    changé.
 8. Déconnecter le dossier et revérifier l'export/import manuel.
-9. Si un transport externe déjà choisi est disponible, vérifier son rôle sans
+9. Tester **Partager un instantané** lorsque le bouton est disponible, sinon le
+   téléchargement JSON ; transférer puis examiner le fichier sur l'autre appareil.
+10. Si un transport externe déjà choisi est disponible, vérifier son rôle sans
    modifier le parcours autonome.
 
 La release `1.0.0` peut décrire honnêtement les sauvegardes locales Windows et
