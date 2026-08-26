@@ -87,12 +87,13 @@ sont complémentaires :
 
 - **UFI** sert de cas de cadrage et de structuration d'une idée à formaliser.
 - **[SetUpMyPi — SUMP](https://github.com/Carouan/SetUpMyPi---SUMP)** sert de
-  cas de projet existant déjà avancé : son README contient 27 cases imbriquées,
-  dont 21 cochées. Une lecture naïve donnerait 78 % ; le comptage des seuls
-  objectifs feuilles produit **16 objectifs terminés sur 21, soit 76 %** avant
-  toute correction humaine. Comme ce README ne possède pas de section roadmap
-  explicite, cette estimation doit être présentée comme une proposition et non
-  comme une progression officielle.
+  cas de projet existant déjà avancé. Au 26 août 2026, son README contient 28
+  lignes de cases imbriquées, dont 21 cochées. Une lecture naïve donne 75 % ; le
+  comptage des seuls objectifs feuilles produit **17 objectifs terminés sur 22,
+  soit 77 %** avant toute correction humaine. Comme ce README ne possède pas de
+  section roadmap explicite, cette estimation reste une proposition de confiance
+  moyenne et non une progression officielle. Ces nombres sont mesurés par le
+  parseur et doivent évoluer avec le document source.
 
 Les évolutions méthodologiques comprennent ensuite des parcours adaptés à la
 complexité, des profils logiciel/scientifique/associatif/personnel et des

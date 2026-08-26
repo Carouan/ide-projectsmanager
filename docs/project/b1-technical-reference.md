@@ -394,9 +394,9 @@ Non fait :
 - push réel distant
 - pull réel distant
 - politique de fusion avancée
-- fusion automatique champ par champ ou réconciliation fine des projets
+- transport automatique ou réconciliation simultanée en arrière-plan
 - stockage / transport distant réel
-- partage natif intégré, relais Pi/WebDAV, QR/WebRTC et fournisseurs cloud
+- relais Pi/WebDAV, QR/WebRTC et fournisseurs cloud
 
 ## Limites connues
 
