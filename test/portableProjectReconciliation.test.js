@@ -3,9 +3,12 @@ import test from "node:test";
 
 import { createPortableBackupSnapshot } from "../src/services/portableBackupSnapshots.js";
 import {
+  applyPortableProjectDecisionPlan,
   comparePortableSnapshotProjects,
+  preparePortableProjectDecisionPlan,
   PORTABLE_PROJECT_COMPARISON_STATE,
   PORTABLE_PROJECT_DECISION,
+  summarizePortableProjectDecisions,
 } from "../src/services/portableProjectReconciliation.js";
 
 const CREATED_AT = "2026-08-25T20:00:00.000Z";
@@ -330,4 +333,150 @@ test("comparison never mutates local projects, external snapshots or baseline da
   compare({ localSnapshot: local, localProjects, externalSnapshot: external });
 
   assert.equal(JSON.stringify({ local, localProjects, external }), before);
+});
+
+test("project decisions require explicit confirmation and cancellation leaves every input untouched", () => {
+  const local = snapshot("base", [project("one")], { deviceId: "device_local" });
+  const localProjects = [project("one")];
+  const external = snapshot("child", [project("one", { title: "External" })], {
+    parent: "base",
+  });
+  const comparison = compare({ localSnapshot: local, localProjects, externalSnapshot: external });
+  const before = JSON.stringify({ localProjects, external, comparison });
+
+  assert.throws(
+    () => applyPortableProjectDecisionPlan({
+      comparison,
+      localProjects,
+      externalSnapshot: external,
+      decisions: { one: PORTABLE_PROJECT_DECISION.USE_EXTERNAL },
+    }),
+    (error) => error.code === "confirmation_required"
+  );
+  assert.equal(JSON.stringify({ localProjects, external, comparison }), before);
+});
+
+test("a complete project plan adds, deletes, replaces and keeps only the selected versions", () => {
+  const baseProjects = [project("keep"), project("replace"), project("delete")];
+  const local = snapshot("base", baseProjects, { deviceId: "device_local" });
+  const external = snapshot("child", [
+    project("keep"),
+    project("replace", { title: "External replacement" }),
+    project("add"),
+  ], { parent: "base" });
+  const comparison = compare({ localSnapshot: local, externalSnapshot: external });
+  const decisions = {
+    replace: PORTABLE_PROJECT_DECISION.USE_EXTERNAL,
+    delete: PORTABLE_PROJECT_DECISION.DELETE_LOCAL,
+    add: PORTABLE_PROJECT_DECISION.ADD_EXTERNAL,
+  };
+  const prepared = preparePortableProjectDecisionPlan({
+    comparison,
+    localProjects: baseProjects,
+    externalSnapshot: external,
+    decisions,
+  });
+
+  assert.deepEqual(prepared.summary, {
+    unchangedCount: 1,
+    addedCount: 1,
+    replacedCount: 1,
+    deletedCount: 1,
+    mergedCount: 0,
+    resultingProjectCount: 3,
+  });
+  assert.deepEqual(
+    prepared.projects.map(({ project: item }) => [item.id, item.title]),
+    [
+      ["keep", "Project keep"],
+      ["replace", "External replacement"],
+      ["add", "Project add"],
+    ]
+  );
+  assert.deepEqual(summarizePortableProjectDecisions(comparison, decisions), prepared.summary);
+});
+
+test("independent fields and stable collection items are combined without overwriting local work", () => {
+  const baseProject = project("one", {
+    backlog: [{ id: "base-task", title: "Initial task" }],
+  });
+  const local = snapshot("base", [baseProject], { deviceId: "device_local" });
+  const localProject = project("one", {
+    title: "Local title",
+    backlog: [
+      { id: "base-task", title: "Initial task" },
+      { id: "local-task", title: "Local task" },
+    ],
+  });
+  const external = snapshot("child", [project("one", {
+    description: "External description",
+    backlog: [
+      { id: "base-task", title: "Initial task" },
+      { id: "external-task", title: "External task" },
+    ],
+  })], { parent: "base" });
+  const comparison = compare({
+    localSnapshot: local,
+    localProjects: [localProject],
+    externalSnapshot: external,
+  });
+  const result = applyPortableProjectDecisionPlan({
+    comparison,
+    localProjects: [localProject],
+    externalSnapshot: external,
+    decisions: { one: PORTABLE_PROJECT_DECISION.MERGE_INDEPENDENT },
+    confirmed: true,
+  });
+
+  assert.equal(result.projects[0].project.title, "Local title");
+  assert.equal(result.projects[0].project.description, "External description");
+  assert.deepEqual(
+    result.projects[0].backlog.map(({ id }) => id),
+    ["base-task", "local-task", "external-task"]
+  );
+  assert.equal(result.summary.mergedCount, 1);
+});
+
+test("missing, incompatible and stale decisions fail atomically", () => {
+  const base = snapshot("base", [project("one")], { deviceId: "device_local" });
+  const localProjects = [project("one", { title: "Local" })];
+  const external = snapshot("child", [project("one", { description: "External" })], {
+    parent: "base",
+  });
+  const comparison = compare({
+    localSnapshot: base,
+    localProjects,
+    externalSnapshot: external,
+  });
+  const before = JSON.stringify(localProjects);
+
+  assert.throws(
+    () => preparePortableProjectDecisionPlan({
+      comparison,
+      localProjects,
+      externalSnapshot: external,
+      decisions: {},
+    }),
+    (error) => error.code === "decision_required"
+  );
+  assert.throws(
+    () => preparePortableProjectDecisionPlan({
+      comparison,
+      localProjects,
+      externalSnapshot: external,
+      decisions: { one: PORTABLE_PROJECT_DECISION.DELETE_LOCAL },
+    }),
+    (error) => error.code === "invalid_project_decision"
+  );
+  assert.throws(
+    () => applyPortableProjectDecisionPlan({
+      comparison,
+      localProjects: [project("one", { title: "Changed after preview" })],
+      externalSnapshot: external,
+      decisions: { one: PORTABLE_PROJECT_DECISION.MERGE_INDEPENDENT },
+      confirmed: true,
+    }),
+    (error) => error.code === "stale_comparison"
+  );
+  assert.equal(JSON.stringify(localProjects), before);
 });

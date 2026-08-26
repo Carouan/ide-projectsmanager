@@ -80,7 +80,11 @@ résulter d'une copie manuelle ou d'un transport externe choisi séparément.
 1. Ouvrir **Paramètres → Sauvegardes des autres appareils**.
 2. Sélectionner **Vérifier les autres appareils**.
 3. Examiner l'origine, la date, le nombre de projets et les impacts indiqués.
-4. Choisir explicitement l'une des actions disponibles :
+4. Développer **Examiner les différences projet par projet** pour vérifier si
+   l'ancêtre commun est prouvé, puis consulter les champs et leur provenance.
+5. Soit choisir une décision compatible pour chaque projet, vérifier les
+   compteurs du résultat attendu et confirmer le plan complet, soit choisir une
+   des actions globales disponibles :
 
 | Action | Effet sur les données locales |
 |---|---|
@@ -88,12 +92,19 @@ résulter d'une copie manuelle ou d'un transport externe choisi séparément.
 | **Conserver mon état local** | Ne modifie aucun projet et mémorise ce choix pour cet instantané. |
 | **Ignorer pour le moment** | Ne modifie aucun projet ; l'instantané pourra réapparaître. |
 | **Restaurer cet état…** | Remplace le portefeuille local uniquement après lecture de l'impact, case cochée et confirmation explicite. |
+| **Appliquer le plan confirmé** | Applique atomiquement les décisions sélectionnées. Les champs modifiés indépendamment peuvent être réunis ; les conflits, suppressions et origines incertaines restent des choix visibles. |
 
 Une **suite directe vérifiée** possède une filiation prouvée par les identifiants
 d'instantanés. Un **état divergent** représente des évolutions concurrentes ou
 des changements locaux non sauvegardés. Une **filiation indéterminée** n'est
 jamais considérée comme sûre sur la seule base de sa date. Une sauvegarde
 illisible reste signalée mais n'est jamais appliquée.
+
+Le plan projet par projet est préparé entièrement en mémoire. Une sélection
+incomplète, incompatible ou devenue obsolète échoue avant toute écriture. La
+case de confirmation et le bouton d'application sont obligatoires. **Annuler
+sans rien modifier** referme la confirmation sans acquitter l'instantané, sans
+changer l'identité d'appareil et sans enregistrer de projet.
 
 ## 4. Transport externe facultatif : exemple Syncthing
 
@@ -143,6 +154,8 @@ pas, à elle seule, l'existence d'un transport entre appareils.
   divergence et modifications locales non sauvegardées.
 - Fichiers corrompus, erreurs d'écriture, confirmations obligatoires et import
   comme copies sans écrasement local.
+- Comparaison champ par champ, choix par projet, réunion des modifications
+  indépendantes, refus atomique des plans obsolètes et annulation sans écriture.
 - Suite automatisée complète exécutée avec `npm test` et compilation PWA
   réussie ; le nombre exact de tests évolue avec les fonctionnalités.
 
@@ -162,8 +175,10 @@ le résultat de chaque étape :
    la date et les projets affectés.
 6. Produire deux évolutions concurrentes ; vérifier que la divergence reste
    visible et qu'aucune restauration ne démarre automatiquement.
-7. Tester séparément **Importer comme copies**, **Conserver mon état local** et
-   une restauration explicitement confirmée sur des projets de test.
+7. Tester séparément **Importer comme copies**, **Conserver mon état local**, le
+   plan projet par projet et une restauration explicitement confirmée sur des
+   projets de test ; annuler une première fois et vérifier qu'aucune donnée n'a
+   changé.
 8. Déconnecter le dossier et revérifier l'export/import manuel.
 9. Si un transport externe déjà choisi est disponible, vérifier son rôle sans
    modifier le parcours autonome.

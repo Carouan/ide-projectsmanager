@@ -4,7 +4,10 @@ import {
   restoreProjectBundle,
 } from "./jsonTransfer.js";
 import { validatePortableBackupSnapshot } from "./portableBackupSnapshots.js";
-import { comparePortableSnapshotProjects } from "./portableProjectReconciliation.js";
+import {
+  applyPortableProjectDecisionPlan,
+  comparePortableSnapshotProjects,
+} from "./portableProjectReconciliation.js";
 
 export const PORTABLE_SNAPSHOT_REVIEW_STATE = Object.freeze({
   NO_EXTERNAL: "no_external",
@@ -20,6 +23,7 @@ export const PORTABLE_SNAPSHOT_REVIEW_STATE = Object.freeze({
 export const PORTABLE_SNAPSHOT_DECISION = Object.freeze({
   RESTORE: "restore",
   COPY: "copy",
+  PROJECTS: "projects",
   KEEP: "keep",
   IGNORE: "ignore",
 });
@@ -215,6 +219,17 @@ export function applyPortableBackupSnapshotDecision(
 
   const snapshot = validatePortableBackupSnapshot(candidate?.snapshot);
   const currentProjects = Array.isArray(existingProjects) ? existingProjects : [];
+
+  if (action === PORTABLE_SNAPSHOT_DECISION.PROJECTS) {
+    return applyPortableProjectDecisionPlan({
+      comparison: candidate?.projectComparison,
+      localProjects: currentProjects,
+      externalSnapshot: snapshot,
+      decisions: options.projectDecisions,
+      confirmed: options.confirmed,
+    });
+  }
+
   const analysis = analyzeProjectBundle(snapshot.bundle, currentProjects);
 
   if (action === PORTABLE_SNAPSHOT_DECISION.RESTORE) {

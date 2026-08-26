@@ -332,6 +332,43 @@ test("confirmed restore reports replaced, removed and added projects accurately"
   assert.equal(original[0].project.title, "Local");
 });
 
+test("a confirmed project plan applies the reviewed per-project choices", () => {
+  const local = snapshot({
+    id: "local",
+    deviceId: "device_local",
+    projects: [project("project-1", "Local")],
+    createdAt: DATE_A,
+  });
+  const external = snapshot({
+    id: "external",
+    parent: "local",
+    projects: [project("project-1", "External"), project("new")],
+  });
+  const candidate = review({
+    localSnapshot: local,
+    externalSnapshots: [external],
+  }).candidates[0];
+  const result = applyPortableBackupSnapshotDecision(
+    candidate,
+    local.bundle.projects,
+    PORTABLE_SNAPSHOT_DECISION.PROJECTS,
+    {
+      confirmed: true,
+      projectDecisions: {
+        "project-1": PORTABLE_PROJECT_DECISION.USE_EXTERNAL,
+        new: PORTABLE_PROJECT_DECISION.ADD_EXTERNAL,
+      },
+    }
+  );
+
+  assert.deepEqual(
+    result.projects.map(({ project: item }) => [item.id, item.title]),
+    [["project-1", "External"], ["new", "new"]]
+  );
+  assert.equal(result.summary.replacedCount, 1);
+  assert.equal(result.summary.addedCount, 1);
+});
+
 test("import-as-copies keeps every local project and assigns safe fresh IDs", () => {
   const original = [project("project-1", "Local")];
   const external = snapshot({

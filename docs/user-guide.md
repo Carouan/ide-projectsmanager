@@ -204,9 +204,10 @@ Pour chaque instantané externe, **Examiner les différences projet par projet**
 affiche l'ancêtre commun lorsqu'il est vérifiable, puis les projets identiques,
 ajoutés, supprimés, modifiés, conflictuels ou d'origine incertaine. Développer un
 projet montre chaque champ concerné, sa valeur locale, la valeur externe et sa
-provenance. Les choix projet par projet y sont encore présentés comme une
-prévisualisation : ils ne modifient rien tant que leur application dédiée n'est
-pas explicitement confirmée.
+provenance. Il est alors possible de choisir une décision compatible pour
+chaque projet et de vérifier le résultat global attendu. Le plan complet n'est
+écrit qu'après une confirmation explicite ; l'annuler, ou fermer la vue, ne
+modifie aucune donnée locale.
 
 Le [guide complet des sauvegardes personnelles](portable-backup-user-guide.md)
 détaille le parcours autonome, les permissions, les divergences, le transport
