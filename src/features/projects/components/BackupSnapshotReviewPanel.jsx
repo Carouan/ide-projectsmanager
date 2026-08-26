@@ -4,6 +4,7 @@ import {
   PORTABLE_SNAPSHOT_DECISION,
   PORTABLE_SNAPSHOT_REVIEW_STATE,
 } from "../../../services/portableBackupReview";
+import { summarizePortableProjectDecisions } from "../../../services/portableProjectReconciliation";
 import { formatDateTime } from "../../../services/dateTimePresentation";
 
 const MAX_PREVIEW_LENGTH = 160;
@@ -22,7 +23,21 @@ function previewComparisonValue(entry, t) {
     : readable;
 }
 
-function ProjectComparison({ comparison, error, t }) {
+function ProjectComparison({
+  comparison,
+  error,
+  projectDecisions,
+  decisionSummary,
+  isConfirming,
+  confirmed,
+  isBusy,
+  onDecisionChange,
+  onPrepare,
+  onConfirmationChange,
+  onApply,
+  onCancel,
+  t,
+}) {
   if (error) {
     return (
       <div className="bundle-restore-message bundle-restore-error" role="alert">
@@ -41,6 +56,16 @@ function ProjectComparison({ comparison, error, t }) {
     ["conflicts", comparison.summary.conflicts],
     ["unverified", comparison.summary.unverified],
   ];
+  const decisionSummaryEntries = decisionSummary
+    ? [
+        ["unchanged", decisionSummary.unchangedCount],
+        ["added", decisionSummary.addedCount],
+        ["replaced", decisionSummary.replacedCount],
+        ["deleted", decisionSummary.deletedCount],
+        ["merged", decisionSummary.mergedCount],
+      ]
+    : [];
+  const hasProjectDecisions = comparison.projects.some(({ decisions }) => decisions.length > 0);
 
   return (
     <details className="snapshot-project-comparison">
@@ -73,14 +98,23 @@ function ProjectComparison({ comparison, error, t }) {
 
               <div className="snapshot-comparison-project-content">
                 {project.decisions.length > 0 ? (
-                  <p className="snapshot-comparison-decisions">
-                    <strong>{t("settings.backup.review.comparison.decisions")}</strong>{" "}
-                    {project.decisions.map((decision) => (
-                      <span className="snapshot-comparison-decision" key={decision}>
-                        {t(`settings.backup.review.comparison.decision.${decision}`)}
-                      </span>
-                    ))}
-                  </p>
+                  <label className="snapshot-comparison-decision-field">
+                    <span>{t("settings.backup.review.comparison.projectDecision")}</span>
+                    <select
+                      value={projectDecisions[project.projectId] || ""}
+                      disabled={isBusy || isConfirming}
+                      onChange={(event) => onDecisionChange(
+                        project.projectId,
+                        event.target.value
+                      )}
+                    >
+                      {project.decisions.map((decision) => (
+                        <option value={decision} key={decision}>
+                          {t(`settings.backup.review.comparison.decision.${decision}`)}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
                 ) : (
                   <p className="muted">{t("settings.backup.review.comparison.noDecision")}</p>
                 )}
@@ -116,11 +150,80 @@ function ProjectComparison({ comparison, error, t }) {
           ))}
         </div>
 
+        {hasProjectDecisions && decisionSummary && (
+          <div className="snapshot-comparison-plan">
+            <div>
+              <strong>{t("settings.backup.review.comparison.plan.title")}</strong>
+              <p className="muted">{t("settings.backup.review.comparison.plan.description")}</p>
+            </div>
+            <dl className="bundle-restore-stats snapshot-comparison-plan-stats">
+              {decisionSummaryEntries.map(([name, value]) => (
+                <div key={name}>
+                  <dt>{t(`settings.backup.review.comparison.plan.${name}`)}</dt>
+                  <dd>{value}</dd>
+                </div>
+              ))}
+            </dl>
+
+            {isConfirming ? (
+              <div className="snapshot-restore-confirmation">
+                <strong>{t("settings.backup.review.comparison.plan.confirmTitle")}</strong>
+                <p>{t("settings.backup.review.comparison.plan.confirmDescription", {
+                  count: decisionSummary.resultingProjectCount,
+                })}</p>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={confirmed}
+                    onChange={(event) => onConfirmationChange(event.target.checked)}
+                  />
+                  <span>{t("settings.backup.review.comparison.plan.acknowledge")}</span>
+                </label>
+                <div className="folder-actions">
+                  <button
+                    className="btn btn-primary"
+                    type="button"
+                    disabled={isBusy || !confirmed}
+                    onClick={onApply}
+                  >
+                    {t("settings.backup.review.comparison.plan.apply")}
+                  </button>
+                  <button
+                    className="btn btn-secondary"
+                    type="button"
+                    disabled={isBusy}
+                    onClick={onCancel}
+                  >
+                    {t("settings.backup.review.comparison.plan.cancel")}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                className="btn btn-primary snapshot-comparison-plan-prepare"
+                type="button"
+                disabled={isBusy}
+                onClick={onPrepare}
+              >
+                {t("settings.backup.review.comparison.plan.prepare")}
+              </button>
+            )}
+          </div>
+        )}
+
         <p className="muted snapshot-comparison-notice">
           {t("settings.backup.review.comparison.previewOnly")}
         </p>
       </div>
     </details>
+  );
+}
+
+function defaultProjectDecisions(comparison) {
+  return Object.fromEntries(
+    (comparison?.projects || [])
+      .filter(({ decisions }) => decisions.length > 0)
+      .map((project) => [project.projectId, project.decisions[0]])
   );
 }
 
@@ -133,7 +236,24 @@ function ReviewCandidate({
 }) {
   const [isConfirming, setIsConfirming] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
+  const [projectDecisions, setProjectDecisions] = useState(() =>
+    defaultProjectDecisions(candidate.projectComparison)
+  );
+  const [isProjectConfirming, setIsProjectConfirming] = useState(false);
+  const [projectConfirmed, setProjectConfirmed] = useState(false);
   const isSame = candidate.state === PORTABLE_SNAPSHOT_REVIEW_STATE.SAME;
+  let projectDecisionSummary = null;
+
+  if (candidate.projectComparison) {
+    try {
+      projectDecisionSummary = summarizePortableProjectDecisions(
+        candidate.projectComparison,
+        projectDecisions
+      );
+    } catch {
+      projectDecisionSummary = null;
+    }
+  }
 
   return (
     <article className={`snapshot-review-card snapshot-review-${candidate.state}`}>
@@ -173,6 +293,34 @@ function ReviewCandidate({
       <ProjectComparison
         comparison={candidate.projectComparison}
         error={candidate.comparisonError}
+        projectDecisions={projectDecisions}
+        decisionSummary={projectDecisionSummary}
+        isConfirming={isProjectConfirming}
+        confirmed={projectConfirmed}
+        isBusy={isBusy}
+        onDecisionChange={(projectId, decision) => {
+          setProjectDecisions((current) => ({ ...current, [projectId]: decision }));
+          setProjectConfirmed(false);
+        }}
+        onPrepare={() => {
+          setIsConfirming(false);
+          setConfirmed(false);
+          setIsProjectConfirming(true);
+          setProjectConfirmed(false);
+        }}
+        onConfirmationChange={setProjectConfirmed}
+        onApply={() => onDecision(
+          candidate,
+          PORTABLE_SNAPSHOT_DECISION.PROJECTS,
+          {
+            confirmed: true,
+            projectDecisions,
+          }
+        )}
+        onCancel={() => {
+          setIsProjectConfirming(false);
+          setProjectConfirmed(false);
+        }}
         t={t}
       />
 
@@ -227,7 +375,11 @@ function ReviewCandidate({
                 className="btn btn-secondary"
                 type="button"
                 disabled={isBusy}
-                onClick={() => setIsConfirming(true)}
+                onClick={() => {
+                  setIsProjectConfirming(false);
+                  setProjectConfirmed(false);
+                  setIsConfirming(true);
+                }}
               >
                 {t("settings.backup.review.actions.restore")}
               </button>

@@ -1107,7 +1107,7 @@ if (loaded.length > 0) {
   }
 
   async function resolveBackupSnapshot(candidate, action, options = {}) {
-    const snapshot = {
+    const normalizedSnapshot = {
       ...candidate.snapshot,
       bundle: {
         ...candidate.snapshot.bundle,
@@ -1118,12 +1118,24 @@ if (loaded.length > 0) {
         ),
       },
     };
-    const result = applyPortableBackupSnapshotDecision(
+    const isProjectPlan = action === PORTABLE_SNAPSHOT_DECISION.PROJECTS;
+    const snapshot = isProjectPlan ? candidate.snapshot : normalizedSnapshot;
+    const preparedResult = applyPortableBackupSnapshotDecision(
       { ...candidate, snapshot },
       projects,
       action,
       options
     );
+    const result = isProjectPlan
+      ? {
+          ...preparedResult,
+          projects: preparedResult.projects.map((projectDoc) =>
+            stripLegacyProjectOwner(
+              withProjectOwnerId(projectDoc, userProfile?.id)
+            )
+          ),
+        }
+      : preparedResult;
 
     if (action !== PORTABLE_SNAPSHOT_DECISION.IGNORE) {
       const currentDevice = await ensureBackupDevice();
@@ -1145,7 +1157,8 @@ if (loaded.length > 0) {
 
     if (
       action === PORTABLE_SNAPSHOT_DECISION.RESTORE ||
-      action === PORTABLE_SNAPSHOT_DECISION.COPY
+      action === PORTABLE_SNAPSHOT_DECISION.COPY ||
+      action === PORTABLE_SNAPSHOT_DECISION.PROJECTS
     ) {
       setProjects(result.projects);
 

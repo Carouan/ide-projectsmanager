@@ -11,7 +11,7 @@ La décision de référence est
 
 ## A — Continuité entre appareils et transports facultatifs
 
-- [ ] A1 — Réconciliation sûre des instantanés
+- [x] A1 — Réconciliation sûre des instantanés (#134, #136, #138)
   - [x] Identifier les projets identiques par leur identifiant stable (#134).
   - [x] Détecter les projets ajoutés sur un seul appareil (#134).
   - [x] Distinguer une modification unilatérale d'un conflit réel (#134).
@@ -19,7 +19,7 @@ La décision de référence est
   - [x] Reconnaître explicitement les suppressions vérifiables (#134).
   - [x] Comparer les éléments du backlog, du journal et des décisions (#134).
   - [x] Prévisualiser toutes les décisions avant application (#136).
-  - [ ] Garantir une annulation sans modification locale.
+  - [x] Garantir une annulation sans modification locale (#138).
 - [ ] A2 — Partage natif Windows / Android
   - [ ] Détecter les capacités réelles de partage du navigateur.
   - [ ] Partager manuellement un instantané depuis Windows.
