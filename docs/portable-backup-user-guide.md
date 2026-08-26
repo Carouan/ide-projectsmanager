@@ -1,0 +1,215 @@
+# Sauvegardes personnelles : guide et matrice de validation
+
+IDE-projectsmanager fonctionne seul dans le navigateur. Aucun compte, service,
+logiciel compagnon ou synchroniseur n'est nécessaire pour sauvegarder puis
+restaurer ses projets. Le dossier facultatif et un éventuel transport externe
+constituent deux options séparées.
+
+## 1. Parcours autonome, sans aucune installation
+
+### Sauvegarder tous les projets
+
+1. Ouvrir **Paramètres** dans IDE-projectsmanager.
+2. Dans **Exporter tous les projets**, sélectionner **Télécharger la sauvegarde
+   complète**.
+3. Conserver le fichier JSON téléchargé dans un emplacement de son choix.
+4. Si nécessaire, copier ce fichier sur un autre appareil avec un moyen déjà
+   disponible : clé USB, partage de fichiers, dossier personnel ou autre.
+
+Ce fichier contient le portefeuille global versionné et les projets existants.
+Il ne contient ni autorisation GitHub, ni référence de dossier navigateur, ni
+secret d'appareil.
+
+### Restaurer la sauvegarde sur cet appareil ou sur un autre
+
+1. Ouvrir l'application puis **Paramètres** sur l'appareil de destination.
+2. Dans **Restaurer tous les projets**, sélectionner **Choisir une sauvegarde
+   JSON** et désigner le fichier téléchargé.
+3. Vérifier l'aperçu : nombre de projets, nouvelles entrées et conflits.
+4. Pour chaque conflit, choisir entre conserver la version locale ou importer la
+   version externe comme copie.
+5. Déclencher explicitement la restauration.
+
+Cette procédure ne remplace jamais silencieusement un projet existant. Elle
+reste disponible si l'accès direct à un dossier est absent, refusé ou révoqué.
+
+## 2. Dossier local facultatif
+
+L'option **Paramètres → Dossier local de sauvegarde** dépend à la fois du
+navigateur, du système, du contexte sécurisé et des permissions effectives. Son
+affichage ne signifie pas que tous les navigateurs ou tous les appareils Android
+permettent réellement la sélection d'un dossier.
+
+Si le sélecteur échoue, l'IDE distingue désormais une annulation ou un dossier
+sensible (`AbortError`), un blocage du contexte de sécurité (`SecurityError`),
+un refus de permission (`NotAllowedError`) et un paramètre interne invalide
+(`TypeError`). Dans tous les cas, l'export et la restauration JSON manuels
+restent disponibles. Sous Chrome, choisir un sous-dossier dédié dans
+**Documents** ou **Téléchargements** plutôt qu'une racine ou un dossier système.
+
+1. Vérifier que le panneau indique **Aucun dossier connecté**, et non **Dossier
+   direct non pris en charge**.
+2. Sélectionner **Choisir un dossier**, puis désigner volontairement un dossier.
+3. Si le navigateur le demande, autoriser sa lecture et son écriture.
+4. Vérifier le nom du dossier, l'identité locale de l'appareil et l'état
+   **Dossier autorisé**.
+5. Sélectionner **Sauvegarder cet appareil dans le dossier**.
+6. Vérifier la présence de `snapshots/<device-id>/latest.json` dans le dossier.
+
+Chaque appareil écrit uniquement son propre `latest.json`. L'identité locale
+est aléatoire et ne contient ni compte, ni nom d'hôte, ni secret. Le dossier ne
+se synchronise pas lui-même. Rien n'est écrit lorsque l'application est fermée.
+
+### Renouveler ou retirer l'autorisation
+
+- Si le panneau affiche **Autorisation à renouveler**, utiliser **Réautoriser
+  le dossier** et confirmer la demande du navigateur.
+- Si l'accès a été refusé, le réautoriser ou sélectionner **Changer de dossier**.
+- Si la mémorisation sûre n'est pas supportée, le dossier reste disponible
+  uniquement pendant la session courante.
+- Utiliser **Déconnecter le dossier** pour retirer le lien local ; le dossier et
+  les sauvegardes existantes ne sont pas supprimés.
+- Après déconnexion, l'export et la restauration JSON manuels restent inchangés.
+
+## 3. Examiner les sauvegardes d'autres appareils
+
+Un instantané externe devient visible uniquement si un fichier provenant d'un
+autre appareil arrive réellement dans le dossier sélectionné. Cette arrivée peut
+résulter d'une copie manuelle ou d'un transport externe choisi séparément.
+
+1. Ouvrir **Paramètres → Sauvegardes des autres appareils**.
+2. Sélectionner **Vérifier les autres appareils**.
+3. Examiner l'origine, la date, le nombre de projets et les impacts indiqués.
+4. Développer **Examiner les différences projet par projet** pour vérifier si
+   l'ancêtre commun est prouvé, puis consulter les champs et leur provenance.
+5. Soit choisir une décision compatible pour chaque projet, vérifier les
+   compteurs du résultat attendu et confirmer le plan complet, soit choisir une
+   des actions globales disponibles :
+
+| Action | Effet sur les données locales |
+|---|---|
+| **Importer comme copies** | Conserve les projets locaux et crée des copies distinctes pour les conflits. |
+| **Conserver mon état local** | Ne modifie aucun projet et mémorise ce choix pour cet instantané. |
+| **Ignorer pour le moment** | Ne modifie aucun projet ; l'instantané pourra réapparaître. |
+| **Restaurer cet état…** | Remplace le portefeuille local uniquement après lecture de l'impact, case cochée et confirmation explicite. |
+| **Appliquer le plan confirmé** | Applique atomiquement les décisions sélectionnées. Les champs modifiés indépendamment peuvent être réunis ; les conflits, suppressions et origines incertaines restent des choix visibles. |
+
+Une **suite directe vérifiée** possède une filiation prouvée par les identifiants
+d'instantanés. Un **état divergent** représente des évolutions concurrentes ou
+des changements locaux non sauvegardés. Une **filiation indéterminée** n'est
+jamais considérée comme sûre sur la seule base de sa date. Une sauvegarde
+illisible reste signalée mais n'est jamais appliquée.
+
+Le plan projet par projet est préparé entièrement en mémoire. Une sélection
+incomplète, incompatible ou devenue obsolète échoue avant toute écriture. La
+case de confirmation et le bouton d'application sont obligatoires. **Annuler
+sans rien modifier** referme la confirmation sans acquitter l'instantané, sans
+changer l'identité d'appareil et sans enregistrer de projet.
+
+## 4. Transfert manuel natif Windows / Android
+
+Le panneau **Partager ou recevoir un instantané** prépare le même format JSON
+versionné que le dossier local. Si le navigateur confirme à la fois l'API de
+partage et l'acceptation de fichiers, **Partager un instantané** ouvre la feuille
+de partage Windows ou Android. L'IDE ne choisit ni le destinataire ni
+l'application de transport.
+
+Si cette capacité n'est pas annoncée, ou si le système la refuse,
+**Télécharger l'instantané JSON** reste disponible. Après transfert volontaire
+du fichier, l'appareil destinataire utilise **Examiner un instantané reçu** : le
+fichier entre alors dans le parcours de comparaison et de réconciliation décrit
+plus haut. Annuler la feuille de partage ne marque pas l'instantané comme
+transféré et ne change aucun projet.
+
+Ce parcours réalise une copie ponctuelle. Il ne surveille aucun dossier, ne
+répète pas le transfert et ne crée aucune synchronisation implicite. La prise en
+charge logicielle Windows et Android est couverte automatiquement ; l'ouverture
+réelle des feuilles de partage doit encore être confirmée sur les appareils de
+recette.
+
+## 5. Transport externe facultatif : exemple Syncthing
+
+Syncthing n'est pas une fonctionnalité intégrée, une dépendance ni une condition
+d'utilisation d'IDE-projectsmanager. L'application ne l'installe pas, ne le
+configure pas, ne le contrôle pas et n'utilise aucune API Syncthing.
+
+Si un utilisateur possède déjà un outil de synchronisation de dossiers et
+souhaite l'utiliser :
+
+1. Configurer cet outil de manière indépendante, sous sa propre responsabilité.
+2. Lui confier le dossier choisi précédemment dans l'IDE, si son environnement
+   et ses permissions l'autorisent.
+3. Laisser l'outil transférer les sous-dossiers `snapshots/<device-id>/` entre
+   les appareils.
+4. Ouvrir l'IDE sur l'autre appareil, choisir son dossier local correspondant
+   et vérifier les sauvegardes externes.
+5. Résoudre explicitement une éventuelle divergence dans l'IDE.
+
+Un autre synchroniseur de dossiers peut remplir le même rôle. Les fournisseurs
+cloud, WebDAV et le transfert direct entre appareils restent des pistes futures,
+non promises comme fonctionnalités déjà intégrées.
+
+## 6. Matrice de validation réelle
+
+État au **25 août 2026**, après les résultats communiqués par l'utilisateur sur
+ses propres appareils. Une réussite observée pour le choix du dossier ne prouve
+pas, à elle seule, l'existence d'un transport entre appareils.
+
+| Environnement / scénario | Résultat réel | Action restante |
+|---|---|---|
+| Chrome / PWA sous Windows : choix du dossier et écriture | **Réussite confirmée** : dossier sélectionné et fichier `snapshots/<device-id>/latest.json` effectivement créé. | Vérifier ultérieurement la reconnexion, le renouvellement de permission et la restauration complète. |
+| Chrome sous Android : choix du dossier et écriture | **Réussite confirmée** sur l'appareil de l'utilisateur : choix du dossier et création de l'instantané local. | Tester ultérieurement la reconnexion et un scénario avec dossier effectivement partagé. |
+| Partage natif de fichier Windows / Android | Détection, création du fichier, annulation et erreurs couvertes automatiquement ; feuille système non encore essayée physiquement. | Essayer **Partager un instantané** sur chaque appareil compatible puis importer le fichier reçu. |
+| Edge ou autre navigateur Windows | Essai physique explicitement reporté. | Vérifier plus tard la compatibilité, les permissions et le retour au mode manuel. |
+| Navigateur sans accès direct au dossier | Couvert automatiquement ; essai physique reporté. | Vérifier ultérieurement le message d'incompatibilité et l'export/import JSON. |
+| Deux appareils : restauration et divergence | Non observé physiquement : les deux dossiers locaux ne se partagent pas d'eux-mêmes. | Configurer un transport commun puis tester copie, conservation et restauration confirmée. |
+| Syncthing, partage natif ou autre transport externe | Non configuré et non testé entre les deux appareils. | Choisir puis vérifier facultativement le transfert des instantanés ; aucun outil n'est imposé. |
+
+### Ce qui a été effectivement vérifié automatiquement
+
+- Détection de navigateur compatible et incompatible ; absence d'autorisation
+  demandée silencieusement.
+- Permission accordée, refusée, renouvelée ou limitée à la session.
+- Export/import JSON universel et conservation des projets historiques.
+- Deux appareils simulés écrivant dans des fichiers distincts.
+- Instantanés versionnés, ascendance directe et transitive, état antérieur,
+  divergence et modifications locales non sauvegardées.
+- Fichiers corrompus, erreurs d'écriture, confirmations obligatoires et import
+  comme copies sans écrasement local.
+- Comparaison champ par champ, choix par projet, réunion des modifications
+  indépendantes, refus atomique des plans obsolètes et annulation sans écriture.
+- Détection du partage natif de fichiers, génération d'un instantané transférable,
+  annulation sûre, téléchargement de secours et import dans la comparaison.
+- Suite automatisée complète exécutée avec `npm test` et compilation PWA
+  réussie ; le nombre exact de tests évolue avec les fonctionnalités.
+
+### Protocole court de recette réelle
+
+Pour chaque appareil, noter le système, le navigateur, sa version, la date et
+le résultat de chaque étape :
+
+1. Créer ou modifier un projet sans dossier connecté.
+2. Exporter un bundle JSON ; le restaurer sur un second appareil sans installer
+   de logiciel supplémentaire.
+3. Si le navigateur le permet, choisir un dossier et écrire son propre
+   `snapshots/<device-id>/latest.json`.
+4. Fermer puis rouvrir l'application ; vérifier l'état de permission et, si
+   nécessaire, utiliser **Réautoriser le dossier**.
+5. Placer un instantané externe valide dans le dossier et vérifier l'origine,
+   la date et les projets affectés.
+6. Produire deux évolutions concurrentes ; vérifier que la divergence reste
+   visible et qu'aucune restauration ne démarre automatiquement.
+7. Tester séparément **Importer comme copies**, **Conserver mon état local**, le
+   plan projet par projet et une restauration explicitement confirmée sur des
+   projets de test ; annuler une première fois et vérifier qu'aucune donnée n'a
+   changé.
+8. Déconnecter le dossier et revérifier l'export/import manuel.
+9. Tester **Partager un instantané** lorsque le bouton est disponible, sinon le
+   téléchargement JSON ; transférer puis examiner le fichier sur l'autre appareil.
+10. Si un transport externe déjà choisi est disponible, vérifier son rôle sans
+   modifier le parcours autonome.
+
+La release `1.0.0` peut décrire honnêtement les sauvegardes locales Windows et
+Android confirmées. La continuité physique entre appareils, les transports et
+les essais sur d'autres navigateurs restent des validations distinctes : ils ne
+doivent pas être présentés comme déjà réalisés.

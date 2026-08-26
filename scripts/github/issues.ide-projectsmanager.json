@@ -1,0 +1,106 @@
+[
+  {
+    "title": "F0.1 - Add project governance and PR rules",
+    "body": "## Objective\nAdd repository governance documents for Codex and contributors.\n\n## Tasks\n- create or complete `/docs` guidance files\n- ensure PR checklist and rollback policy are documented\n- keep this change runtime-neutral\n\n## Constraints\n- no runtime impact\n- no refactor\n- no business logic changes\n\n## Validation\n- documentation files exist in the repository\n- repository still builds as before\n\n## Rollback\n- revert the added documentation files"
+  },
+  {
+    "title": "F1.1 - Introduce AppShell layout",
+    "body": "## Objective\nCreate a top-level `AppShell` layout without changing existing business behavior.\n\n## Tasks\n- create `src/app/AppShell.jsx`\n- wrap the existing app UI in this layout\n- keep current navigation and state behavior intact\n\n## Do not do\n- do not change store logic\n- do not refactor unrelated components\n- do not change data structures\n\n## Validation\n- app behavior remains the same\n- `npm run build` passes\n- UI is visually equivalent except for harmless structural cleanup\n\n## Rollback\n- revert AppShell integration"
+  },
+  {
+    "title": "F1.2 - Move screens into feature folders",
+    "body": "## Objective\nModularize screen files into a feature-oriented structure.\n\n## Tasks\n- create `features/projects/screens`\n- move `ProjectListScreen`\n- move `ProjectScreen`\n- fix imports only as needed\n\n## Constraints\n- no business logic changes\n- no data model changes\n\n## Validation\n- project list view works\n- project detail view works\n- build passes\n\n## Rollback\n- revert file moves and import updates"
+  },
+  {
+    "title": "F1.3 - Add right panel layout slot",
+    "body": "## Objective\nPrepare a right-side layout slot for future Markdown preview.\n\n## Tasks\n- add a `rightPanel` slot in the layout\n- keep layout responsive\n- render placeholder or empty slot by default\n\n## Constraints\n- no feature behavior changes\n\n## Validation\n- desktop layout remains stable\n- mobile layout remains usable\n- build passes\n\n## Rollback\n- revert layout slot changes"
+  },
+  {
+    "title": "F2.1 - Add settings slice and defaults",
+    "body": "## Objective\nCreate the settings foundation.\n\n## Fields\n- `language`\n- `theme`\n- `markdownPreviewEnabled`\n- `uiDensity`\n- `exportFormat`\n\n## Tasks\n- add settings defaults\n- add settings state management\n- hydrate missing default values safely\n\n## Validation\n- build passes\n- existing project data remains readable\n\n## Rollback\n- revert settings slice and defaults"
+  },
+  {
+    "title": "F2.2 - Persist settings",
+    "body": "## Objective\nPersist UI settings reliably across refreshes.\n\n## Tasks\n- save settings to local storage layer\n- rehydrate on app start\n- handle missing values safely\n\n## Validation\n- settings persist after refresh\n- no project data loss\n- build passes\n\n## Rollback\n- revert settings persistence"
+  },
+  {
+    "title": "F2.3 - Add settings screen",
+    "body": "## Objective\nCreate a minimal settings screen.\n\n## Tasks\n- add language control\n- add theme control\n- add Markdown preview toggle\n\n## Validation\n- settings can be changed from the UI\n- settings remain persisted\n- build passes\n\n## Rollback\n- remove settings screen while preserving state if possible"
+  },
+  {
+    "title": "F3.1 - Add i18n core",
+    "body": "## Objective\nAdd a lightweight localization core.\n\n## Tasks\n- create `src/i18n/fr.json`\n- create `src/i18n/en.json`\n- create translation helper and hook\n\n## Constraints\n- avoid heavy i18n frameworks\n\n## Validation\n- translation layer works without full migration\n- fallback behavior is defined\n\n## Rollback\n- revert i18n core files"
+  },
+  {
+    "title": "F3.2 - Migrate global app strings",
+    "body": "## Objective\nMove global app UI strings to the i18n layer.\n\n## Scope\n- app title\n- top bar\n- global buttons\n- global tabs and generic messages\n\n## Validation\n- language switch affects migrated strings\n- build passes\n\n## Rollback\n- revert string migration"
+  },
+  {
+    "title": "F3.3 - Migrate project and stage strings",
+    "body": "## Objective\nMigrate Project and Stage UI strings to the i18n layer.\n\n## Scope\n- `ProjectScreen`\n- `StageEditor`\n\n## Validation\n- labels render correctly in both languages\n- no functional regression\n\n## Rollback\n- revert string migration"
+  },
+  {
+    "title": "F3.4 - Migrate backlog, journal, decisions, and decision tree strings",
+    "body": "## Objective\nFinish migrating major remaining UI strings.\n\n## Scope\n- backlog\n- journal\n- decisions\n- decision tree modal\n- PWA prompt\n\n## Validation\n- no major hardcoded UI strings remain in these modules\n- build passes\n\n## Rollback\n- revert string migration"
+  },
+  {
+    "title": "F4.1 - Add MarkdownPreview component",
+    "body": "## Objective\nCreate a minimal Markdown preview component.\n\n## Tasks\n- add Markdown rendering utility or dependency\n- create `MarkdownPreview` component\n\n## Constraints\n- keep it simple\n- do not introduce a WYSIWYG editor\n\n## Validation\n- Markdown renders correctly in isolation\n- build passes\n\n## Rollback\n- remove component and dependency"
+  },
+  {
+    "title": "F4.2 - Add preview toggle from settings",
+    "body": "## Objective\nControl Markdown preview visibility from settings.\n\n## Tasks\n- connect preview visibility to `markdownPreviewEnabled`\n- persist the toggle\n\n## Validation\n- preview can be shown and hidden\n- state persists after refresh\n\n## Rollback\n- revert settings binding"
+  },
+  {
+    "title": "F4.3 - Render active stage content in preview",
+    "body": "## Objective\nRender current stage content in the Markdown preview panel.\n\n## Scope\n- objective\n- notes\n- deliverable\n- definition of done\n\n## Validation\n- preview follows active stage\n- editing remains intact\n- build passes\n\n## Rollback\n- revert preview binding"
+  },
+  {
+    "title": "F5.1 - Add attachment model",
+    "body": "## Objective\nAdd a minimal attachments model.\n\n## Supported types\n- `url`\n- `note`\n- `snippet`\n- `file_ref`\n\n## Constraints\n- keep JSON import/export compatible\n- add migration if needed\n\n## Validation\n- attachments persist safely\n- build passes\n\n## Rollback\n- revert model changes with migration rollback if needed"
+  },
+  {
+    "title": "F5.2 - Add attachments panel",
+    "body": "## Objective\nCreate a simple UI to manage attachments.\n\n## Tasks\n- list attachments\n- add attachment\n- edit attachment\n- delete attachment\n\n## Validation\n- CRUD works\n- no regression elsewhere\n- build passes\n\n## Rollback\n- revert attachments panel"
+  },
+  {
+    "title": "F5.3 - Integrate attachments into project screen",
+    "body": "## Objective\nExpose the attachments block in the project screen.\n\n## Validation\n- attachments are visible and usable in project context\n- build passes\n\n## Rollback\n- revert integration changes"
+  },
+  {
+    "title": "U1.1 - Add local user profile",
+    "body": "## Objective\nCreate a local `UserProfile` model and state.\n\n## Tasks\n- generate a local user on first launch\n- persist it safely\n\n## Validation\n- a local user is always available\n- build passes\n\n## Rollback\n- revert local user feature"
+  },
+  {
+    "title": "U1.2 - Attach ownerId to projects",
+    "body": "## Objective\nAssociate each project with an `ownerId`.\n\n## Tasks\n- migrate existing projects\n- ensure new projects receive an ownerId\n\n## Validation\n- no project is orphaned\n- migration is explicit\n- build passes\n\n## Rollback\n- revert migration safely"
+  },
+  {
+    "title": "U2.1 - Add storage repository layer",
+    "body": "## Objective\nIntroduce a storage abstraction layer.\n\n## Tasks\n- add local repository interfaces\n- stop direct storage calls from UI where feasible\n\n## Validation\n- build passes\n- current behavior preserved\n\n## Rollback\n- revert repository layer"
+  },
+  {
+    "title": "U2.2 - Migrate projects to IndexedDB",
+    "body": "## Objective\nMove project storage to IndexedDB through the abstraction layer.\n\n## Constraints\n- no silent data loss\n- explicit migration required\n\n## Validation\n- existing projects migrate correctly\n- create/update/read still work\n- build passes\n\n## Rollback\n- restore previous adapter"
+  },
+  {
+    "title": "U2.3 - Migrate settings and user storage consistently",
+    "body": "## Objective\nAlign user and settings persistence with the new storage strategy.\n\n## Validation\n- user and settings persist correctly\n- migration is safe\n- build passes\n\n## Rollback\n- revert persistence changes"
+  },
+  {
+    "title": "U3.1 - Add sync metadata to ProjectDocument",
+    "body": "## Objective\nAdd sync metadata fields to the project document.\n\n## Fields\n- `localVersion`\n- `remoteVersion`\n- `lastSyncedAt`\n- `dirty`\n\n## Constraints\n- preserve import/export compatibility\n- add explicit migration\n\n## Validation\n- metadata is added safely\n- build passes\n\n## Rollback\n- revert metadata changes safely"
+  },
+  {
+    "title": "U5.1 - Add sync engine skeleton",
+    "body": "## Objective\nCreate the minimal sync engine structure.\n\n## Tasks\n- add `pushProject`\n- add `pullProject`\n- add `syncProject`\n- add conflict computation stub\n\n## Constraints\n- no real backend required yet\n\n## Validation\n- sync engine is present and non-invasive\n- build passes\n\n## Rollback\n- revert sync engine skeleton"
+  },
+  {
+    "title": "U5.2 - Implement conflict detection",
+    "body": "## Objective\nImplement a simple explicit conflict detection strategy.\n\n## Strategy\n- controlled last-write-wins\n- no silent overwrite when both sides changed\n\n## Validation\n- conflict states can be detected\n- build passes\n\n## Rollback\n- revert conflict logic"
+  },
+  {
+    "title": "U5.3 - Add sync status UI",
+    "body": "## Objective\nExpose sync state in the UI.\n\n## States\n- local only\n- dirty\n- synced\n- conflict\n- error\n\n## Validation\n- sync status is visible and coherent\n- build passes\n\n## Rollback\n- revert sync status UI"
+  }
+]
