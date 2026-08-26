@@ -187,6 +187,12 @@ Après `1.0.0`, trois axes distincts sont planifiés :
 3. **C — Interface et personnalisation** : densité, disposition et
    redimensionnement progressifs des panneaux.
 
+Le moteur B1 sait désormais lire un dépôt public par requêtes `GET`, distinguer
+une roadmap formelle d'une checklist indicative et reconstruire les objectifs
+feuilles avec leur provenance. Le parcours B2 de correction et de création
+locale reste une étape séparée : l'analyse seule ne crée ni ne modifie aucun
+projet ou dépôt.
+
 La [roadmap détaillée après la v1.0](docs/roadmaps/post-v1-evolution-roadmap.md)
 garde ces objectifs visibles sans réduire artificiellement le pourcentage de
 la release actuellement préparée.
@@ -217,13 +223,15 @@ la release actuellement préparée.
   vérifiées, les états antérieurs, divergents, inconnus ou illisibles. La date
   seule ne sert jamais à décider qu'un état peut remplacer les données locales.
 - Avant toute action, l'interface détaille l'appareil, la date et les projets
-  ajoutés, remplacés ou retirés. Importer comme copies préserve les données ;
-  restaurer exige une confirmation explicite. Il n'existe aucune restauration
-  automatique.
+  ajoutés, remplacés ou retirés. La comparaison champ par champ permet un plan
+  de décision distinct par projet, appliqué atomiquement après confirmation.
+  Importer comme copies préserve les données ; restaurer exige également une
+  confirmation explicite. Il n'existe aucune restauration automatique.
 - Un dossier local ne se synchronise jamais seul : un partage, une copie ou un
   transport séparé doit effectivement déplacer les fichiers entre appareils.
-- Syncthing, un partage natif ou un futur relais pourront assurer ce transport
-  sans devenir des dépendances obligatoires de l'application.
+- Le partage natif de fichiers ou le téléchargement JSON réalisent maintenant
+  un transfert ponctuel explicite. Syncthing ou un futur relais peuvent assurer
+  le transport continu sans devenir des dépendances obligatoires.
 
 Le [guide pratique des sauvegardes personnelles](docs/portable-backup-user-guide.md)
 commence par le parcours autonome sans installation et distingue les validations
@@ -236,7 +244,8 @@ La décision complète et l'ordre d'implémentation sont documentés dans
 [roadmap de sauvegarde portable](docs/roadmaps/local-first-syncthing-roadmap.md).
 
 Le périmètre de release, les conflits d'instantanés, les pistes de transport,
-le futur import UFI/SUMP et le rôle facultatif d'un conteneur ZIP `.ipm` sont
+l'analyse publique préparant l'import UFI/SUMP et le rôle facultatif d'un
+conteneur ZIP `.ipm` sont
 documentés dans
 [DR-006](docs/decisions/DR-006-first-release-and-post-release-evolution.md).
 

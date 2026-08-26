@@ -51,13 +51,13 @@ La décision de référence est
 
 ## B — Méthode projet et import de projets existants
 
-- [ ] B1 — Analyse de dépôt public en lecture seule
-  - [ ] Valider une URL GitHub publique sans accepter une autre origine.
-  - [ ] Lire la description, le README et une roadmap éventuelle.
-  - [ ] Identifier les objectifs explicites et leur hiérarchie.
-  - [ ] Distinguer une roadmap formelle d'une checklist seulement indicative.
-  - [ ] Compter les objectifs feuilles sans double comptage.
-  - [ ] Conserver la provenance et un niveau de confiance.
+- [x] B1 — Analyse de dépôt public en lecture seule (#142)
+  - [x] Valider une URL GitHub publique sans accepter une autre origine (#142).
+  - [x] Lire la description, le README et une roadmap éventuelle (#142).
+  - [x] Identifier les objectifs explicites et leur hiérarchie (#142).
+  - [x] Distinguer une roadmap formelle d'une checklist seulement indicative (#142).
+  - [x] Compter les objectifs feuilles sans double comptage (#142).
+  - [x] Conserver la provenance et un niveau de confiance (#142).
 - [ ] B2 — Prévisualisation et adaptation au canevas IDE
   - [ ] Proposer titre, résumé, description et dépôt canonique.
   - [ ] Proposer une étape compatible avec les preuves observées.
@@ -67,10 +67,10 @@ La décision de référence est
   - [ ] Créer uniquement un projet local après confirmation.
 - [ ] B3 — Valider les deux cas pilotes
   - [ ] Intégrer UFI comme projet distinct à formaliser.
-  - [ ] Analyser les cases imbriquées du README de SUMP.
-  - [ ] Distinguer ses 21 objectifs feuilles de ses 27 lignes cochables.
+  - [x] Analyser les cases imbriquées du README actuel de SUMP (#142).
+  - [x] Distinguer ses 22 objectifs feuilles de ses 28 lignes cochables (#142).
   - [ ] Conserver son organisation existante et les liens de provenance.
-  - [ ] Vérifier qu'aucun dépôt source n'est modifié.
+  - [x] Vérifier qu'aucun dépôt source n'est modifié par l'analyse (#142).
 - [ ] B4 — Parcours et domaines
   - [ ] Définir un parcours idée rapide.
   - [ ] Définir un parcours projet standard.
