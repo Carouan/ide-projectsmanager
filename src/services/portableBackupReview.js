@@ -4,6 +4,7 @@ import {
   restoreProjectBundle,
 } from "./jsonTransfer.js";
 import { validatePortableBackupSnapshot } from "./portableBackupSnapshots.js";
+import { comparePortableSnapshotProjects } from "./portableProjectReconciliation.js";
 
 export const PORTABLE_SNAPSHOT_REVIEW_STATE = Object.freeze({
   NO_EXTERNAL: "no_external",
@@ -147,11 +148,29 @@ export function reviewPortableBackupSnapshots({
   }
 
   const effectiveLocalSnapshot = snapshotsById.get(localSnapshotId) || localSnapshot;
+  const knownSnapshots = [
+    ...(effectiveLocalSnapshot ? [effectiveLocalSnapshot] : []),
+    ...validatedExternalSnapshots.map(({ snapshot }) => snapshot),
+  ];
 
   const candidates = validatedExternalSnapshots
     .filter(({ snapshot }) => !acknowledged.has(snapshot.snapshotId))
     .map(({ reference, snapshot }) => {
       const analysis = analyzeProjectBundle(snapshot.bundle, currentProjects);
+      let projectComparison = null;
+      let comparisonError = null;
+
+      try {
+        projectComparison = comparePortableSnapshotProjects({
+          localProjects: currentProjects,
+          localSnapshot: effectiveLocalSnapshot,
+          externalSnapshot: snapshot,
+          knownSnapshots,
+        });
+      } catch (error) {
+        comparisonError = error?.code || "comparison_failed";
+      }
+
       return {
         reference,
         snapshot,
@@ -170,6 +189,8 @@ export function reviewPortableBackupSnapshots({
         newCount: analysis.newCount,
         conflictCount: analysis.conflictCount,
         removedCount: removedProjectCount(snapshot.bundle, currentProjects),
+        projectComparison,
+        comparisonError,
       };
     })
     .sort((left, right) => right.createdAt.localeCompare(left.createdAt));

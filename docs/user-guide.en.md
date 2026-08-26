@@ -197,6 +197,13 @@ selected folder can also hold a separate snapshot for each device. External
 snapshots can be inspected, imported as copies, or restored only after explicit
 confirmation.
 
+For every external snapshot, **Inspect project-by-project differences** shows
+the common ancestor when it can be verified, followed by identical, added,
+deleted, modified, conflicting, or uncertain projects. Expanding a project
+shows every affected field, its local and external values, and its provenance.
+Project-by-project choices are still presented as a preview here: they change
+nothing until their dedicated application is explicitly confirmed.
+
 The [personal-backup guide and validation matrix](portable-backup-user-guide.md)
 documents standalone use, folder permissions, conflict handling, optional
 external transport, and folder selection already confirmed on real Windows and

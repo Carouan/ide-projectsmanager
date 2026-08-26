@@ -12,6 +12,10 @@ import {
   PORTABLE_SNAPSHOT_REVIEW_STATE,
   reviewPortableBackupSnapshots,
 } from "../src/services/portableBackupReview.js";
+import {
+  PORTABLE_PROJECT_COMPARISON_STATE,
+  PORTABLE_PROJECT_DECISION,
+} from "../src/services/portableProjectReconciliation.js";
 
 const DATE_A = "2026-08-24T20:00:00.000Z";
 const DATE_B = "2026-08-24T21:00:00.000Z";
@@ -97,6 +101,15 @@ test("a direct descendant is proved by its parent snapshot identifier", () => {
   assert.equal(result.candidates[0].conflictCount, 1);
   assert.equal(result.candidates[0].deviceLabel, "Other device");
   assert.equal(result.candidates[0].reference, "snapshots/external/latest.json");
+  assert.deepEqual(result.candidates[0].projectComparison.baseline, {
+    status: "verified",
+    snapshotId: "local",
+    reason: null,
+  });
+  assert.equal(
+    result.candidates[0].projectComparison.projects.find(({ projectId }) => projectId === "new").state,
+    PORTABLE_PROJECT_COMPARISON_STATE.EXTERNAL_ADDED
+  );
 });
 
 test("older snapshots are identified by ancestry rather than their creation time", () => {
@@ -119,6 +132,56 @@ test("a newer timestamp without proven lineage remains unknown", () => {
 
   assert.equal(result.state, PORTABLE_SNAPSHOT_REVIEW_STATE.UNKNOWN);
   assert.notEqual(result.candidates[0].state, PORTABLE_SNAPSHOT_REVIEW_STATE.NEWER_DESCENDANT);
+});
+
+test("a missing common ancestor exposes uncertainty without inventing a deletion", () => {
+  const local = snapshot({
+    id: "local",
+    deviceId: "device_local",
+    projects: [project("local-only")],
+    createdAt: DATE_A,
+  });
+  const unrelated = snapshot({
+    id: "unrelated",
+    projects: [project("external-only")],
+    createdAt: DATE_B,
+  });
+  const result = review({ localSnapshot: local, externalSnapshots: [unrelated] });
+  const comparison = result.candidates[0].projectComparison;
+
+  assert.equal(comparison.baseline.status, "unavailable");
+  assert.deepEqual(
+    comparison.projects.map(({ projectId, state }) => [projectId, state]),
+    [
+      ["external-only", PORTABLE_PROJECT_COMPARISON_STATE.EXTERNAL_ONLY],
+      ["local-only", PORTABLE_PROJECT_COMPARISON_STATE.LOCAL_ONLY],
+    ]
+  );
+  assert.equal(
+    comparison.projects.some(({ decisions }) =>
+      decisions.includes(PORTABLE_PROJECT_DECISION.DELETE_LOCAL)
+    ),
+    false
+  );
+});
+
+test("an ambiguous snapshot history keeps the candidate visible and isolates comparison failure", () => {
+  const local = snapshot({ id: "local", deviceId: "device_local", createdAt: DATE_A });
+  const first = snapshot({
+    id: "duplicate",
+    parent: "local",
+    projects: [project("project-1", "First external value")],
+  });
+  const second = snapshot({
+    id: "duplicate",
+    parent: "local",
+    projects: [project("project-1", "Different external value")],
+  });
+  const result = review({ localSnapshot: local, externalSnapshots: [first, second] });
+
+  assert.equal(result.candidates.length, 2);
+  assert.equal(result.candidates[0].projectComparison, null);
+  assert.equal(result.candidates[0].comparisonError, "comparison_failed");
 });
 
 test("siblings sharing a known parent remain visibly divergent", () => {

@@ -6,6 +6,124 @@ import {
 } from "../../../services/portableBackupReview";
 import { formatDateTime } from "../../../services/dateTimePresentation";
 
+const MAX_PREVIEW_LENGTH = 160;
+
+function previewComparisonValue(entry, t) {
+  if (!entry?.present) return t("settings.backup.review.comparison.value.absent");
+  if (entry.value === null) return "null";
+
+  const value = typeof entry.value === "string"
+    ? entry.value
+    : JSON.stringify(entry.value);
+  const readable = value || t("settings.backup.review.comparison.value.empty");
+
+  return readable.length > MAX_PREVIEW_LENGTH
+    ? `${readable.slice(0, MAX_PREVIEW_LENGTH)}…`
+    : readable;
+}
+
+function ProjectComparison({ comparison, error, t }) {
+  if (error) {
+    return (
+      <div className="bundle-restore-message bundle-restore-error" role="alert">
+        {t("settings.backup.review.comparison.error")}
+      </div>
+    );
+  }
+
+  if (!comparison) return null;
+
+  const summaryEntries = [
+    ["identical", comparison.summary.identical],
+    ["added", comparison.summary.added],
+    ["deleted", comparison.summary.deleted],
+    ["modified", comparison.summary.modified],
+    ["conflicts", comparison.summary.conflicts],
+    ["unverified", comparison.summary.unverified],
+  ];
+
+  return (
+    <details className="snapshot-project-comparison">
+      <summary>{t("settings.backup.review.comparison.open")}</summary>
+      <div className="snapshot-project-comparison-content">
+        <p className={`snapshot-comparison-baseline snapshot-comparison-baseline-${comparison.baseline.status}`}>
+          {t(`settings.backup.review.comparison.baseline.${comparison.baseline.status}`, {
+            snapshotId: comparison.baseline.snapshotId,
+          })}
+        </p>
+
+        <dl className="bundle-restore-stats snapshot-comparison-stats">
+          {summaryEntries.map(([name, value]) => (
+            <div key={name}>
+              <dt>{t(`settings.backup.review.comparison.summary.${name}`)}</dt>
+              <dd>{value}</dd>
+            </div>
+          ))}
+        </dl>
+
+        <div className="snapshot-comparison-projects">
+          {comparison.projects.map((project) => (
+            <details className={`snapshot-comparison-project snapshot-comparison-project-${project.state}`} key={project.projectId}>
+              <summary>
+                <span>{project.title}</span>
+                <span className="snapshot-review-badge">
+                  {t(`settings.backup.review.comparison.state.${project.state}`)}
+                </span>
+              </summary>
+
+              <div className="snapshot-comparison-project-content">
+                {project.decisions.length > 0 ? (
+                  <p className="snapshot-comparison-decisions">
+                    <strong>{t("settings.backup.review.comparison.decisions")}</strong>{" "}
+                    {project.decisions.map((decision) => (
+                      <span className="snapshot-comparison-decision" key={decision}>
+                        {t(`settings.backup.review.comparison.decision.${decision}`)}
+                      </span>
+                    ))}
+                  </p>
+                ) : (
+                  <p className="muted">{t("settings.backup.review.comparison.noDecision")}</p>
+                )}
+
+                {project.changes.length > 0 && (
+                  <div className="snapshot-comparison-table-wrapper">
+                    <table className="snapshot-comparison-table">
+                      <thead>
+                        <tr>
+                          <th>{t("settings.backup.review.comparison.field")}</th>
+                          <th>{t("settings.backup.review.comparison.origin")}</th>
+                          <th>{t("settings.backup.review.comparison.base")}</th>
+                          <th>{t("settings.backup.review.comparison.local")}</th>
+                          <th>{t("settings.backup.review.comparison.external")}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {project.changes.map((change) => (
+                          <tr key={`${project.projectId}-${change.path}`}>
+                            <th scope="row"><code>{change.path}</code></th>
+                            <td>{t(`settings.backup.review.comparison.change.${change.state}`)}</td>
+                            <td><code>{previewComparisonValue(change.base, t)}</code></td>
+                            <td><code>{previewComparisonValue(change.local, t)}</code></td>
+                            <td><code>{previewComparisonValue(change.external, t)}</code></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </details>
+          ))}
+        </div>
+
+        <p className="muted snapshot-comparison-notice">
+          {t("settings.backup.review.comparison.previewOnly")}
+        </p>
+      </div>
+    </details>
+  );
+}
+
 function ReviewCandidate({
   candidate,
   isBusy,
@@ -51,6 +169,12 @@ function ReviewCandidate({
           <dd>{candidate.removedCount}</dd>
         </div>
       </dl>
+
+      <ProjectComparison
+        comparison={candidate.projectComparison}
+        error={candidate.comparisonError}
+        t={t}
+      />
 
       {isConfirming && (
         <div className="snapshot-restore-confirmation">
