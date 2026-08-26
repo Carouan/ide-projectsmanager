@@ -40,6 +40,7 @@ les documents canoniques du dépôt.
 - [DR-004 — Roadmap mesurable et progression effective](decisions/DR-004-measurable-roadmap-effective-progress.md).
 - [DR-005 — Lecture privée GitHub limitée à la session](decisions/DR-005-private-github-session-read-access.md).
 - [DR-006 — Première release et évolution après la v1.0](decisions/DR-006-first-release-and-post-release-evolution.md).
+- [DR-007 — Réconciliation sûre des projets entre instantanés](decisions/DR-007-safe-project-snapshot-reconciliation.md).
 
 Une décision acceptée explique son contexte, ses limites et les solutions
 écartées. Elle ne doit pas annoncer comme livrée une capacité seulement prévue.
