@@ -10,6 +10,7 @@ import {
   savePersistedPortableBackupDevice,
 } from "../repositories/storageRepository";
 import { createEmptyProject } from "../services/projectFactory";
+import { materializePublicRepositoryProject } from "../services/publicRepositoryProjectImport.js";
 import { createGovernedProjectDocument } from "../services/governedProjectBootstrap";
 import {
   analyzeProjectBundle,
@@ -306,6 +307,18 @@ if (loaded.length > 0) {
     );
     setProjects((prev) => [newProject, ...prev]);
     setCurrentProjectId(newProject.project.id);
+  }
+
+  function importPublicRepositoryProject(draft) {
+    const importedProject = stripLegacyProjectOwner(
+      withProjectOwnerId(
+        materializePublicRepositoryProject(draft, { ownerId: userProfile?.id || null }),
+        userProfile?.id
+      )
+    );
+    setProjects((previousProjects) => [importedProject, ...previousProjects]);
+    setCurrentProjectId(importedProject.project.id);
+    return importedProject.project.id;
   }
 
   function createGovernedProject(preparedPackage) {
@@ -1340,6 +1353,7 @@ if (loaded.length > 0) {
     currentProject,
     currentProjectId,
     createProject,
+    importPublicRepositoryProject,
     createGovernedProject,
     installIdeDemoProject,
     createProjectFromIdea,

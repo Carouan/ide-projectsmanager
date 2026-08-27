@@ -58,13 +58,13 @@ La décision de référence est
   - [x] Distinguer une roadmap formelle d'une checklist seulement indicative (#142).
   - [x] Compter les objectifs feuilles sans double comptage (#142).
   - [x] Conserver la provenance et un niveau de confiance (#142).
-- [ ] B2 — Prévisualisation et adaptation au canevas IDE
-  - [ ] Proposer titre, résumé, description et dépôt canonique.
-  - [ ] Proposer une étape compatible avec les preuves observées.
-  - [ ] Proposer des chantiers sans écraser leur structure d'origine.
-  - [ ] Proposer un backlog traçable vers les objectifs sources.
-  - [ ] Autoriser correction, annulation et validation humaines.
-  - [ ] Créer uniquement un projet local après confirmation.
+- [x] B2 — Prévisualisation et adaptation au canevas IDE (#144)
+  - [x] Proposer titre, résumé, description et dépôt canonique (#144).
+  - [x] Proposer une étape compatible avec les preuves observées (#144).
+  - [x] Proposer des chantiers sans écraser leur structure d'origine (#144).
+  - [x] Proposer un backlog traçable vers les objectifs sources (#144).
+  - [x] Autoriser correction, annulation et validation humaines (#144).
+  - [x] Créer uniquement un projet local après confirmation (#144).
 - [ ] B3 — Valider les deux cas pilotes
   - [ ] Intégrer UFI comme projet distinct à formaliser.
   - [x] Analyser les cases imbriquées du README actuel de SUMP (#142).
