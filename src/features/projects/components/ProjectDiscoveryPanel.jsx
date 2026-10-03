@@ -56,8 +56,27 @@ export default function ProjectDiscoveryPanel({
   }, [enabled, owner]);
 
   useEffect(() => {
-    discover(false);
-  }, [discover]);
+    let cancelled = false;
+
+    if (!enabled || !owner) return undefined;
+
+    githubProjectDiscoveryProvider
+      .discover({ owner, forceRefresh: false })
+      .then((result) => {
+        if (!cancelled) {
+          setState({ status: "success", result, error: null });
+        }
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          setState({ status: "error", result: null, error });
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [enabled, owner]);
 
   useEffect(() => {
     if (state.status !== "success" || typeof onImport !== "function") return;
