@@ -112,7 +112,7 @@ test("governed packages use a stable, reviewable and versioned contract", () => 
     packageDocument.files.map(({ path }) => path),
     GOVERNED_PROJECT_REQUIRED_FILES
   );
-  assert.equal(new Set(packageDocument.files.map(({ path }) => path)).size, 5);
+  assert.equal(new Set(packageDocument.files.map(({ path }) => path)).size, 6);
 });
 
 test("the project mandate preserves explicit objectives, exclusions and measurable criteria", () => {
@@ -135,6 +135,17 @@ test("the steward manifest binds the same identifier, repository and versioned d
   assert.match(manifest, /full_name: "Carouan\/hazardous-waste-characterization"/u);
   assert.match(manifest, /visibility: "private"/u);
   assert.match(manifest, /executive_status_file: "PROJECT_STATUS.md"/u);
+});
+
+test("the IDE manifest registers discovery, launch metadata and DEV-CMD defaults", () => {
+  const manifest = file(prepared(), ".ide-project.yml");
+
+  assert.match(manifest, /version: 1/u);
+  assert.match(manifest, new RegExp('id: "' + PROJECT_ID + '"', "u"));
+  assert.match(manifest, /enabled: true/u);
+  assert.match(manifest, /protocol: "dev-cmd-v1"/u);
+  assert.match(manifest, /transport: "github-issues"/u);
+  assert.match(manifest, /label: "dev-cmd"/u);
 });
 
 test("generated files reference stewardship without embedding its methodology or asserting remote creation", () => {
@@ -181,7 +192,7 @@ test("governed packages and governed projects survive normal JSON backup round t
 
   assert.deepEqual(validateGovernedProjectPackage(copiedPackage), packageDocument);
   assert.equal(copiedBundle.projects[0].project.id, PROJECT_ID);
-  assert.equal(copiedBundle.projects[0].attachments.length, 5);
+  assert.equal(copiedBundle.projects[0].attachments.length, 6);
 });
 
 test("tampered files and canonical repository links are rejected before project creation", () => {
