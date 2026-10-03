@@ -48,6 +48,23 @@ test("manifest normalization keeps explicit app and feedback routing", () => {
   assert.equal(manifest.feedback.protocol, "dev-cmd-v1");
 });
 
+test("generic template manifests derive identity from the concrete repository", () => {
+  const manifest = normalizeIdeProjectManifest({
+    schemaVersion: 1,
+    ide: { enabled: true, autoImport: true },
+    feedback: { enabled: true, protocol: "dev-cmd-v1", transport: "github-issues" },
+  }, {
+    full_name: "Carouan/new-project",
+    name: "new-project",
+    description: "Generated from the governed template",
+  });
+
+  assert.equal(manifest.projectId, "Carouan/new-project");
+  assert.equal(manifest.name, "new-project");
+  assert.equal(manifest.summary, "Generated from the governed template");
+  assert.equal(manifest.feedback.protocol, "dev-cmd-v1");
+});
+
 test("discovery rejects owner strings that could alter the GitHub search query", async () => {
   let calls = 0;
   const provider = createGitHubProjectDiscoveryProvider({
