@@ -10,7 +10,10 @@ import {
   savePersistedPortableBackupDevice,
 } from "../repositories/storageRepository";
 import { createEmptyProject } from "../services/projectFactory";
-import { materializePublicRepositoryProject } from "../services/publicRepositoryProjectImport.js";
+import {
+  materializeDiscoveredRepositoryProject,
+  materializePublicRepositoryProject,
+} from "../services/publicRepositoryProjectImport.js";
 import { createGovernedProjectDocument } from "../services/governedProjectBootstrap";
 import {
   analyzeProjectBundle,
@@ -319,6 +322,71 @@ if (loaded.length > 0) {
     setProjects((previousProjects) => [importedProject, ...previousProjects]);
     setCurrentProjectId(importedProject.project.id);
     return importedProject.project.id;
+  }
+
+  function importDiscoveredRepositoryProject(candidate) {
+    const candidateFullName = String(candidate?.repository?.fullName || "").toLowerCase();
+    const candidateExternalId = String(
+      candidate?.repository?.externalProjectId || candidate?.projectId || ""
+    ).toLowerCase();
+
+    setProjects((previousProjects) => {
+      const existingIndex = previousProjects.findIndex((projectDoc) => {
+        const repository = projectDoc?.repository || {};
+        return (
+          (candidateFullName &&
+            String(repository.fullName || "").toLowerCase() === candidateFullName) ||
+          (candidateExternalId &&
+            String(repository.externalProjectId || "").toLowerCase() ===
+              candidateExternalId)
+        );
+      });
+
+      if (existingIndex >= 0) {
+        const existing = previousProjects[existingIndex];
+        const currentRepository = existing.repository || {};
+        const nextRepository = {
+          ...currentRepository,
+          ...(candidate.repository || {}),
+        };
+        const keys = [
+          "provider",
+          "owner",
+          "name",
+          "fullName",
+          "url",
+          "visibility",
+          "defaultBranch",
+          "governance",
+          "externalProjectId",
+          "appUrl",
+          "feedbackProtocol",
+          "feedbackTransport",
+        ];
+        const changed = keys.some(
+          (key) => currentRepository[key] !== nextRepository[key]
+        );
+
+        if (!changed) return previousProjects;
+
+        return previousProjects.map((projectDoc, index) =>
+          index === existingIndex
+            ? { ...projectDoc, repository: nextRepository }
+            : projectDoc
+        );
+      }
+
+      const importedProject = stripLegacyProjectOwner(
+        withProjectOwnerId(
+          materializeDiscoveredRepositoryProject(candidate, {
+            ownerId: userProfile?.id || null,
+          }),
+          userProfile?.id
+        )
+      );
+
+      return [importedProject, ...previousProjects];
+    });
   }
 
   function createGovernedProject(preparedPackage) {
@@ -1354,6 +1422,7 @@ if (loaded.length > 0) {
     currentProjectId,
     createProject,
     importPublicRepositoryProject,
+    importDiscoveredRepositoryProject,
     createGovernedProject,
     installIdeDemoProject,
     createProjectFromIdea,

@@ -1,6 +1,7 @@
 import { RepositoryProviderError } from "./repositoryProvider.js";
 import { parseRoadmapProgress } from "../../services/roadmapProgress.js";
 import { githubAuthorizationSession } from "../../services/githubAuthorizationSession.js";
+import { parseDevCmdRequest } from "../../services/devCmd.js";
 
 const DEFAULT_API_BASE_URL = "https://api.github.com";
 const DEFAULT_MAX_PULL_REQUESTS = 20;
@@ -113,6 +114,27 @@ function mapPullRequest(pullRequest, detail, combinedStatus) {
     statusSummary: combinedStatus
       ? summarizeStatuses(combinedStatus)
       : null,
+  };
+}
+
+function mapDevCmdIssue(issue) {
+  return {
+    number: issue.number,
+    title: issue.title || "",
+    url: issue.html_url || null,
+    body: issue.body || "",
+    author: {
+      login: issue.user?.login || null,
+      type: issue.user?.type || null,
+    },
+    labels: Array.isArray(issue.labels)
+      ? issue.labels
+          .map((label) => typeof label === "string" ? label : label?.name)
+          .filter(Boolean)
+      : [],
+    createdAt: issue.created_at || null,
+    updatedAt: issue.updated_at || null,
+    command: parseDevCmdRequest(issue.body || ""),
   };
 }
 
@@ -301,11 +323,43 @@ export function createGitHubRepositoryProvider({
       return null;
     }
 
-    const [pullRequests, roadmap] = await Promise.all([
+    async function readDevCmdIssues() {
+      if (repositoryData.has_issues !== true) return [];
+
+      try {
+        const issues = await requestJson(
+          `/repos/${fullName}/issues?state=open&sort=updated&direction=desc&per_page=20`
+        );
+        return (Array.isArray(issues) ? issues : [])
+          .filter((issue) => {
+            if (issue.pull_request) return false;
+            const labels = Array.isArray(issue.labels)
+              ? issue.labels
+                  .map((label) => typeof label === "string" ? label : label?.name)
+                  .filter(Boolean)
+              : [];
+            return (
+              labels.includes("dev-cmd") ||
+              String(issue.title || "").includes("[DEV-CMD]") ||
+              String(issue.body || "").includes("[DEV-CMD]")
+            );
+          })
+          .map(mapDevCmdIssue);
+      } catch (error) {
+        warnings.push({
+          capability: "dev_cmd",
+          code: error?.code || "unknown",
+        });
+        return [];
+      }
+    }
+
+    const [pullRequests, roadmap, openDevCmdItems] = await Promise.all([
       requestJson(
         `/repos/${fullName}/pulls?state=open&sort=updated&direction=desc&per_page=${safeMaxPullRequests}`
       ),
       readRoadmap(),
+      readDevCmdIssues(),
     ]);
 
     const enrichedPullRequests = await Promise.all(
@@ -361,6 +415,7 @@ export function createGitHubRepositoryProvider({
         repositoryData.pushed_at || repositoryData.updated_at || null,
       roadmap,
       openPullRequests: enrichedPullRequests,
+      openDevCmdItems,
       enrichment: {
         pullRequestsListed: enrichedPullRequests.length,
         pullRequestsEnriched: Math.min(
@@ -372,6 +427,12 @@ export function createGitHubRepositoryProvider({
         repository: repositoryData.html_url || repository.url || null,
         pullRequests: repositoryData.html_url
           ? `${repositoryData.html_url}/pulls`
+          : null,
+        issues: repositoryData.has_issues === true && repositoryData.html_url
+          ? `${repositoryData.html_url}/issues`
+          : null,
+        devCmdNew: repositoryData.has_issues === true && repositoryData.html_url
+          ? `${repositoryData.html_url}/issues/new?labels=dev-cmd`
           : null,
       },
       rateLimit: combineRateLimits(rateLimits),

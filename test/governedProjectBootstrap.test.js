@@ -112,7 +112,7 @@ test("governed packages use a stable, reviewable and versioned contract", () => 
     packageDocument.files.map(({ path }) => path),
     GOVERNED_PROJECT_REQUIRED_FILES
   );
-  assert.equal(new Set(packageDocument.files.map(({ path }) => path)).size, 5);
+  assert.equal(new Set(packageDocument.files.map(({ path }) => path)).size, 6);
 });
 
 test("the project mandate preserves explicit objectives, exclusions and measurable criteria", () => {
@@ -137,6 +137,18 @@ test("the steward manifest binds the same identifier, repository and versioned d
   assert.match(manifest, /executive_status_file: "PROJECT_STATUS.md"/u);
 });
 
+test("governed packages include an IDE discovery manifest with DEV-CMD routing", () => {
+  const manifest = JSON.parse(file(prepared(), ".ide-project.json"));
+
+  assert.equal(manifest.schemaVersion, 1);
+  assert.equal(manifest.projectId, PROJECT_ID);
+  assert.equal(manifest.name, "Caractérisation des déchets dangereux");
+  assert.equal(manifest.ide.enabled, true);
+  assert.equal(manifest.ide.autoImport, true);
+  assert.equal(manifest.feedback.protocol, "dev-cmd-v1");
+  assert.equal(manifest.feedback.transport, "github-issues");
+});
+
 test("generated files reference stewardship without embedding its methodology or asserting remote creation", () => {
   const packageDocument = prepared();
   const status = file(packageDocument, "PROJECT_STATUS.md");
@@ -159,6 +171,8 @@ test("governed project creation preserves the local project schema and saves eve
   assert.match(projectDocument.stages.v0_0.definitionOfDone, /Méthode reproductible/u);
   assert.equal(projectDocument.repository.externalProjectId, PROJECT_ID);
   assert.equal(projectDocument.repository.provisioningState, "planned");
+  assert.equal(projectDocument.repository.feedbackProtocol, "dev-cmd-v1");
+  assert.equal(projectDocument.repository.feedbackTransport, "github-issues");
   assert.deepEqual(projectDocument.attachments.map(({ fileName }) => fileName), GOVERNED_PROJECT_REQUIRED_FILES);
   assert.ok(projectDocument.attachments.every(({ type }) => type === "snippet"));
   assert.match(projectDocument.journal[0].content, /No repository was created automatically/u);
@@ -181,7 +195,7 @@ test("governed packages and governed projects survive normal JSON backup round t
 
   assert.deepEqual(validateGovernedProjectPackage(copiedPackage), packageDocument);
   assert.equal(copiedBundle.projects[0].project.id, PROJECT_ID);
-  assert.equal(copiedBundle.projects[0].attachments.length, 5);
+  assert.equal(copiedBundle.projects[0].attachments.length, 6);
 });
 
 test("tampered files and canonical repository links are rejected before project creation", () => {

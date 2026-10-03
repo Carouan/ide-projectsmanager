@@ -119,3 +119,31 @@ export function materializePublicRepositoryProject(draft, options = {}) {
     })),
   };
 }
+
+export function materializeDiscoveredRepositoryProject(candidate, options = {}) {
+  const project = createEmptyProject(options.ownerId || null);
+  const now = new Date().toISOString();
+  const repository = candidate?.repository || {};
+  const title = String(candidate?.title || repository.name || "Projet GitHub").trim();
+
+  return {
+    ...project,
+    project: {
+      ...project.project,
+      title,
+      slug: slugify(title),
+      summary: String(candidate?.summary || "").trim(),
+      description: String(candidate?.description || "").trim(),
+      tags: Array.isArray(candidate?.tags) ? candidate.tags.filter(Boolean) : [],
+      currentStage: "v0_1",
+      updatedAt: now,
+    },
+    repository: {
+      ...repository,
+      provider: "github",
+      externalProjectId:
+        repository.externalProjectId || candidate?.projectId || null,
+    },
+  };
+}
+

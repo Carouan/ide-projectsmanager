@@ -54,6 +54,7 @@ export default function GitHubPrivateAccessPanel() {
           <li>{t("settings.github.permissions.metadata")}</li>
           <li>{t("settings.github.permissions.contents")}</li>
           <li>{t("settings.github.permissions.pullRequests")}</li>
+          <li>{t("settings.github.permissions.issues")}</li>
           <li>{t("settings.github.permissions.statuses")}</li>
         </ul>
         <a

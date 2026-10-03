@@ -2893,3 +2893,41 @@ select:focus {
     max-width: none;
   }
 }
+
+.project-discovery-header,
+.project-launch-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.project-discovery-header {
+  justify-content: space-between;
+}
+
+.project-discovery-header > div {
+  min-width: min(100%, 320px);
+}
+
+.project-launch-actions {
+  margin-top: 12px;
+}
+
+.repository-dev-cmd-header {
+  margin-top: 28px;
+}
+
+@media (max-width: 720px) {
+  .project-discovery-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .project-launch-actions > .btn,
+  .project-launch-actions > a {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+}
+

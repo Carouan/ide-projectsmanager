@@ -8,6 +8,7 @@ import ProjectDashboardControls from "../components/ProjectDashboardControls";
 import ProjectProgressMigrationPreview from "../components/ProjectProgressMigrationPreview";
 import ProjectProgressSummary from "../components/ProjectProgressSummary";
 import PublicRepositoryImportPanel from "../components/PublicRepositoryImportPanel";
+import ProjectDiscoveryPanel from "../components/ProjectDiscoveryPanel";
 import { useAttentionInbox } from "../hooks/useAttentionInbox.js";
 import {
   DEFAULT_DASHBOARD_FILTERS,
@@ -16,6 +17,38 @@ import {
   normalizeDashboardPreferences,
   selectDashboardProjects,
 } from "../services/projectDashboardModel.js";
+import { getProjectLaunchLinks } from "../../../services/projectLaunchLinks.js";
+
+function ProjectLaunchActions({ projectDoc }) {
+  const { t } = useI18n();
+  const links = getProjectLaunchLinks(projectDoc);
+
+  if (!links.repository) return null;
+
+  return (
+    <div className="project-launch-actions" aria-label={t("dashboard.launch.title")}>
+      <a className="btn btn-secondary" href={links.repository} target="_blank" rel="noreferrer">
+        {t("dashboard.launch.github")}
+      </a>
+      {links.app && (
+        <a className="btn btn-primary" href={links.app} target="_blank" rel="noreferrer">
+          {t("dashboard.launch.test")}
+        </a>
+      )}
+      <a className="btn btn-secondary" href={links.issues} target="_blank" rel="noreferrer">
+        {t("dashboard.launch.issues")}
+      </a>
+      <a className="btn btn-secondary" href={links.pullRequests} target="_blank" rel="noreferrer">
+        {t("dashboard.launch.pullRequests")}
+      </a>
+      {links.feedback && (
+        <a className="btn btn-secondary" href={links.feedback} target="_blank" rel="noreferrer">
+          {t("dashboard.launch.feedback")}
+        </a>
+      )}
+    </div>
+  );
+}
 
 export default function ProjectListScreen({
   projects,
@@ -29,6 +62,7 @@ export default function ProjectListScreen({
   settings,
   onUpdateSettings,
   onImportPublicRepository,
+  onImportDiscoveredRepository,
 }) {
   const { t, locale } = useI18n();
   const attentionInbox = useAttentionInbox(projects);
@@ -77,6 +111,13 @@ export default function ProjectListScreen({
         </div>
 
         <PublicRepositoryImportPanel onConfirm={onImportPublicRepository} />
+
+        <ProjectDiscoveryPanel
+          projects={projects}
+          enabled={settings?.githubDiscoveryEnabled !== false}
+          owner={settings?.githubDiscoveryOwner || "Carouan"}
+          onImport={onImportDiscoveredRepository}
+        />
 
         {projects.length > 0 && (
           <>
@@ -169,6 +210,8 @@ export default function ProjectListScreen({
                       projectDoc={p}
                       repositoryResult={repositoryResult}
                     />
+
+                    <ProjectLaunchActions projectDoc={p} />
 
                     <div className="project-actions">
                       <button
