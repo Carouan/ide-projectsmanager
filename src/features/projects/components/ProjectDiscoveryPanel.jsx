@@ -71,8 +71,8 @@ export default function ProjectDiscoveryPanel({
         trackedRepositories.has(repositoryKeyValue) ||
         trackedProjectIds.has(projectKeyValue);
 
-      if (candidate.autoImport && !tracked) {
-        onImport(candidate);
+      if (candidate.autoImport) {
+        onImport({ ...candidate, alreadyTracked: tracked });
       }
     }
   }, [
