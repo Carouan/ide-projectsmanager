@@ -2893,3 +2893,45 @@ select:focus {
     max-width: none;
   }
 }
+
+
+.discovery-panel {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.discovery-list {
+  display: grid;
+  gap: 10px;
+}
+
+.discovery-item,
+.repository-manifest-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--panel-2);
+}
+
+.repository-manifest-card {
+  margin: 18px 0;
+}
+
+.repository-devcmd {
+  display: grid;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+@media (max-width: 760px) {
+  .discovery-item,
+  .repository-manifest-card {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
