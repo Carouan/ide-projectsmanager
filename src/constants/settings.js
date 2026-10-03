@@ -11,4 +11,6 @@ export const DEFAULT_SETTINGS = {
   dashboardView: "grid",
   dashboardSortField: "updatedAt",
   dashboardSortDirection: "desc",
+  githubDiscoveryEnabled: true,
+  githubDiscoveryOwner: "Carouan",
 };
