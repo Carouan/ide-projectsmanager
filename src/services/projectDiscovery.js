@@ -218,6 +218,12 @@ export function createGitHubProjectDiscoveryProvider({
         "A GitHub owner is required for project discovery."
       );
     }
+    if (!/^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,37}[a-zA-Z0-9])?$/u.test(normalizedOwner)) {
+      throw new ProjectDiscoveryError(
+        "invalid_owner",
+        "The GitHub owner used for discovery is invalid."
+      );
+    }
 
     const authorized = authorizationSession?.isAuthorized?.() === true;
     const cacheKey = `${normalizedOwner.toLowerCase()}:${authorized ? "private" : "public"}`;
