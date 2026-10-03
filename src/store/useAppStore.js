@@ -331,7 +331,7 @@ if (loaded.length > 0) {
     ).toLowerCase();
 
     setProjects((previousProjects) => {
-      const alreadyTracked = previousProjects.some((projectDoc) => {
+      const existingIndex = previousProjects.findIndex((projectDoc) => {
         const repository = projectDoc?.repository || {};
         return (
           (candidateFullName &&
@@ -342,7 +342,39 @@ if (loaded.length > 0) {
         );
       });
 
-      if (alreadyTracked) return previousProjects;
+      if (existingIndex >= 0) {
+        const existing = previousProjects[existingIndex];
+        const currentRepository = existing.repository || {};
+        const nextRepository = {
+          ...currentRepository,
+          ...(candidate.repository || {}),
+        };
+        const keys = [
+          "provider",
+          "owner",
+          "name",
+          "fullName",
+          "url",
+          "visibility",
+          "defaultBranch",
+          "governance",
+          "externalProjectId",
+          "appUrl",
+          "feedbackProtocol",
+          "feedbackTransport",
+        ];
+        const changed = keys.some(
+          (key) => currentRepository[key] !== nextRepository[key]
+        );
+
+        if (!changed) return previousProjects;
+
+        return previousProjects.map((projectDoc, index) =>
+          index === existingIndex
+            ? { ...projectDoc, repository: nextRepository }
+            : projectDoc
+        );
+      }
 
       const importedProject = stripLegacyProjectOwner(
         withProjectOwnerId(
