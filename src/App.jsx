@@ -18,6 +18,7 @@ export default function App() {
     currentProject,
     createProject,
     importPublicRepositoryProject,
+    importDiscoveredRepositoryProject,
     createGovernedProject,
     installIdeDemoProject,
     openProject,
@@ -119,6 +120,7 @@ export default function App() {
         settings={settings}
         onUpdateSettings={updateSettings}
         onImportPublicRepository={handleImportPublicRepository}
+        onImportDiscoveredRepository={importDiscoveredRepositoryProject}
       />
     ) : view === "governed" ? (
       <GovernedProjectBootstrapScreen
