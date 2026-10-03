@@ -851,40 +851,24 @@
   "repository.origin.bot": "Origine : bot GitHub",
   "repository.origin.unknown": "Origine : inconnue",
   "repository.value.unknown": "Inconnu",
-  "discovery": {
-    "eyebrow": "Découverte GitHub",
-    "title": "Projets disponibles",
-    "description": "Recherche les dépôts publics portant le topic ide-project et lit leur manifeste .ide-project.yml.",
-    "actions": {
-      "scan": "Rechercher",
-      "scanning": "Recherche…",
-      "import": "Ajouter au dashboard",
-      "test": "Tester"
-    },
-    "empty": "Aucun nouveau projet compatible n’a été trouvé.",
-    "error": "La découverte GitHub a échoué : {{error}}."
-  },
-  "dashboard": {
-    "actions": {
-      "test": "Tester"
-    }
-  },
-  "repository": {
-    "actions": {
-      "openApp": "Tester l’application"
-    },
-    "manifest": {
-      "eyebrow": "Manifeste IDE",
-      "version": "Version {{version}}",
-      "feedbackEnabled": "DEV-CMD activé",
-      "feedbackDisabled": "DEV-CMD désactivé"
-    },
-    "devCmd": {
-      "title": "Retours DEV-CMD",
-      "count": "{{count}} retour(s) ouvert(s)",
-      "open": "Ouvrir dans GitHub",
-      "empty": "Aucun retour DEV-CMD ouvert.",
-      "updated": "Mis à jour : {{timestamp}}"
-    }
-  }
+  "discovery.eyebrow": "Découverte GitHub",
+  "discovery.title": "Projets disponibles",
+  "discovery.description": "Recherche les dépôts publics portant le topic ide-project et lit leur manifeste .ide-project.yml.",
+  "discovery.actions.scan": "Rechercher",
+  "discovery.actions.scanning": "Recherche…",
+  "discovery.actions.import": "Ajouter au dashboard",
+  "discovery.actions.test": "Tester",
+  "discovery.empty": "Aucun nouveau projet compatible n’a été trouvé.",
+  "discovery.error": "La découverte GitHub a échoué : {{error}}.",
+  "dashboard.actions.test": "Tester",
+  "repository.actions.openApp": "Tester l’application ↗",
+  "repository.manifest.eyebrow": "Manifeste IDE",
+  "repository.manifest.version": "Version {{version}}",
+  "repository.manifest.feedbackEnabled": "DEV-CMD activé",
+  "repository.manifest.feedbackDisabled": "DEV-CMD désactivé",
+  "repository.devCmd.title": "Retours DEV-CMD",
+  "repository.devCmd.count": "{{count}} retour(s) ouvert(s)",
+  "repository.devCmd.open": "Ouvrir dans GitHub ↗",
+  "repository.devCmd.empty": "Aucun retour DEV-CMD ouvert.",
+  "repository.devCmd.updated": "Mis à jour : {{timestamp}}"
 }
