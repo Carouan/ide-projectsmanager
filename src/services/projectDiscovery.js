@@ -248,6 +248,8 @@ export function createGitHubProjectDiscoveryProvider({
     const warnings = [];
 
     for (const repository of repositories) {
+      if (repository.is_template === true) continue;
+
       const topicOptIn = Array.isArray(repository.topics)
         ? repository.topics.includes(IDE_PROJECT_TOPIC)
         : false;
