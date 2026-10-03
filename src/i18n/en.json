@@ -850,5 +850,41 @@
   "repository.origin.human": "Origin: human",
   "repository.origin.bot": "Origin: GitHub bot",
   "repository.origin.unknown": "Origin: unknown",
-  "repository.value.unknown": "Unknown"
+  "repository.value.unknown": "Unknown",
+  "discovery": {
+    "eyebrow": "GitHub discovery",
+    "title": "Available projects",
+    "description": "Finds public repositories carrying the ide-project topic and reads their .ide-project.yml manifest.",
+    "actions": {
+      "scan": "Scan",
+      "scanning": "Scanning…",
+      "import": "Add to dashboard",
+      "test": "Test"
+    },
+    "empty": "No new compatible project was found.",
+    "error": "GitHub discovery failed: {{error}}."
+  },
+  "dashboard": {
+    "actions": {
+      "test": "Test"
+    }
+  },
+  "repository": {
+    "actions": {
+      "openApp": "Test application"
+    },
+    "manifest": {
+      "eyebrow": "IDE manifest",
+      "version": "Version {{version}}",
+      "feedbackEnabled": "DEV-CMD enabled",
+      "feedbackDisabled": "DEV-CMD disabled"
+    },
+    "devCmd": {
+      "title": "DEV-CMD feedback",
+      "count": "{{count}} open feedback item(s)",
+      "open": "Open in GitHub",
+      "empty": "No open DEV-CMD feedback.",
+      "updated": "Updated: {{timestamp}}"
+    }
+  }
 }
