@@ -135,6 +135,36 @@ test("session authorization is sent only as a Bearer header on safe GitHub repos
   assert.equal("body" in calls[0].options, false);
 });
 
+test("session authorization permits safe repository discovery but no broader GitHub search", async () => {
+  const calls = [];
+  const session = createGitHubAuthorizationSession({
+    fetchImpl: async (url, options) => {
+      calls.push({ url, options });
+      return response({ items: [] });
+    },
+  });
+  session.connect(TEST_CREDENTIAL);
+
+  await session.request(
+    "https://api.github.com/search/repositories?q=user%3ACarouan+fork%3Afalse&sort=updated&order=desc&per_page=20"
+  );
+
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].options.headers.Authorization, "Bearer " + TEST_CREDENTIAL);
+
+  for (const destination of [
+    "https://api.github.com/search/issues?q=user%3ACarouan",
+    "https://api.github.com/search/repositories?q=user%3ACarouan&access_token=leak",
+  ]) {
+    await assert.rejects(
+      session.request(destination),
+      (error) => error.code === "unsafe_destination"
+    );
+  }
+
+  assert.equal(calls.length, 1);
+});
+
 test("private authorization refuses other origins, redirects, credentials, path escapes and token queries", async () => {
   let calls = 0;
   const session = createGitHubAuthorizationSession({
