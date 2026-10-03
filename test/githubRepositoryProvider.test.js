@@ -190,7 +190,7 @@ test("GitHub provider keeps core PR data when optional enrichment fails", async 
   assert.equal(snapshot.roadmap, null);
 });
 
-test("GitHub provider exposes open DEV-CMD issues without mixing pull requests", async () => {
+test("GitHub provider exposes DEV-CMD protocol issues without requiring a label or mixing pull requests", async () => {
   const provider = createGitHubRepositoryProvider({
     fetchImpl: async (url) => {
       if (url.endsWith("/repos/owner/repo")) {
@@ -225,7 +225,7 @@ test("GitHub provider exposes open DEV-CMD issues without mixing pull requests",
               "Repair the mobile toolbar.",
             ].join("\n"),
             user: { login: "tester", type: "User" },
-            labels: [{ name: "dev-cmd" }],
+            labels: [],
           },
           {
             number: 8,
