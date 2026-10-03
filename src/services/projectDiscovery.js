@@ -121,8 +121,10 @@ function candidateFromRepository(repository, manifest) {
       governance: "project-steward",
       externalProjectId: manifest.projectId,
       appUrl: manifest.app?.url || null,
-      feedbackProtocol: manifest.feedback?.protocol || null,
-      feedbackTransport: manifest.feedback?.transport || null,
+      feedbackProtocol:
+        manifest.feedback?.enabled === true ? manifest.feedback.protocol : null,
+      feedbackTransport:
+        manifest.feedback?.enabled === true ? manifest.feedback.transport : null,
     },
   };
 }
