@@ -1,0 +1,14 @@
+version: 1
+project:
+  id: "ide-projectsmanager"
+  name: "IDE Projects Manager"
+ide:
+  enabled: true
+app:
+  type: "pwa"
+  url: "https://carouan.github.io/ide-projectsmanager/"
+feedback:
+  enabled: true
+  protocol: "dev-cmd-v1"
+  transport: "github-issues"
+  label: "dev-cmd"
