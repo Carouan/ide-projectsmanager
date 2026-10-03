@@ -1,6 +1,5 @@
 import {
   IDE_PROJECT_MANIFEST_PATH,
-  IDE_PROJECT_TOPIC,
   parseProjectManifest,
 } from "./projectManifest.js";
 
@@ -18,9 +17,8 @@ export async function discoverGitHubProjects({
   fetchImpl = (...args) => globalThis.fetch(...args),
   apiBaseUrl = DEFAULT_API_BASE_URL,
 } = {}) {
-  const query = encodeURIComponent(`topic:${IDE_PROJECT_TOPIC} user:${owner}`);
   const response = await fetchImpl(
-    `${apiBaseUrl}/search/repositories?q=${query}&sort=updated&order=desc&per_page=50`,
+    `${apiBaseUrl}/users/${encodeURIComponent(owner)}/repos?sort=updated&direction=desc&per_page=30&type=owner`,
     {
       method: "GET",
       credentials: "omit",
@@ -38,7 +36,7 @@ export async function discoverGitHubProjects({
   }
 
   const payload = await response.json();
-  const repositories = Array.isArray(payload?.items) ? payload.items : [];
+  const repositories = Array.isArray(payload) ? payload : [];
 
   const results = await Promise.all(
     repositories.map(async (repository) => {
@@ -82,5 +80,7 @@ export async function discoverGitHubProjects({
     })
   );
 
-  return results.filter((candidate) => candidate.manifest?.ide?.enabled !== false);
+  return results.filter(
+    (candidate) => candidate.manifest && candidate.manifest.ide?.enabled !== false
+  );
 }
