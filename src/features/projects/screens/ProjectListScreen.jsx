@@ -8,6 +8,7 @@ import ProjectDashboardControls from "../components/ProjectDashboardControls";
 import ProjectProgressMigrationPreview from "../components/ProjectProgressMigrationPreview";
 import ProjectProgressSummary from "../components/ProjectProgressSummary";
 import PublicRepositoryImportPanel from "../components/PublicRepositoryImportPanel";
+import GitHubProjectDiscoveryPanel from "../components/GitHubProjectDiscoveryPanel";
 import { useAttentionInbox } from "../hooks/useAttentionInbox.js";
 import {
   DEFAULT_DASHBOARD_FILTERS,
@@ -29,6 +30,7 @@ export default function ProjectListScreen({
   settings,
   onUpdateSettings,
   onImportPublicRepository,
+  onImportDiscoveredProject,
 }) {
   const { t, locale } = useI18n();
   const attentionInbox = useAttentionInbox(projects);
@@ -75,6 +77,11 @@ export default function ProjectListScreen({
             </button>
           </div>
         </div>
+
+        <GitHubProjectDiscoveryPanel
+          projects={projects}
+          onImport={onImportDiscoveredProject}
+        />
 
         <PublicRepositoryImportPanel onConfirm={onImportPublicRepository} />
 
@@ -171,6 +178,30 @@ export default function ProjectListScreen({
                     />
 
                     <div className="project-actions">
+                      {(repositoryResult?.snapshot?.manifest?.app?.url ||
+                        p.repository?.manifest?.app?.url) && (
+                        <a
+                          className="repository-link"
+                          href={
+                            repositoryResult?.snapshot?.manifest?.app?.url ||
+                            p.repository?.manifest?.app?.url
+                          }
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {t("dashboard.actions.test")}
+                        </a>
+                      )}
+                      {p.repository?.url && (
+                        <a
+                          className="repository-link"
+                          href={p.repository.url}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          GitHub
+                        </a>
+                      )}
                       <button
                         className="btn btn-secondary"
                         onClick={() => onOpenProject(p.project.id)}
