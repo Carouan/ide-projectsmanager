@@ -150,6 +150,43 @@ export default function SettingsScreen({
 
         <GitHubPrivateAccessPanel />
 
+        <section className="panel settings-github-discovery-panel">
+          <div>
+            <div className="eyebrow">{t("settings.discovery.eyebrow")}</div>
+            <h2>{t("settings.discovery.title")}</h2>
+            <p className="hero-text">{t("settings.discovery.description")}</p>
+          </div>
+          <div className="form-grid">
+            <label className="field field-full field-toggle">
+              <span>{t("settings.discovery.enabled")}</span>
+              <input
+                type="checkbox"
+                checked={safeSettings.githubDiscoveryEnabled !== false}
+                onChange={(event) =>
+                  onUpdateSettings({
+                    githubDiscoveryEnabled: event.target.checked,
+                  })
+                }
+              />
+            </label>
+            <label className="field">
+              <span>{t("settings.discovery.owner")}</span>
+              <input
+                type="text"
+                value={safeSettings.githubDiscoveryOwner || ""}
+                disabled={safeSettings.githubDiscoveryEnabled === false}
+                onChange={(event) =>
+                  onUpdateSettings({
+                    githubDiscoveryOwner: event.target.value.trim(),
+                  })
+                }
+                placeholder="Carouan"
+              />
+            </label>
+          </div>
+          <p className="muted">{t("settings.discovery.note")}</p>
+        </section>
+
         <section className="panel settings-backup-panel">
           <div>
             <div className="eyebrow">{t("settings.backup.eyebrow")}</div>
