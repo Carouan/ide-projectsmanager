@@ -12,6 +12,7 @@ export const GOVERNED_PROJECT_REQUIRED_FILES = Object.freeze([
   "PROJECT_CONTEXT.md",
   "PROJECT_STATUS.md",
   ".project-steward.yml",
+  ".ide-project.yml",
   "README.md",
 ]);
 
@@ -165,6 +166,24 @@ function renderStewardManifest(draft) {
   return `project_steward:\n  methodology_repository: ${yamlString(GOVERNED_PROJECT_STEWARD_REPOSITORY)}\n  skill_file: "SKILL.md"\n  language_policy_file: "LANGUAGE_POLICY.md"\n  version: "v1-draft"\n  canonical_repository_is_source_of_truth: true\n  executive_summary_max_words: 800\n  decision_record_prefix: "DR"\n  handoff_file: ".project/HANDOFF.md"\n  language:\n    human_facing_default: "fr"\n    technical_default: "en"\n\n  dashboard:\n    contract_version: "1"\n    enabled: true\n    project_id: ${yamlString(draft.projectId)}\n    canonical_repository:\n      provider: "github"\n      full_name: ${yamlString(draft.repositoryFullName)}\n      url: ${yamlString(`https://github.com/${draft.repositoryFullName}`)}\n      default_branch: "main"\n      visibility: ${yamlString(draft.visibility)}\n    executive_status_file: "PROJECT_STATUS.md"\n`;
 }
 
+function renderIdeProjectManifest(draft) {
+  return `version: 1
+project:
+  id: ${yamlString(draft.projectId)}
+  name: ${yamlString(draft.title)}
+ide:
+  enabled: true
+app:
+  type: "pwa"
+  url: ""
+feedback:
+  enabled: true
+  protocol: "dev-cmd-v1"
+  transport: "github-issues"
+  label: "dev-cmd"
+`;
+}
+
 function renderReadme(draft) {
   return `# ${draft.title}\n\n${draft.objective}\n\n## Contexte\n\n${draft.context}\n\n## Livrables attendus\n\n${renderList(draft.deliverables)}\n\n## Critères de réussite\n\n${renderList(draft.successCriteria)}\n\n## Gouvernance\n\n- Dépôt canonique prévu : \`${draft.repositoryFullName}\`.\n- Identifiant projet stable : \`${draft.projectId}\`.\n- Template : https://github.com/${GOVERNED_PROJECT_TEMPLATE_REPOSITORY}\n- Méthodologie Project Steward : https://github.com/${GOVERNED_PROJECT_STEWARD_REPOSITORY}\n\nLa création du dépôt et la publication des fichiers restent des actions humaines\nexplicites. Aucun dépôt n'est créé automatiquement par IDE-projectsmanager.\n`;
 }
@@ -200,6 +219,7 @@ export function createGovernedProjectPackage(input = {}, options = {}) {
       { path: "PROJECT_CONTEXT.md", content: renderContext(draft) },
       { path: "PROJECT_STATUS.md", content: renderStatus(draft) },
       { path: ".project-steward.yml", content: renderStewardManifest(draft) },
+      { path: ".ide-project.yml", content: renderIdeProjectManifest(draft) },
       { path: "README.md", content: renderReadme(draft) },
     ],
   };
