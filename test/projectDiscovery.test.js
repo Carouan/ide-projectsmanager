@@ -48,6 +48,22 @@ test("manifest normalization keeps explicit app and feedback routing", () => {
   assert.equal(manifest.feedback.protocol, "dev-cmd-v1");
 });
 
+test("discovery rejects owner strings that could alter the GitHub search query", async () => {
+  let calls = 0;
+  const provider = createGitHubProjectDiscoveryProvider({
+    fetchImpl: async () => {
+      calls += 1;
+      return response({ items: [] });
+    },
+  });
+
+  await assert.rejects(
+    provider.discover({ owner: "Carouan sort:stars" }),
+    (error) => error.code === "invalid_owner"
+  );
+  assert.equal(calls, 0);
+});
+
 test("discovery imports manifest-enabled repositories and topic-only repositories", async () => {
   const manifest = {
     schemaVersion: 1,
