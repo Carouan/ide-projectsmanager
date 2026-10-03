@@ -107,6 +107,18 @@ test("discovery imports manifest-enabled repositories and topic-only repositorie
       topics: [],
       has_pages: false,
     },
+    {
+      full_name: "Carouan/ai-project-template",
+      name: "ai-project-template",
+      owner: { login: "Carouan" },
+      html_url: "https://github.com/Carouan/ai-project-template",
+      visibility: "private",
+      private: true,
+      default_branch: "main",
+      topics: ["ide-project"],
+      has_pages: false,
+      is_template: true,
+    },
   ];
   const calls = [];
   const provider = createGitHubProjectDiscoveryProvider({
