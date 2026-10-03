@@ -192,6 +192,19 @@ export default function ProjectListScreen({
                           {t("dashboard.actions.test")}
                         </a>
                       )}
+                      {repositoryResult?.snapshot?.manifest?.feedback?.enabled === true && (
+                        <a
+                          className="repository-link"
+                          href={
+                            repositoryResult?.snapshot?.links?.devCmdIssues ||
+                            repositoryResult?.snapshot?.links?.issues
+                          }
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          DEV-CMD ({repositoryResult?.snapshot?.devCmdIssues?.length || 0})
+                        </a>
+                      )}
                       {p.repository?.url && (
                         <a
                           className="repository-link"
