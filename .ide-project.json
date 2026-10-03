@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "projectId": "ide-projectsmanager",
+  "name": "IDE Projects Manager",
+  "summary": "Cockpit local-first de cadrage, suivi et reprise de projets.",
+  "tags": [
+    "project-management",
+    "pwa",
+    "ai-assisted-development"
+  ],
+  "ide": {
+    "enabled": true,
+    "autoImport": true
+  },
+  "app": {
+    "type": "pwa",
+    "url": "https://carouan.github.io/ide-projectsmanager/"
+  },
+  "feedback": {
+    "enabled": true,
+    "protocol": "dev-cmd-v1",
+    "transport": "github-issues"
+  }
+}
