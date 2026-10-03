@@ -11,6 +11,7 @@ import {
 } from "../repositories/storageRepository";
 import { createEmptyProject } from "../services/projectFactory";
 import { materializePublicRepositoryProject } from "../services/publicRepositoryProjectImport.js";
+import { createEmptyProject as createDiscoveredProjectBase } from "../services/projectFactory";
 import { createGovernedProjectDocument } from "../services/governedProjectBootstrap";
 import {
   analyzeProjectBundle,
@@ -319,6 +320,60 @@ if (loaded.length > 0) {
     setProjects((previousProjects) => [importedProject, ...previousProjects]);
     setCurrentProjectId(importedProject.project.id);
     return importedProject.project.id;
+  }
+
+  function importDiscoveredProject(candidate) {
+    const repository = normalizeRepositoryLink({
+      ...candidate.repository,
+      manifest: candidate.manifest || null,
+    });
+    const existing = projects.find(
+      (projectDoc) =>
+        String(projectDoc.repository?.fullName || "").toLowerCase() ===
+        String(repository?.fullName || "").toLowerCase()
+    );
+    if (existing) {
+      setCurrentProjectId(existing.project.id);
+      return existing.project.id;
+    }
+
+    const base = createDiscoveredProjectBase(userProfile?.id || null);
+    const now = new Date().toISOString();
+    const discovered = stripLegacyProjectOwner(
+      withProjectOwnerId(
+        {
+          ...base,
+          project: {
+            ...base.project,
+            id: candidate.projectId || base.project.id,
+            slug: slugify(candidate.title || repository?.name || "project"),
+            title: candidate.title || repository?.name || "GitHub project",
+            summary:
+              candidate.manifest?.project?.name ||
+              `Projet découvert automatiquement depuis ${repository?.fullName || "GitHub"}.`,
+            description: "",
+            tags: ["github", "ide-project"],
+            createdAt: now,
+            updatedAt: now,
+          },
+          repository,
+          journal: [{
+            id: newJournalId(),
+            createdAt: now,
+            type: "note",
+            title: "Projet découvert via GitHub",
+            content: `Import automatique du dépôt ${repository?.fullName || ""} portant le topic ide-project.`,
+            stage: "v0_0",
+            impact: "Ajout au cockpit IDE Projects Manager",
+          }],
+        },
+        userProfile?.id
+      )
+    );
+
+    setProjects((previousProjects) => [discovered, ...previousProjects]);
+    setCurrentProjectId(discovered.project.id);
+    return discovered.project.id;
   }
 
   function createGovernedProject(preparedPackage) {
@@ -1354,6 +1409,7 @@ if (loaded.length > 0) {
     currentProjectId,
     createProject,
     importPublicRepositoryProject,
+    importDiscoveredProject,
     createGovernedProject,
     installIdeDemoProject,
     createProjectFromIdea,
