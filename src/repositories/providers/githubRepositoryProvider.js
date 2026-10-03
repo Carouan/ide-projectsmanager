@@ -328,10 +328,22 @@ export function createGitHubRepositoryProvider({
 
       try {
         const issues = await requestJson(
-          `/repos/${fullName}/issues?state=open&labels=dev-cmd&sort=updated&direction=desc&per_page=20`
+          `/repos/${fullName}/issues?state=open&sort=updated&direction=desc&per_page=20`
         );
         return (Array.isArray(issues) ? issues : [])
-          .filter((issue) => !issue.pull_request)
+          .filter((issue) => {
+            if (issue.pull_request) return false;
+            const labels = Array.isArray(issue.labels)
+              ? issue.labels
+                  .map((label) => typeof label === "string" ? label : label?.name)
+                  .filter(Boolean)
+              : [];
+            return (
+              labels.includes("dev-cmd") ||
+              String(issue.title || "").includes("[DEV-CMD]") ||
+              String(issue.body || "").includes("[DEV-CMD]")
+            );
+          })
           .map(mapDevCmdIssue);
       } catch (error) {
         warnings.push({
