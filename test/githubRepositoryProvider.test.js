@@ -190,6 +190,66 @@ test("GitHub provider keeps core PR data when optional enrichment fails", async 
   assert.equal(snapshot.roadmap, null);
 });
 
+test("GitHub provider exposes open DEV-CMD issues without mixing pull requests", async () => {
+  const provider = createGitHubRepositoryProvider({
+    fetchImpl: async (url) => {
+      if (url.endsWith("/repos/owner/repo")) {
+        return jsonResponse({
+          id: 1,
+          full_name: "owner/repo",
+          name: "repo",
+          owner: { login: "owner" },
+          html_url: "https://github.com/owner/repo",
+          visibility: "public",
+          private: false,
+          default_branch: "main",
+          has_issues: true,
+        });
+      }
+      if (url.includes("/pulls?")) return jsonResponse([]);
+      if (url.includes("/issues?")) {
+        return jsonResponse([
+          {
+            number: 7,
+            title: "[DEV-CMD] FIX — demo",
+            html_url: "https://github.com/owner/repo/issues/7",
+            body: [
+              "[DEV-CMD]",
+              "",
+              "PROTOCOL: DEV-CMD/1",
+              "PROJECT: demo",
+              "ACTION: FIX",
+              "REQUEST-ID: req-7",
+              "",
+              "DESCRIPTION:",
+              "Repair the mobile toolbar.",
+            ].join("\n"),
+            user: { login: "tester", type: "User" },
+            labels: [{ name: "dev-cmd" }],
+          },
+          {
+            number: 8,
+            title: "PR masquerading as issue",
+            pull_request: { url: "https://api.github.com/repos/owner/repo/pulls/8" },
+          },
+        ]);
+      }
+      return jsonResponse({}, { status: 404 });
+    },
+  });
+
+  const snapshot = await provider.readRepository({
+    provider: "github",
+    fullName: "owner/repo",
+  });
+
+  assert.equal(snapshot.openDevCmdItems.length, 1);
+  assert.equal(snapshot.openDevCmdItems[0].number, 7);
+  assert.equal(snapshot.openDevCmdItems[0].command.action, "FIX");
+  assert.equal(snapshot.openDevCmdItems[0].command.requestId, "req-7");
+  assert.equal(snapshot.links.devCmdNew, "https://github.com/owner/repo/issues/new?labels=dev-cmd");
+});
+
 test("GitHub provider reports public API rate limits deterministically", async () => {
   const provider = createGitHubRepositoryProvider({
     fetchImpl: async () =>
