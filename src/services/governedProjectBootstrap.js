@@ -1,6 +1,10 @@
 import { createAttachment } from "./attachments.js";
 import { createEmptyProject } from "./projectFactory.js";
 import { normalizeRepositoryLink } from "./repositoryLink.js";
+import {
+  IDE_PROJECT_MANIFEST_PATH,
+  IDE_PROJECT_MANIFEST_VERSION,
+} from "./projectDiscovery.js";
 
 export const GOVERNED_PROJECT_PACKAGE_FORMAT =
   "ide-projectsmanager.governed-project-bootstrap";
@@ -12,6 +16,7 @@ export const GOVERNED_PROJECT_REQUIRED_FILES = Object.freeze([
   "PROJECT_CONTEXT.md",
   "PROJECT_STATUS.md",
   ".project-steward.yml",
+  IDE_PROJECT_MANIFEST_PATH,
   "README.md",
 ]);
 
@@ -165,6 +170,29 @@ function renderStewardManifest(draft) {
   return `project_steward:\n  methodology_repository: ${yamlString(GOVERNED_PROJECT_STEWARD_REPOSITORY)}\n  skill_file: "SKILL.md"\n  language_policy_file: "LANGUAGE_POLICY.md"\n  version: "v1-draft"\n  canonical_repository_is_source_of_truth: true\n  executive_summary_max_words: 800\n  decision_record_prefix: "DR"\n  handoff_file: ".project/HANDOFF.md"\n  language:\n    human_facing_default: "fr"\n    technical_default: "en"\n\n  dashboard:\n    contract_version: "1"\n    enabled: true\n    project_id: ${yamlString(draft.projectId)}\n    canonical_repository:\n      provider: "github"\n      full_name: ${yamlString(draft.repositoryFullName)}\n      url: ${yamlString(`https://github.com/${draft.repositoryFullName}`)}\n      default_branch: "main"\n      visibility: ${yamlString(draft.visibility)}\n    executive_status_file: "PROJECT_STATUS.md"\n`;
 }
 
+function renderIdeProjectManifest(draft) {
+  return JSON.stringify(
+    {
+      schemaVersion: IDE_PROJECT_MANIFEST_VERSION,
+      projectId: draft.projectId,
+      name: draft.title,
+      summary: draft.objective,
+      tags: ["project-steward", "governed"],
+      ide: {
+        enabled: true,
+        autoImport: true,
+      },
+      feedback: {
+        enabled: true,
+        protocol: "dev-cmd-v1",
+        transport: "github-issues",
+      },
+    },
+    null,
+    2
+  ) + "\n";
+}
+
 function renderReadme(draft) {
   return `# ${draft.title}\n\n${draft.objective}\n\n## Contexte\n\n${draft.context}\n\n## Livrables attendus\n\n${renderList(draft.deliverables)}\n\n## Critères de réussite\n\n${renderList(draft.successCriteria)}\n\n## Gouvernance\n\n- Dépôt canonique prévu : \`${draft.repositoryFullName}\`.\n- Identifiant projet stable : \`${draft.projectId}\`.\n- Template : https://github.com/${GOVERNED_PROJECT_TEMPLATE_REPOSITORY}\n- Méthodologie Project Steward : https://github.com/${GOVERNED_PROJECT_STEWARD_REPOSITORY}\n\nLa création du dépôt et la publication des fichiers restent des actions humaines\nexplicites. Aucun dépôt n'est créé automatiquement par IDE-projectsmanager.\n`;
 }
@@ -193,6 +221,8 @@ export function createGovernedProjectPackage(input = {}, options = {}) {
       visibility: draft.visibility,
       governance: `${GOVERNED_PROJECT_STEWARD_REPOSITORY}@v1-draft`,
       externalProjectId: draft.projectId,
+      feedbackProtocol: "dev-cmd-v1",
+      feedbackTransport: "github-issues",
       provisioningState: "planned",
     },
     files: [
@@ -200,6 +230,7 @@ export function createGovernedProjectPackage(input = {}, options = {}) {
       { path: "PROJECT_CONTEXT.md", content: renderContext(draft) },
       { path: "PROJECT_STATUS.md", content: renderStatus(draft) },
       { path: ".project-steward.yml", content: renderStewardManifest(draft) },
+      { path: IDE_PROJECT_MANIFEST_PATH, content: renderIdeProjectManifest(draft) },
       { path: "README.md", content: renderReadme(draft) },
     ],
   };
