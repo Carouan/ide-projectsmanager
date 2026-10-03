@@ -20,8 +20,9 @@ test("project launch links expose repository, Pages, issues, PRs and DEV-CMD", (
   assert.equal(links.app, "https://carouan.github.io/glom-visual-workspace/");
   assert.equal(links.issues, "https://github.com/Carouan/glom-visual-workspace/issues");
   assert.equal(links.pullRequests, "https://github.com/Carouan/glom-visual-workspace/pulls");
-  assert.match(links.feedback, /labels=dev-cmd/u);
-  assert.match(decodeURIComponent(links.feedback), /REQUEST-ID: req-42/u);
+  const feedback = new URL(links.feedback);
+  assert.equal(feedback.searchParams.get("labels"), "dev-cmd");
+  assert.match(feedback.searchParams.get("body"), /REQUEST-ID: req-42/u);
 });
 
 test("local projects do not invent launch links", () => {
