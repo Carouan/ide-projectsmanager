@@ -105,6 +105,16 @@ export default function RepositoryPanel({ repositoryState }) {
               ? t("repository.actions.refreshing")
               : t("repository.actions.refresh")}
           </button>
+          {snapshot.links?.app && (
+            <a
+              className="repository-link repository-link-primary"
+              href={snapshot.links.app}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {t("repository.actions.openApp")}
+            </a>
+          )}
           {snapshot.links?.repository && (
             <a
               className="repository-link repository-link-primary"
@@ -211,6 +221,81 @@ export default function RepositoryPanel({ repositoryState }) {
           </div>
         </article>
       </div>
+
+      {snapshot.manifest && (
+        <div className="repository-manifest-card">
+          <div>
+            <div className="repository-card-kicker">{t("repository.manifest.eyebrow")}</div>
+            <h3>{snapshot.manifest.project?.name || repository.fullName}</h3>
+          </div>
+          <div className="repository-pr-meta">
+            <span>{t("repository.manifest.version", { version: snapshot.manifest.version })}</span>
+            <span>
+              {snapshot.manifest.feedback?.enabled
+                ? t("repository.manifest.feedbackEnabled")
+                : t("repository.manifest.feedbackDisabled")}
+            </span>
+            {snapshot.manifest.feedback?.protocol && (
+              <span>{snapshot.manifest.feedback.protocol}</span>
+            )}
+          </div>
+        </div>
+      )}
+
+      {snapshot.manifest?.feedback?.enabled === true && (
+        <div className="repository-devcmd">
+          <div className="repository-pr-header">
+            <div>
+              <h3>{t("repository.devCmd.title")}</h3>
+              <p className="muted">
+                {t("repository.devCmd.count", {
+                  count: snapshot.devCmdIssues?.length || 0,
+                })}
+              </p>
+            </div>
+            {snapshot.links?.devCmdIssues && (
+              <a
+                className="repository-link"
+                href={snapshot.links.devCmdIssues}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {t("repository.devCmd.open")}
+              </a>
+            )}
+          </div>
+          {(snapshot.devCmdIssues?.length || 0) === 0 ? (
+            <div className="empty-inline">{t("repository.devCmd.empty")}</div>
+          ) : (
+            <div className="repository-pr-list">
+              {snapshot.devCmdIssues.map((issue) => (
+                <article className="repository-pr-card" key={issue.number}>
+                  <div className="repository-pr-title-row">
+                    <div>
+                      <div className="repository-pr-number">DEV-CMD #{issue.number}</div>
+                      <h4>
+                        <a href={issue.url} target="_blank" rel="noreferrer">
+                          {issue.title}
+                        </a>
+                      </h4>
+                    </div>
+                    <StatusBadge kind="information" translationKey="repository.attention.information" />
+                  </div>
+                  <div className="repository-pr-meta">
+                    <span>
+                      {t("repository.devCmd.updated", {
+                        timestamp:
+                          formatDateTime(issue.updatedAt, locale) ||
+                          t("repository.value.unknown"),
+                      })}
+                    </span>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="repository-pr-header">
         <div>
