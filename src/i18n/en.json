@@ -851,40 +851,24 @@
   "repository.origin.bot": "Origin: GitHub bot",
   "repository.origin.unknown": "Origin: unknown",
   "repository.value.unknown": "Unknown",
-  "discovery": {
-    "eyebrow": "GitHub discovery",
-    "title": "Available projects",
-    "description": "Finds public repositories carrying the ide-project topic and reads their .ide-project.yml manifest.",
-    "actions": {
-      "scan": "Scan",
-      "scanning": "Scanning…",
-      "import": "Add to dashboard",
-      "test": "Test"
-    },
-    "empty": "No new compatible project was found.",
-    "error": "GitHub discovery failed: {{error}}."
-  },
-  "dashboard": {
-    "actions": {
-      "test": "Test"
-    }
-  },
-  "repository": {
-    "actions": {
-      "openApp": "Test application"
-    },
-    "manifest": {
-      "eyebrow": "IDE manifest",
-      "version": "Version {{version}}",
-      "feedbackEnabled": "DEV-CMD enabled",
-      "feedbackDisabled": "DEV-CMD disabled"
-    },
-    "devCmd": {
-      "title": "DEV-CMD feedback",
-      "count": "{{count}} open feedback item(s)",
-      "open": "Open in GitHub",
-      "empty": "No open DEV-CMD feedback.",
-      "updated": "Updated: {{timestamp}}"
-    }
-  }
+  "discovery.eyebrow": "GitHub discovery",
+  "discovery.title": "Available projects",
+  "discovery.description": "Finds public repositories carrying the ide-project topic and reads their .ide-project.yml manifest.",
+  "discovery.actions.scan": "Scan",
+  "discovery.actions.scanning": "Scanning…",
+  "discovery.actions.import": "Add to dashboard",
+  "discovery.actions.test": "Test",
+  "discovery.empty": "No new compatible project was found.",
+  "discovery.error": "GitHub discovery failed: {{error}}.",
+  "dashboard.actions.test": "Test",
+  "repository.actions.openApp": "Test application ↗",
+  "repository.manifest.eyebrow": "IDE manifest",
+  "repository.manifest.version": "Version {{version}}",
+  "repository.manifest.feedbackEnabled": "DEV-CMD enabled",
+  "repository.manifest.feedbackDisabled": "DEV-CMD disabled",
+  "repository.devCmd.title": "DEV-CMD feedback",
+  "repository.devCmd.count": "{{count}} open feedback item(s)",
+  "repository.devCmd.open": "Open in GitHub ↗",
+  "repository.devCmd.empty": "No open DEV-CMD feedback.",
+  "repository.devCmd.updated": "Updated: {{timestamp}}"
 }
