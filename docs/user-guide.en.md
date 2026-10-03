@@ -31,12 +31,14 @@ GitHub repository compatible with Project Steward:
    document under **Files ready for review**.
 4. Download individual files or export the versioned JSON package before any
    publication.
-5. Select **Create local governed project** to open the project; all five files
+5. Select **Create local governed project** to open the project; all six files
    remain available under **Attachments**.
 
 The prepared files are `PROJECT_MANDATE.md`, `PROJECT_CONTEXT.md`,
-`PROJECT_STATUS.md`, `.project-steward.yml`, and `README.md`. One stable
-identifier connects the local project, manifest, and declared repository.
+`PROJECT_STATUS.md`, `.project-steward.yml`, `.ide-project.json`, and
+`README.md`. The discovery manifest opts the repository into IDE Projects
+Manager and declares DEV-CMD feedback routing. One stable identifier connects
+the local project, manifests, and declared repository.
 
 No repository is created, modified, or published automatically. Visibility is
 only declared, and actual repository existence remains unverified. **Cancel**
