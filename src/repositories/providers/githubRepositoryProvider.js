@@ -1,6 +1,10 @@
 import { RepositoryProviderError } from "./repositoryProvider.js";
 import { parseRoadmapProgress } from "../../services/roadmapProgress.js";
 import { githubAuthorizationSession } from "../../services/githubAuthorizationSession.js";
+import {
+  IDE_PROJECT_MANIFEST_PATH,
+  parseProjectManifest,
+} from "../../services/projectManifest.js";
 
 const DEFAULT_API_BASE_URL = "https://api.github.com";
 const DEFAULT_MAX_PULL_REQUESTS = 20;
@@ -259,6 +263,50 @@ export function createGitHubRepositoryProvider({
 
     const warnings = [];
 
+    async function readManifest() {
+      try {
+        const document = await requestJson(
+          `/repos/${fullName}/contents/${IDE_PROJECT_MANIFEST_PATH}`
+        );
+        const source = decodeGitHubMarkdown(document);
+        return source ? parseProjectManifest(source) : null;
+      } catch (error) {
+        if (error?.code === "not_found") return null;
+        warnings.push({
+          capability: "project_manifest",
+          code: error?.code || "unknown",
+        });
+        return null;
+      }
+    }
+
+    async function readDevCmdIssues(label = "dev-cmd") {
+      try {
+        const encodedLabel = encodeURIComponent(label || "dev-cmd");
+        const issues = await requestJson(
+          `/repos/${fullName}/issues?state=open&labels=${encodedLabel}&sort=updated&direction=desc&per_page=20`
+        );
+        return (Array.isArray(issues) ? issues : [])
+          .filter((issue) => !issue.pull_request)
+          .map((issue) => ({
+            number: issue.number,
+            title: issue.title || "",
+            url: issue.html_url || null,
+            state: issue.state || "open",
+            updatedAt: issue.updated_at || null,
+            labels: (issue.labels || []).map((item) =>
+              typeof item === "string" ? item : item?.name
+            ).filter(Boolean),
+          }));
+      } catch (error) {
+        warnings.push({
+          capability: "dev_cmd_issues",
+          code: error?.code || "unknown",
+        });
+        return [];
+      }
+    }
+
     async function readRoadmap() {
       const candidates = [
         {
@@ -301,12 +349,17 @@ export function createGitHubRepositoryProvider({
       return null;
     }
 
-    const [pullRequests, roadmap] = await Promise.all([
+    const [pullRequests, roadmap, manifest] = await Promise.all([
       requestJson(
         `/repos/${fullName}/pulls?state=open&sort=updated&direction=desc&per_page=${safeMaxPullRequests}`
       ),
       readRoadmap(),
+      readManifest(),
     ]);
+    const devCmdIssues =
+      manifest?.feedback?.enabled === true
+        ? await readDevCmdIssues(manifest.feedback.label)
+        : [];
 
     const enrichedPullRequests = await Promise.all(
       (Array.isArray(pullRequests) ? pullRequests : []).map(async (pullRequest, index) => {
@@ -360,6 +413,8 @@ export function createGitHubRepositoryProvider({
       lastActivityAt:
         repositoryData.pushed_at || repositoryData.updated_at || null,
       roadmap,
+      manifest,
+      devCmdIssues,
       openPullRequests: enrichedPullRequests,
       enrichment: {
         pullRequestsListed: enrichedPullRequests.length,
@@ -373,6 +428,21 @@ export function createGitHubRepositoryProvider({
         pullRequests: repositoryData.html_url
           ? `${repositoryData.html_url}/pulls`
           : null,
+        issues: repositoryData.html_url
+          ? `${repositoryData.html_url}/issues`
+          : null,
+        app:
+          manifest?.app?.url ||
+          repositoryData.homepage ||
+          (repositoryData.has_pages && repositoryData.owner?.login && repositoryData.name
+            ? `https://${repositoryData.owner.login}.github.io/${repositoryData.name}/`
+            : null),
+        devCmdIssues:
+          repositoryData.html_url && manifest?.feedback?.enabled === true
+            ? `${repositoryData.html_url}/issues?q=is%3Aissue+is%3Aopen+label%3A${encodeURIComponent(
+                manifest.feedback.label || "dev-cmd"
+              )}`
+            : null,
       },
       rateLimit: combineRateLimits(rateLimits),
       warnings,
