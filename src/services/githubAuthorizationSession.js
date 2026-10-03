@@ -44,20 +44,30 @@ function validateDestination(value, options = {}) {
 
   const pathParts = destination.pathname.split("/").filter(Boolean);
   const method = String(options.method || "GET").toUpperCase();
+  const queryKeys = [...destination.searchParams.keys()];
+  const repositoryEndpoint =
+    pathParts.length >= 3 &&
+    pathParts[0] === "repos" &&
+    !pathParts.slice(1, 3).some((part) => !part || /%2f|%5c/iu.test(part));
+  const repositorySearchEndpoint =
+    pathParts.length === 2 &&
+    pathParts[0] === "search" &&
+    pathParts[1] === "repositories" &&
+    queryKeys.every((key) =>
+      ["q", "sort", "order", "per_page", "page"].includes(key)
+    );
 
   if (
     destination.origin !== "https://api.github.com" ||
     destination.username ||
     destination.password ||
     destination.hash ||
-    pathParts.length < 3 ||
-    pathParts[0] !== "repos" ||
-    pathParts.slice(1, 3).some((part) => !part || /%2f|%5c/iu.test(part)) ||
-    [...destination.searchParams.keys()].some((key) => /token|secret|credential|authorization/iu.test(key))
+    (!repositoryEndpoint && !repositorySearchEndpoint) ||
+    queryKeys.some((key) => /token|secret|credential|authorization/iu.test(key))
   ) {
     throw authorizationError(
       "unsafe_destination",
-      "Private authorization is restricted to repository endpoints on api.github.com."
+      "Private authorization is restricted to repository reads and repository discovery on api.github.com."
     );
   }
 
