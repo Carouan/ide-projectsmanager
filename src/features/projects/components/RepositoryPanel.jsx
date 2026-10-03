@@ -80,6 +80,7 @@ export default function RepositoryPanel({ repositoryState }) {
   const snapshot = result.snapshot;
   const repository = snapshot.repository;
   const pullRequests = snapshot.openPullRequests || [];
+  const devCmdItems = snapshot.openDevCmdItems || [];
   const attention = summarizeRepositoryAttention(pullRequests);
   const isStale = panelState === "stale";
   const cacheAge = formatCacheAge(result.cache?.ageMs, t);
@@ -301,6 +302,74 @@ export default function RepositoryPanel({ repositoryState }) {
               </article>
             );
           })}
+        </div>
+      )}
+
+      <div className="repository-pr-header repository-dev-cmd-header">
+        <div>
+          <div className="repository-card-kicker">
+            {t("repository.devCmd.eyebrow")}
+          </div>
+          <h3>{t("repository.devCmd.title")}</h3>
+          <p className="muted">
+            {t("repository.devCmd.count", { count: devCmdItems.length })}
+          </p>
+        </div>
+        {snapshot.links?.devCmdNew && (
+          <a
+            className="repository-link"
+            href={snapshot.links.devCmdNew}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {t("repository.actions.newDevCmd")}
+          </a>
+        )}
+      </div>
+
+      {devCmdItems.length === 0 ? (
+        <div className="empty-inline">{t("repository.devCmd.empty")}</div>
+      ) : (
+        <div className="repository-pr-list repository-dev-cmd-list">
+          {devCmdItems.map((item) => (
+            <article className="repository-pr-card" key={item.number}>
+              <div className="repository-pr-title-row">
+                <div>
+                  <div className="repository-pr-number">#{item.number}</div>
+                  <h4>
+                    {item.url ? (
+                      <a href={item.url} target="_blank" rel="noreferrer">
+                        {item.title}
+                      </a>
+                    ) : (
+                      item.title
+                    )}
+                  </h4>
+                </div>
+              </div>
+              <div className="repository-pr-meta">
+                <span>
+                  {t("repository.devCmd.author", {
+                    author: item.author?.login || t("repository.value.unknown"),
+                  })}
+                </span>
+                {item.command?.action && (
+                  <span>
+                    {t("repository.devCmd.action", {
+                      action: item.command.action,
+                    })}
+                  </span>
+                )}
+                {item.command?.requestId && (
+                  <span>
+                    {t("repository.devCmd.request", {
+                      requestId: item.command.requestId,
+                    })}
+                  </span>
+                )}
+              </div>
+            </article>
+          ))}
         </div>
       )}
     </section>
