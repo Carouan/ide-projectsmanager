@@ -11,7 +11,6 @@ import {
 } from "../repositories/storageRepository";
 import { createEmptyProject } from "../services/projectFactory";
 import { materializePublicRepositoryProject } from "../services/publicRepositoryProjectImport.js";
-import { createEmptyProject as createDiscoveredProjectBase } from "../services/projectFactory";
 import { createGovernedProjectDocument } from "../services/governedProjectBootstrap";
 import {
   analyzeProjectBundle,
@@ -337,7 +336,7 @@ if (loaded.length > 0) {
       return existing.project.id;
     }
 
-    const base = createDiscoveredProjectBase(userProfile?.id || null);
+    const base = createEmptyProject(userProfile?.id || null);
     const now = new Date().toISOString();
     const discovered = stripLegacyProjectOwner(
       withProjectOwnerId(
