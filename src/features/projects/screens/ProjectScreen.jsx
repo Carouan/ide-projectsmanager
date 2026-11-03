@@ -42,6 +42,7 @@ export default function ProjectScreen({
   onHandleDecisionTreeDestination,
   onUpdateDecisionStatus,
   onAddAttachment,
+  onApproveKnowledgeReference,
   onUpdateAttachment,
   onRemoveAttachment,
   onExportJson,
@@ -473,7 +474,10 @@ export default function ProjectScreen({
 
         {tab === "attachments" && (
           <>
-            <ReferenceProposalPreview projectDocuments={projectDocuments} />
+            <ReferenceProposalPreview
+              projectDocuments={projectDocuments}
+              onApproveReference={onApproveKnowledgeReference}
+            />
             <AttachmentsPanel
               projectId={project.id}
               attachments={attachments}

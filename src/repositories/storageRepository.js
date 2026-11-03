@@ -1,6 +1,8 @@
 import {
   loadProjects,
   saveProjects,
+  rememberCancelledReference,
+  clearCancelledReference,
   loadSettings,
   saveSettings,
   loadUserProfile,
@@ -14,12 +16,20 @@ import {
   savePortableBackupDevice,
 } from "../services/storage.js";
 
-export async function loadPersistedProjects() {
-  return loadProjects();
+export async function loadPersistedProjects(options) {
+  return loadProjects(options);
 }
 
 export async function savePersistedProjects(projects) {
   await saveProjects(projects);
+}
+
+export function rememberCancelledKnowledgeReference(receipt) {
+  rememberCancelledReference(receipt);
+}
+
+export function clearCancelledKnowledgeReference(receipt) {
+  clearCancelledReference(receipt);
 }
 
 export async function loadPersistedSettings() {

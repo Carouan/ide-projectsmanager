@@ -1,5 +1,9 @@
 import { useMemo, useState } from "react";
 import { ATTACHMENT_TYPES } from "../services/attachments";
+import {
+  isKnowledgeReferenceAttachment,
+  readKnowledgeReference,
+} from "../services/knowledgeReferences.js";
 import { useI18n } from "../i18n/useI18n";
 import { formatDateTime } from "../services/dateTimePresentation";
 
@@ -11,6 +15,32 @@ const DEFAULT_FORM = {
   fileName: "",
   content: "",
 };
+
+function KnowledgeReferenceDetails({ attachment, t, locale }) {
+  let reference;
+  try {
+    reference = readKnowledgeReference(attachment);
+  } catch {
+    return <p role="alert">{t("ide2dbrain.reference.invalid")}</p>;
+  }
+  if (!reference) return null;
+  return (
+    <div>
+      <strong>{t("ide2dbrain.reference.status")}</strong>
+      <p>{t("ide2dbrain.reference.category", {
+        category: reference.classification.category_id,
+      })}</p>
+      <p>{t("ide2dbrain.reference.relation", { relation: reference.relation })}</p>
+      <p>{t("ide2dbrain.reference.fingerprint", {
+        fingerprint: reference.provenance.source_sha256.slice(0, 12),
+      })}</p>
+      <p>{t("ide2dbrain.reference.date", {
+        date: formatDateTime(reference.approvedAt, locale),
+      })}</p>
+      <p className="muted">{t("ide2dbrain.reference.noSourceAccess")}</p>
+    </div>
+  );
+}
 
 export default function AttachmentsPanel({
   projectId,
@@ -189,6 +219,10 @@ export default function AttachmentsPanel({
                 <span className="badge">{attachment.type}</span>
               </div>
 
+              {isKnowledgeReferenceAttachment(attachment) ? (
+                <KnowledgeReferenceDetails attachment={attachment} t={t} locale={locale} />
+              ) : (
+                <>
               {attachment.description ? <p>{attachment.description}</p> : null}
               {attachment.url ? (
                 <p>
@@ -210,14 +244,16 @@ export default function AttachmentsPanel({
                   {attachment.content}
                 </p>
               ) : null}
+                </>
+              )}
 
               <div className="project-actions">
-                <button
+                {!isKnowledgeReferenceAttachment(attachment) && <button
                   className="btn btn-secondary"
                   onClick={() => startEdit(attachment)}
                 >
                   {t("attachments.actions.edit")}
-                </button>
+                </button>}
                 <button
                   className="btn btn-danger"
                   onClick={() => onRemoveAttachment(projectId, attachment.id)}
