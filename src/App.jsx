@@ -130,6 +130,7 @@ export default function App() {
     ) : view === "project" ? (
       <ProjectScreen
         projectDoc={currentProject}
+        projectDocuments={projects}
         onBack={handleBack}
         onOpenSettings={handleOpenSettings}
         onUpdateProjectMeta={updateProjectMeta}
