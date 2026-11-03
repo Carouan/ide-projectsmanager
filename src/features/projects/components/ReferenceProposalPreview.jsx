@@ -98,6 +98,13 @@ export default function ReferenceProposalPreview({ projectDocuments = [] }) {
       <p className="muted">{t("ide2dbrain.preview.securityNotice")}</p>
 
       {loading && <p role="status">{t("ide2dbrain.preview.loading")}</p>}
+      {(loading || proposal || errorCode) && (
+        <div className="field-actions">
+          <button className="btn btn-secondary" type="button" onClick={clearPreview}>
+            {t("ide2dbrain.preview.clear")}
+          </button>
+        </div>
+      )}
       {errorCode && (
         <p role="alert">{t(`ide2dbrain.errors.${errorCode}`)}</p>
       )}
@@ -144,11 +151,6 @@ export default function ReferenceProposalPreview({ projectDocuments = [] }) {
           {selectedId && !selectedProject && (
             <p role="alert">{t("ide2dbrain.errors.unknown_project")}</p>
           )}
-          <div className="field-actions">
-            <button className="btn btn-secondary" type="button" onClick={clearPreview}>
-              {t("ide2dbrain.preview.clear")}
-            </button>
-          </div>
         </div>
       )}
     </section>
