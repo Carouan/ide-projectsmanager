@@ -34,6 +34,11 @@ import {
   normalizeAttachments,
   patchAttachment,
 } from "../services/attachments";
+import {
+  addApprovedReferenceToProjects,
+  prepareKnowledgeReference,
+} from "../services/knowledgeReferences.js";
+import { ReferenceProposalError } from "../services/ide2dbrainPreview.js";
 import { normalizeUserProfile } from "../services/userProfile";
 import { normalizeSyncMetadata } from "../services/syncMetadata";
 import { normalizeRepositoryLink } from "../services/repositoryLink";
@@ -655,6 +660,20 @@ if (loaded.length > 0) {
     );
 
     return nextAttachment;
+  }
+
+  async function approveKnowledgeReference({ proposal, projectId, relation, confirmed, signal }) {
+    const reference = await prepareKnowledgeReference(proposal, {
+      projectId, relation, confirmed,
+    });
+    if (signal?.aborted) throw new ReferenceProposalError("approval_cancelled");
+    const checked = addApprovedReferenceToProjects(projects, projectId, reference);
+    if (checked.status === "unknown_project" || checked.status === "reference_conflict") {
+      throw new ReferenceProposalError(checked.status);
+    }
+    setProjects((previous) => signal?.aborted ? previous
+      : addApprovedReferenceToProjects(previous, projectId, reference).projects);
+    return checked.status;
   }
 
   function updateAttachment(projectId, attachmentId, patch) {
@@ -1441,6 +1460,7 @@ if (loaded.length > 0) {
     addJournalEntry,
     addDecision,
     addAttachment,
+    approveKnowledgeReference,
     updateAttachment,
     removeAttachment,
     updateDecisionStatus,

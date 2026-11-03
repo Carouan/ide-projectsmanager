@@ -38,6 +38,7 @@ export default function App() {
     updateBacklogItemStatus,
     updateDecisionStatus,
     addAttachment,
+    approveKnowledgeReference,
     updateAttachment,
     removeAttachment,
     exportCurrentProjectJson,
@@ -147,6 +148,7 @@ export default function App() {
         onUpdateBacklogItemStatus={updateBacklogItemStatus}
         onUpdateDecisionStatus={updateDecisionStatus}
         onAddAttachment={addAttachment}
+        onApproveKnowledgeReference={approveKnowledgeReference}
         onUpdateAttachment={updateAttachment}
         onRemoveAttachment={removeAttachment}
         onExportJson={exportCurrentProjectJson}
