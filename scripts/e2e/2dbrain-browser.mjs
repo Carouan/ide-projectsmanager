@@ -23,6 +23,8 @@ const CHROME = process.env.IDE_TEST_CHROME || [
 ].find((candidate) => existsSync(candidate));
 const BASE = "http://127.0.0.1:5179/ide-projectsmanager/";
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const RECOVERY_KEY = "ide-projet-personnel.projects-recovery-v1";
+const CANCELLED_KEY = "ide-projet-personnel.cancelled-reference-writes-v1";
 
 function fixtureProposal({ stale = false, tampered = false } = {}) {
   const sha = "1".repeat(64);
@@ -116,6 +118,104 @@ async function waitForStoredReference(page, count) {
     const records = await readIndexedDbProjects(page);
     return records.length > 0 && references(records[0]).length === count ? records : null;
   }, "IndexedDB reference count " + count);
+}
+
+// Fault injection lives solely in an ephemeral Chromium context. It aborts
+// actual project-store transactions, rather than mocking the IDE repository.
+// A delayed oncomplete simulates a slow durability acknowledgement *after*
+// Chrome has committed the transaction, exposing cancellation/rollback races.
+async function newFaultContext(browser, contextOptions) {
+  const context = await browser.newContext(contextOptions);
+  await context.route("**/*", (route) => {
+    const address = new URL(route.request().url());
+    return address.hostname === "127.0.0.1" ? route.continue() : route.abort();
+  });
+  await context.addInitScript(() => {
+    const defaults = { failIdbWrites: false, failFallbackWrites: false,
+      delayNextWriteMs: 0, delayStarted: false };
+    const saved = JSON.parse(sessionStorage.getItem("__ideFaults") || "{}");
+    window.__ideFaults = { ...defaults, ...saved, delayStarted: false };
+    const nativeTransaction = IDBDatabase.prototype.transaction;
+    IDBDatabase.prototype.transaction = function (...args) {
+      const tx = nativeTransaction.apply(this, args);
+      if (this.name !== "ide-projet-personnel" || args[0] !== "project_storage"
+          || args[1] !== "readwrite") return tx;
+      const faults = window.__ideFaults;
+      if (faults.failIdbWrites) {
+        queueMicrotask(() => { try { tx.abort(); } catch { /* already completed */ } });
+      }
+      if (faults.delayNextWriteMs > 0) {
+        const delay = faults.delayNextWriteMs;
+        faults.delayNextWriteMs = 0;
+        let handler;
+        Object.defineProperty(tx, "oncomplete", {
+          configurable: true,
+          get: () => handler,
+          set: (callback) => {
+            handler = callback;
+            tx.addEventListener("complete", (event) => {
+              faults.delayStarted = true;
+              setTimeout(() => callback.call(tx, event), delay);
+            }, { once: true });
+          },
+        });
+      }
+      return tx;
+    };
+    const nativeSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, value) {
+      if (key === "ide-projet-personnel.projects-recovery-v1"
+          && window.__ideFaults.failFallbackWrites) {
+        throw new DOMException("Synthetic recovery quota exceeded", "QuotaExceededError");
+      }
+      return nativeSetItem.call(this, key, value);
+    };
+  });
+  return context;
+}
+
+async function setFaults(page, patch) {
+  await page.evaluate((next) => {
+    Object.assign(window.__ideFaults, next);
+    sessionStorage.setItem("__ideFaults", JSON.stringify(window.__ideFaults));
+  }, patch);
+}
+
+async function createFixtureProject(page) {
+  await page.goto(BASE);
+  await page.getByRole("button", { name: "Nouveau projet" }).first().click();
+  await openAttachments(page);
+  const saved = await eventually(async () => {
+    const entries = await readIndexedDbProjects(page);
+    return entries.length === 1 ? entries : null;
+  }, "fixture project committed to IndexedDB");
+  return saved[0].project.id;
+}
+
+async function readRecoveryState(page) {
+  return page.evaluate(({ recoveryKey, cancelledKey }) => ({
+    recovery: JSON.parse(localStorage.getItem(recoveryKey) || "null"),
+    cancelled: JSON.parse(localStorage.getItem(cancelledKey) || "[]"),
+  }), { recoveryKey: RECOVERY_KEY, cancelledKey: CANCELLED_KEY });
+}
+
+async function exportBundle(page) {
+  await page.getByRole("button", { name: "Paramètres" }).first().click();
+  const downloadEvent = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Télécharger la sauvegarde complète" }).click();
+  return JSON.parse(await readFile(await (await downloadEvent).path(), "utf8"));
+}
+
+async function restoreBundle(page, bundle) {
+  await page.goto(BASE);
+  await page.getByRole("button", { name: "Paramètres" }).click();
+  await page.locator(".settings-restore-panel input[type=file]").setInputFiles({
+    name: "recovered-synthetic-v1.json", mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(bundle)),
+  });
+  await page.getByText("Aperçu de la restauration").waitFor();
+  await page.getByRole("button", { name: "Appliquer la restauration" }).click();
+  await page.getByText(/Restauration terminée/).waitFor();
 }
 
 async function main() {
@@ -314,7 +414,103 @@ async function main() {
       await pageCopy.getByRole("button", { name: "Retour" }).first().click();
     }
 
-    process.stdout.write("D1_BROWSER_OK: Chrome isolated, durable approval/status, duplicate/reload, JSON v1 export and restore/copy, damaged/incomplete restored references flagged and preserved, conflicts fail closed.\n");
+    // A committed older IndexedDB snapshot must not conceal a successful
+    // localStorage recovery when the next real IndexedDB transaction aborts.
+    const fallbackContext = await newFaultContext(browser, contextOptions);
+    const fallbackPage = await fallbackContext.newPage();
+    const fallbackProjectId = await createFixtureProject(fallbackPage);
+    const olderIndexed = await readIndexedDbProjects(fallbackPage);
+    assert.equal(references(olderIndexed[0]).length, 0);
+    await setFaults(fallbackPage, { failIdbWrites: true });
+    await previewAndSelect(fallbackPage, fixtureProposal(), fallbackProjectId);
+    await confirm(fallbackPage);
+    await fallbackPage.getByText(/Référence enregistrée dans les pièces jointes/).waitFor();
+    const fallbackState = await readRecoveryState(fallbackPage);
+    assert.equal(fallbackState.recovery.format, "ide-projectsmanager.local-recovery.v1");
+    assert.equal(references(fallbackState.recovery.projects[0]).length, 1);
+    assert.equal(references((await readIndexedDbProjects(fallbackPage))[0]).length, 0,
+      "the IndexedDB write must actually fail, leaving the old snapshot intact");
+
+    await fallbackPage.reload(); // The injected failure persists in sessionStorage.
+    await fallbackPage.getByRole("button", { name: "Ouvrir" }).first().click();
+    await openAttachments(fallbackPage);
+    await fallbackPage.getByText("Référence 2dBrain approuvée").waitFor();
+    assert.equal(references((await readIndexedDbProjects(fallbackPage))[0]).length, 0);
+    assert.equal(references((await readRecoveryState(fallbackPage)).recovery.projects[0]).length, 1);
+
+    await setFaults(fallbackPage, { failIdbWrites: false });
+    await fallbackPage.reload();
+    const recovered = await waitForStoredReference(fallbackPage, 1);
+    assert.equal(recovered[0].project.id, fallbackProjectId);
+    assert.equal(JSON.parse(references(recovered[0])[0].content).source.ref,
+      fixtureProposal().source.ref);
+    const recoveredBundle = await exportBundle(fallbackPage);
+    assert.equal(recoveredBundle.format, "ide-projectsmanager.project-bundle");
+    assert.equal(recoveredBundle.version, 1);
+    assert.equal(references(recoveredBundle.projects[0]).length, 1);
+    const recoveredCopyContext = await browser.newContext(contextOptions);
+    await recoveredCopyContext.route("**/*", (route) =>
+      new URL(route.request().url()).hostname === "127.0.0.1"
+        ? route.continue() : route.abort());
+    const recoveredCopyPage = await recoveredCopyContext.newPage();
+    await restoreBundle(recoveredCopyPage, recoveredBundle);
+    await waitForStoredReference(recoveredCopyPage, 1);
+    await recoveredCopyPage.reload();
+    assert.equal(references((await readIndexedDbProjects(recoveredCopyPage))[0]).length, 1);
+    await recoveredCopyContext.close();
+    await fallbackContext.close();
+
+    // The initial IndexedDB transaction has physically committed, but its
+    // completion callback is delayed. Dismissing the preview must write a
+    // tombstone immediately and wait for a second, durable rollback commit.
+    const cancelContext = await newFaultContext(browser, contextOptions);
+    const cancelPage = await cancelContext.newPage();
+    const cancelId = await createFixtureProject(cancelPage);
+    await previewAndSelect(cancelPage, fixtureProposal(), cancelId);
+    await setFaults(cancelPage, { delayNextWriteMs: 1800 });
+    await confirm(cancelPage);
+    await eventually(() => cancelPage.evaluate(() => window.__ideFaults.delayStarted),
+      "slow IndexedDB write has committed but is awaiting acknowledgement");
+    assert.equal(references((await readIndexedDbProjects(cancelPage))[0]).length, 1);
+    await cancelPage.getByRole("button", { name: "Effacer cet aperçu" }).click();
+    assert.equal((await readRecoveryState(cancelPage)).cancelled.length, 1,
+      "closing a pending approval must synchronously journal cancellation");
+    await eventually(async () => {
+      const physical = await readIndexedDbProjects(cancelPage);
+      const journal = await readRecoveryState(cancelPage);
+      return references(physical[0]).length === 0 && journal.cancelled.length === 0;
+    }, "durable rollback transaction and tombstone clearance", 100);
+    await cancelPage.reload();
+    assert.equal(references((await readIndexedDbProjects(cancelPage))[0]).length, 0);
+    await cancelContext.close();
+
+    // If both rollback stores reject, the warning survives dismissing the
+    // preview. The tombstone protects a subsequent browser restart until the
+    // unmasked IndexedDB record has been physically removed.
+    const failureContext = await newFaultContext(browser, contextOptions);
+    const failurePage = await failureContext.newPage();
+    const failureId = await createFixtureProject(failurePage);
+    await previewAndSelect(failurePage, fixtureProposal(), failureId);
+    await setFaults(failurePage, { delayNextWriteMs: 1800 });
+    await confirm(failurePage);
+    await eventually(() => failurePage.evaluate(() => window.__ideFaults.delayStarted),
+      "unacknowledged approval preceding rollback failure");
+    await failurePage.getByRole("button", { name: "Effacer cet aperçu" }).click();
+    await setFaults(failurePage, { failIdbWrites: true, failFallbackWrites: true });
+    await failurePage.getByRole("alert").getByText(/Annulation non confirmée/)
+      .waitFor({ timeout: 12000 });
+    assert.equal(references((await readIndexedDbProjects(failurePage))[0]).length, 1,
+      "rollback failure must not pretend IndexedDB deleted the reference");
+    assert.equal((await readRecoveryState(failurePage)).cancelled.length, 1);
+    await setFaults(failurePage, { failIdbWrites: false, failFallbackWrites: false });
+    await failurePage.reload(); // Simulated tab closure/reopening, same isolated profile.
+    await eventually(async () =>
+      references((await readIndexedDbProjects(failurePage))[0]).length === 0,
+    "hydration physically recovers the cancelled reference", 100);
+    assert.equal((await failurePage.getByText("Référence 2dBrain approuvée").count()), 0);
+    await failureContext.close();
+
+    process.stdout.write("D1_BROWSER_OK: isolated Chrome, approval/duplicate/reload, JSON v1 export/restore/copy, tamper detection, actual aborted IndexedDB fallback and recovery, durable slow-write cancellation, failed rollback warning and restart recovery.\n");
   } finally {
     if (browser) await browser.close();
     if (vite.exitCode === null) vite.kill();
