@@ -98,7 +98,8 @@ async function readProjectsFromIndexedDb() {
 async function writeProjectsToIndexedDb(projects) {
   await runProjectStore("readwrite", (store, resolve, reject) => {
     const request = store.put(projects, PROJECTS_RECORD_KEY);
-    request.onsuccess = () => resolve();
+    // Successful put() is not durable until the transaction completes.
+    // runProjectStore resolves only from tx.oncomplete.
     request.onerror = () => reject(request.error || new Error("Failed to write projects"));
   });
 }

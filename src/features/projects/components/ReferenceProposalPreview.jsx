@@ -15,7 +15,7 @@ const ERRORS = new Set([
   "invalid_source", "invalid_classification", "invalid_provenance",
   "invalid_approval", "unknown_project", "approval_required",
   "invalid_relation", "stale_proposal", "reference_conflict",
-  "invalid_reference",
+  "invalid_reference", "persistence_failed", "approval_cancelled",
 ]);
 
 export default function ReferenceProposalPreview({

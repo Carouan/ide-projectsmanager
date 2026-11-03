@@ -9,6 +9,7 @@ import {
   isKnowledgeReferenceAttachment,
   prepareKnowledgeReference,
   readKnowledgeReference,
+  referenceFingerprintMatches,
 } from "../src/services/knowledgeReferences.js";
 
 const UUID = "d8e0d8a5-0c1c-4c84-ac2e-6b678bb41a9a";
@@ -120,6 +121,18 @@ test("malformed stored references are preserved but rejected, never silently app
     "{\"format\":\"ide-2dbrain.approved-reference.v1\",invalid",
     JSON.stringify({ ...reference, version: 9 }),
     JSON.stringify({ ...reference, path: "C:/secret" }),
+    JSON.stringify({
+      ...reference,
+      source: { ...reference.source, ref: "f".repeat(64) },
+    }),
+    JSON.stringify({
+      ...reference,
+      provenance: { ...reference.provenance, source_sha256: "e".repeat(64) },
+    }),
+    JSON.stringify({
+      ...reference,
+      provenance: { ...reference.provenance, source_sha256: undefined },
+    }),
   ]) {
     const altered = { ...link, content };
     assert.ok(isKnowledgeReferenceAttachment(altered));
@@ -130,6 +143,37 @@ test("malformed stored references are preserved but rejected, never silently app
     }], UUID, reference);
     assert.equal(blocked.status, "reference_conflict");
   }
+});
+
+test("cryptographic provenance is checked again for every restored reference, not only at initial approval", async () => {
+  const valid = await approved();
+  assert.equal(referenceFingerprintMatches(valid), true);
+  const mismatched = {
+    ...valid,
+    provenance: { ...valid.provenance, source_sha256: "a".repeat(64) },
+  };
+  assert.equal(referenceFingerprintMatches(mismatched), false);
+  const link = createAttachment({
+    type: "file_ref", title: "2dBrain · personal.ict.ai",
+    content: JSON.stringify(mismatched),
+  });
+  const bundle = createProjectBundle([{ ...project(), attachments: [link] }], {
+    exportedAt: new Date().toISOString(),
+  });
+  const restored = restoreProjectBundle(JSON.parse(JSON.stringify(bundle)), [], {});
+  const preserved = normalizeAttachments(restored.projects[0].attachments)[0];
+  assert.equal(preserved.content, link.content, "do not silently delete or mutate historical records");
+  assert.ok(isKnowledgeReferenceAttachment(preserved));
+  assert.throws(() => readKnowledgeReference(preserved),
+    (error) => error.code === "invalid_provenance");
+  assert.throws(() => addApprovedReferenceToProjects([project()], UUID, mismatched),
+    (error) => error.code === "invalid_provenance");
+  const fromLegacy = {
+    ...link,
+    content: JSON.stringify({ ...valid, provenance: undefined }),
+  };
+  assert.ok(isKnowledgeReferenceAttachment(fromLegacy));
+  assert.throws(() => readKnowledgeReference(fromLegacy));
 });
 
 test("legacy project-bundle v1 skip and restore-as-copy preserve reference and provenance", async () => {

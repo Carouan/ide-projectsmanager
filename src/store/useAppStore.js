@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+﻿import { useCallback, useEffect, useLayoutEffect, useReducer, useRef, useState } from "react";
 import {
   loadPersistedProjects,
   savePersistedProjects,
@@ -37,6 +37,8 @@ import {
 import {
   addApprovedReferenceToProjects,
   prepareKnowledgeReference,
+  isKnowledgeReferenceAttachment,
+  readKnowledgeReference,
 } from "../services/knowledgeReferences.js";
 import { ReferenceProposalError } from "../services/ide2dbrainPreview.js";
 import { normalizeUserProfile } from "../services/userProfile";
@@ -176,8 +178,78 @@ function uniqueIds(list) {
   return [...new Set(list.filter(Boolean))];
 }
 
+function reduceProjectState(state, action) {
+  if (action.type === "update") {
+    const next = typeof action.update === "function"
+      ? action.update(state.projects) : action.update;
+    return next === state.projects ? state : { ...state, projects: next };
+  }
+  if (action.type === "approveReference") {
+    const transition = action.signal?.aborted
+      ? { projects: state.projects, status: "approval_cancelled" }
+      : addApprovedReferenceToProjects(state.projects, action.projectId, action.reference);
+    const attachmentId = transition.status === "added"
+      ? transition.projects.find((doc) => doc.project.id === action.projectId)?.attachments?.[0]?.id
+      : null;
+    return {
+      projects: transition.projects,
+      receipt: {
+        id: action.id, status: transition.status, projectId: action.projectId,
+        reference: action.reference, attachmentId, signal: action.signal,
+      },
+    };
+  }
+  if (action.type === "rollbackApproval") {
+    const { projectId, attachmentId, reference } = action.receipt;
+    if (!attachmentId) return state;
+    const serialized = JSON.stringify(reference);
+    let changed = false;
+    const remaining = state.projects.map((doc) => {
+      if (doc?.project?.id !== projectId) return doc;
+      const existing = doc.attachments || [];
+      const attachments = existing.filter((attachment) =>
+        attachment.id !== attachmentId || attachment.content !== serialized
+      );
+      if (attachments.length === existing.length) return doc;
+      changed = true;
+      return { ...doc, attachments };
+    });
+    return changed ? { ...state, projects: remaining } : state;
+  }
+  return state;
+}
+
+function committedReferenceExists(projects, receipt) {
+  const target = projects.find((doc) => doc?.project?.id === receipt.projectId);
+  if (!target) return false;
+  return (target.attachments || []).some((attachment) => {
+    if (!isKnowledgeReferenceAttachment(attachment)) return false;
+    if (receipt.attachmentId && attachment.id !== receipt.attachmentId) return false;
+    try {
+      const saved = readKnowledgeReference(attachment);
+      return saved.source.ref === receipt.reference.source.ref
+        && saved.provenance.source_sha256 === receipt.reference.provenance.source_sha256
+        && saved.provenance.taxonomy_sha256 === receipt.reference.provenance.taxonomy_sha256
+        && saved.classification.category_id === receipt.reference.classification.category_id
+        && saved.relation === receipt.reference.relation;
+    } catch {
+      return false;
+    }
+  });
+}
+
 export function useAppStore() {
-  const [projects, setProjects] = useState([]);
+  const [projectState, dispatchProjectState] = useReducer(reduceProjectState, {
+    projects: [], receipt: null,
+  });
+  const { projects, receipt } = projectState;
+  const setProjects = useCallback((update) => dispatchProjectState({ type: "update", update }), []);
+  const pendingApprovalsRef = useRef(new Map());
+  const approvalSequenceRef = useRef(0);
+  const handledReceiptRef = useRef(0);
+  const approvalQueueRef = useRef(Promise.resolve());
+  const saveQueueRef = useRef(Promise.resolve());
+  const committedProjectsRef = useRef(projects);
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [userProfile, setUserProfile] = useState(null);
   const [backupFolderStatus, setBackupFolderStatus] = useState(null);
@@ -185,6 +257,10 @@ export function useAppStore() {
   const [backupSnapshotReview, setBackupSnapshotReview] = useState(null);
   const [currentProjectId, setCurrentProjectId] = useState(null);
   const [isHydrated, setIsHydrated] = useState(false);
+
+  useLayoutEffect(() => {
+    committedProjectsRef.current = projects;
+  }, [projects]);
 
   useEffect(() => {
     let isCancelled = false;
@@ -247,7 +323,7 @@ if (loaded.length > 0) {
     return () => {
       isCancelled = true;
     };
-  }, []);
+  }, [setProjects]);
 
   useEffect(() => {
     let isCancelled = false;
@@ -292,8 +368,47 @@ if (loaded.length > 0) {
 
   useEffect(() => {
     if (!isHydrated) return;
-    savePersistedProjects(projects).catch((error) => {   console.error("Failed to persist projects", error); });
-  }, [projects, isHydrated]);
+    // All project writes are serialized; an older async save must not overwrite
+    // a newer approval or a subsequent project edit.
+    const save = saveQueueRef.current.then(() => savePersistedProjects(projects));
+    saveQueueRef.current = save.catch(() => {});
+    const pendingReceipt = receipt?.id > handledReceiptRef.current ? receipt : null;
+    if (!pendingReceipt) {
+      save.catch((error) => { console.error("Failed to persist projects", error); });
+      return;
+    }
+    handledReceiptRef.current = pendingReceipt.id;
+    const pending = pendingApprovalsRef.current.get(pendingReceipt.id);
+    if (!pending) return;
+    const finish = (error, status) => {
+      pendingApprovalsRef.current.delete(pendingReceipt.id);
+      if (error) pending.reject(error);
+      else pending.resolve(status);
+    };
+    if (!["added", "duplicate"].includes(pendingReceipt.status)) {
+      finish(new ReferenceProposalError(pendingReceipt.status));
+      return;
+    }
+    save.then(() => {
+      if (pendingReceipt.signal?.aborted) {
+        if (pendingReceipt.status === "added") {
+          dispatchProjectState({ type: "rollbackApproval", receipt: pendingReceipt });
+        }
+        finish(new ReferenceProposalError("approval_cancelled"));
+        return;
+      }
+      if (!committedReferenceExists(committedProjectsRef.current, pendingReceipt)) {
+        finish(new ReferenceProposalError("reference_conflict"));
+        return;
+      }
+      finish(null, pendingReceipt.status);
+    }).catch(() => {
+      if (pendingReceipt.status === "added") {
+        dispatchProjectState({ type: "rollbackApproval", receipt: pendingReceipt });
+      }
+      finish(new ReferenceProposalError("persistence_failed"));
+    });
+  }, [projects, receipt, isHydrated]);
 
   useEffect(() => {
     if (!isHydrated) return;
@@ -662,18 +777,25 @@ if (loaded.length > 0) {
     return nextAttachment;
   }
 
-  async function approveKnowledgeReference({ proposal, projectId, relation, confirmed, signal }) {
-    const reference = await prepareKnowledgeReference(proposal, {
-      projectId, relation, confirmed,
+  function approveKnowledgeReference({ proposal, projectId, relation, confirmed, signal }) {
+    // Serialize approvals only. Other project mutations remain free to arrive
+    // during fingerprint verification; the reducer then uses their latest state.
+    const attempt = approvalQueueRef.current.then(async () => {
+      if (signal?.aborted) throw new ReferenceProposalError("approval_cancelled");
+      const reference = await prepareKnowledgeReference(proposal, {
+        projectId, relation, confirmed,
+      });
+      if (signal?.aborted) throw new ReferenceProposalError("approval_cancelled");
+      return new Promise((resolve, reject) => {
+        const id = ++approvalSequenceRef.current;
+        pendingApprovalsRef.current.set(id, { resolve, reject });
+        dispatchProjectState({
+          type: "approveReference", id, projectId, reference, signal,
+        });
+      });
     });
-    if (signal?.aborted) throw new ReferenceProposalError("approval_cancelled");
-    const checked = addApprovedReferenceToProjects(projects, projectId, reference);
-    if (checked.status === "unknown_project" || checked.status === "reference_conflict") {
-      throw new ReferenceProposalError(checked.status);
-    }
-    setProjects((previous) => signal?.aborted ? previous
-      : addApprovedReferenceToProjects(previous, projectId, reference).projects);
-    return checked.status;
+    approvalQueueRef.current = attempt.catch(() => {});
+    return attempt;
   }
 
   function updateAttachment(projectId, attachmentId, patch) {

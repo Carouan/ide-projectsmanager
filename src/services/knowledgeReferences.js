@@ -1,4 +1,6 @@
 import { createAttachment } from "./attachments.js";
+import { sha256 } from "@noble/hashes/sha2.js";
+import { bytesToHex } from "@noble/hashes/utils.js";
 import {
   ReferenceProposalError,
   validateReferenceProposal,
@@ -35,6 +37,24 @@ function pendingContract(reference) {
   };
 }
 
+/**
+ * This is the same content-reference derivation used by A1 and B1.
+ * Synchronous verification is intentional: restored attachments are rendered
+ * immediately and must never appear approved during an asynchronous gap.
+ */
+export function referenceFingerprintMatches(reference) {
+  const hash = reference?.provenance?.source_sha256;
+  const ref = reference?.source?.ref;
+  if (typeof hash !== "string" || !/^[0-9a-f]{64}$/.test(hash)
+      || typeof ref !== "string" || !/^[0-9a-f]{64}$/.test(ref)) {
+    return false;
+  }
+  const expected = bytesToHex(sha256(
+    new TextEncoder().encode("2dbrain-local-proposal-v1:" + hash)
+  ));
+  return expected === ref;
+}
+
 export function validateApprovedReference(reference) {
   if (!sameKeys(reference, FIELDS)
       || reference.format !== APPROVED_REFERENCE_FORMAT
@@ -45,17 +65,25 @@ export function validateApprovedReference(reference) {
     fail("invalid_reference");
   }
   validateReferenceProposal(pendingContract(reference));
+  if (!referenceFingerprintMatches(reference)) {
+    fail("invalid_provenance");
+  }
   return reference;
 }
 
 export function isKnowledgeReferenceAttachment(attachment) {
   return attachment?.type === "file_ref"
-    && typeof attachment.content === "string"
-    && attachment.content.includes(APPROVED_REFERENCE_FORMAT);
+    && (
+      (typeof attachment.title === "string" && attachment.title.startsWith("2dBrain · "))
+      || (typeof attachment.description === "string" && attachment.description.startsWith("2dBrain:"))
+      || (typeof attachment.content === "string"
+        && attachment.content.includes("ide-2dbrain.approved-reference."))
+    );
 }
 
 export function readKnowledgeReference(attachment) {
   if (!isKnowledgeReferenceAttachment(attachment)) return null;
+  if (typeof attachment.content !== "string") fail("invalid_reference");
   let value;
   try {
     value = JSON.parse(attachment.content);

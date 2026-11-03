@@ -94,6 +94,39 @@ async function showProposal() {
 }
 
 describe("C1 explicit approval UI", () => {
+  it("never presents a tampered or incomplete restored attachment as approved", () => {
+    const proposal = makeProposal();
+    const valid = {
+      format: "ide-2dbrain.approved-reference.v1", version: 1,
+      status: "approved", relation: "research",
+      source: { ...proposal.source, ref: "f".repeat(64) },
+      classification: proposal.classification,
+      provenance: proposal.provenance,
+      approvedAt: new Date().toISOString(),
+    };
+    for (const content of [JSON.stringify(valid), JSON.stringify({
+      ...valid, provenance: undefined,
+    })]) {
+      const ui = render(
+        <I18nProvider locale="fr">
+          <AttachmentsPanel projectId={ID} attachments={[{
+            id: "att_tampered", type: "file_ref", title: "2dBrain · personal.ict.ai",
+            description: "2dBrain: research", content, createdAt: new Date().toISOString(),
+          }]}
+            onAddAttachment={() => { throw new Error("unexpected mutation"); }}
+            onUpdateAttachment={() => { throw new Error("unexpected mutation"); }}
+            onRemoveAttachment={() => { throw new Error("unexpected mutation"); }}
+          />
+        </I18nProvider>,
+      );
+      expect(screen.getByRole("alert").textContent).toMatch(/invalide ou altérée/);
+      expect(screen.queryByText("Référence 2dBrain approuvée")).toBeNull();
+      expect(screen.queryByRole("button", { name: "Modifier" })).toBeNull();
+      expect(screen.getByRole("button", { name: "Supprimer" })).toBeTruthy();
+      ui.unmount();
+    }
+  });
+
   it("requires project, relationship and distinct checkbox before saving one persistent attachment", async () => {
     render(<Demo />);
     await showProposal();
@@ -108,7 +141,7 @@ describe("C1 explicit approval UI", () => {
     fireEvent.click(confirm);
     await screen.findByText("Référence 2dBrain approuvée");
     expect(screen.getByText(/Relation : research/)).toBeTruthy();
-    expect(screen.getByText(/Référence ajoutée au projet/)).toBeTruthy();
+    expect(screen.getByText(/Référence enregistrée dans les pièces jointes/)).toBeTruthy();
     fireEvent.click(confirm);
     await screen.findByText(/Aucun doublon ajouté/);
     expect(screen.getAllByText("Référence 2dBrain approuvée")).toHaveLength(1);
@@ -167,6 +200,6 @@ describe("C1 explicit approval UI", () => {
     fireEvent.click(screen.getByRole("button", { name: "Effacer cet aperçu" }));
     expect(signal.aborted).toBe(true);
     unblock();
-    await waitFor(() => expect(screen.queryByText(/Référence ajoutée au projet/)).toBeNull());
+    await waitFor(() => expect(screen.queryByText(/Référence enregistrée dans les pièces jointes/)).toBeNull());
   });
 });
