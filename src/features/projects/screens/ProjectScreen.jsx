@@ -4,6 +4,7 @@ import BacklogPanel from "../../../components/BacklogPanel";
 import JournalPanel from "../../../components/JournalPanel";
 import DecisionsPanel from "../../../components/DecisionsPanel";
 import AttachmentsPanel from "../../../components/AttachmentsPanel";
+import ReferenceProposalPreview from "../components/ReferenceProposalPreview";
 import DecisionTreeModal from "../../../components/DecisionTreeModal";
 import SyncStatusBadge from "../components/SyncStatusBadge";
 import RepositoryPanel from "../components/RepositoryPanel";
@@ -24,6 +25,7 @@ import {
 
 export default function ProjectScreen({
   projectDoc,
+  projectDocuments = [],
   onBack,
   onOpenSettings,
   onUpdateProjectMeta,
@@ -470,13 +472,16 @@ export default function ProjectScreen({
         )}
 
         {tab === "attachments" && (
-          <AttachmentsPanel
-            projectId={project.id}
-            attachments={attachments}
-            onAddAttachment={onAddAttachment}
-            onUpdateAttachment={onUpdateAttachment}
-            onRemoveAttachment={onRemoveAttachment}
-          />
+          <>
+            <ReferenceProposalPreview projectDocuments={projectDocuments} />
+            <AttachmentsPanel
+              projectId={project.id}
+              attachments={attachments}
+              onAddAttachment={onAddAttachment}
+              onUpdateAttachment={onUpdateAttachment}
+              onRemoveAttachment={onRemoveAttachment}
+            />
+          </>
         )}
 
         {tab === "repository" && (
