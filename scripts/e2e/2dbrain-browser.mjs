@@ -8,7 +8,7 @@
  * No real file system source, user profile, GitHub connection or deployment.
  */
 import assert from "node:assert/strict";
-import { createHash } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
@@ -178,6 +178,7 @@ async function main() {
     await previewAndSelect(page, fixtureProposal(), projectId);
     await confirm(page);
     await page.getByText("Référence 2dBrain approuvée").waitFor();
+    await page.getByText(/Référence enregistrée dans les pièces jointes/).waitFor();
     const saved = await waitForStoredReference(page, 1);
     const approved = JSON.parse(references(saved[0])[0].content);
     assert.equal(approved.status, "approved");
@@ -250,7 +251,70 @@ async function main() {
       assert.equal(JSON.parse(references(entry)[0].content).source.ref, approved.source.ref);
     }
 
-    process.stdout.write("D1_BROWSER_OK: isolated Chrome, malformed/tampered/stale/cancelled, approval, duplicate, reload, JSON v1 export and isolated restore/copy.\n");
+    // Import compromised and incomplete v1 attachments as untouched raw records
+    // on the isolated copy. They must NEVER render as approved, and a new
+    // approval must fail closed instead of silently overwriting them.
+    const makeDamagedProject = (title, mutator) => {
+      const copied = structuredClone(bundle.projects[0]);
+      copied.project.id = randomUUID();
+      copied.project.title = title;
+      const link = references(copied)[0];
+      link.content = JSON.stringify(mutator(JSON.parse(link.content)));
+      return copied;
+    };
+    const damaged = makeDamagedProject("Fixture incohérente", (reference) => ({
+      ...reference,
+      provenance: { ...reference.provenance, source_sha256: "f".repeat(64) },
+    }));
+    const incomplete = makeDamagedProject("Fixture historique incomplète", (reference) => {
+      const copy = { ...reference };
+      delete copy.provenance;
+      return copy;
+    });
+    const damagedBundle = {
+      ...bundle, projects: [damaged, incomplete], projectCount: 2,
+    };
+    await upload.setInputFiles({
+      name: "synthetic-damaged-reference-v1.json", mimeType: "application/json",
+      buffer: Buffer.from(JSON.stringify(damagedBundle), "utf8"),
+    });
+    await pageCopy.getByText("Aperçu de la restauration").waitFor();
+    await pageCopy.getByRole("button", { name: "Appliquer la restauration" }).click();
+    await pageCopy.getByText(/Restauration terminée/).waitFor();
+    await eventually(async () => {
+      const all = await readIndexedDbProjects(pageCopy);
+      return all.length === 4 ? all : null;
+    }, "damaged fixture import preserved");
+    await pageCopy.reload();
+    const restoredDamaged = await readIndexedDbProjects(pageCopy);
+    assert.equal(restoredDamaged.length, 4);
+    for (const project of [damaged, incomplete]) {
+      const found = restoredDamaged.find((entry) => entry.project.id === project.project.id);
+      assert.ok(found, "original damaged record was not silently dropped");
+      assert.equal(references(found)[0].content, references(project)[0].content);
+    }
+    for (const title of ["Fixture incohérente", "Fixture historique incomplète"]) {
+      await pageCopy.locator("article.project-card").filter({ hasText: title })
+        .getByRole("button", { name: "Ouvrir" }).click();
+      await openAttachments(pageCopy);
+      await pageCopy.getByRole("alert")
+        .getByText(/Référence 2dBrain invalide ou altérée/).waitFor();
+      assert.equal(await pageCopy.getByText("Référence 2dBrain approuvée").count(), 0);
+      // The corrupted link is retained, protected from generic editing.
+      assert.equal(await pageCopy.getByRole("button", { name: "Modifier" }).count(), 0);
+      if (title === "Fixture incohérente") {
+        await previewAndSelect(pageCopy, fixtureProposal(), damaged.project.id);
+        await confirm(pageCopy);
+        await pageCopy.getByRole("alert")
+          .getByText(/déjà une référence différente ou altérée/).waitFor();
+        const still = (await readIndexedDbProjects(pageCopy))
+          .find((doc) => doc.project.id === damaged.project.id);
+        assert.equal(still.attachments.length, damaged.attachments.length);
+      }
+      await pageCopy.getByRole("button", { name: "Retour" }).first().click();
+    }
+
+    process.stdout.write("D1_BROWSER_OK: Chrome isolated, durable approval/status, duplicate/reload, JSON v1 export and restore/copy, damaged/incomplete restored references flagged and preserved, conflicts fail closed.\n");
   } finally {
     if (browser) await browser.close();
     if (vite.exitCode === null) vite.kill();
