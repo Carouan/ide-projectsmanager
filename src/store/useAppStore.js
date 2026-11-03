@@ -2,6 +2,8 @@
 import {
   loadPersistedProjects,
   savePersistedProjects,
+  rememberCancelledKnowledgeReference,
+  clearCancelledKnowledgeReference,
   loadPersistedSettings,
   savePersistedSettings,
   loadPersistedUserProfile,
@@ -214,7 +216,14 @@ function reduceProjectState(state, action) {
       changed = true;
       return { ...doc, attachments };
     });
-    return changed ? { ...state, projects: remaining } : state;
+    return {
+      ...state,
+      projects: changed ? remaining : state.projects,
+      receipt: {
+        ...action.receipt, id: action.id, status: "rollback_pending",
+        failureCode: action.failureCode,
+      },
+    };
   }
   return state;
 }
@@ -257,6 +266,7 @@ export function useAppStore() {
   const [backupSnapshotReview, setBackupSnapshotReview] = useState(null);
   const [currentProjectId, setCurrentProjectId] = useState(null);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [storageError, setStorageError] = useState(null);
 
   useLayoutEffect(() => {
     committedProjectsRef.current = projects;
@@ -266,6 +276,7 @@ export function useAppStore() {
     let isCancelled = false;
 
 async function hydrateStore() {
+  let hydrated = false;
   try {
     const storedProjects = await loadPersistedProjects();
     const storedSettings = await loadPersistedSettings();
@@ -289,6 +300,7 @@ if (isCancelled) return;
 setProjects(loaded);
 setSettings(initialSettings);
 setUserProfile(initialUserProfile);
+hydrated = true;
 
 if (loaded.length > 0) {
   setCurrentProjectId(loaded[0].project.id);
@@ -296,25 +308,14 @@ if (loaded.length > 0) {
 
   } catch (error) {
     console.error("Failed to hydrate store", error);
-
-    const fallbackUserProfile = normalizeUserProfile(
-      await loadPersistedUserProfile()
-    );
-
-    const fallbackSettings = {
-      ...DEFAULT_SETTINGS,
-      ...((await loadPersistedSettings()) || {}),
-    };
-
     if (isCancelled) return;
-    
-    setProjects([]);
-    setSettings(fallbackSettings);
-    setUserProfile(fallbackUserProfile);
-    setCurrentProjectId(null);
+    // Never interpret a failed storage read as an empty portfolio:
+    // hydration must not trigger a destructive save of [].
+    setStorageError(error?.name === "ProjectsStorageConflictError"
+      ? "conflict" : "unavailable");
 
   } finally {
-    if (!isCancelled) {   setIsHydrated(true); }
+    if (!isCancelled && hydrated) { setIsHydrated(true); }
   }
 }
 
@@ -381,30 +382,77 @@ if (loaded.length > 0) {
     const pending = pendingApprovalsRef.current.get(pendingReceipt.id);
     if (!pending) return;
     const finish = (error, status) => {
+      if (pending.abortListener) {
+        pendingReceipt.signal?.removeEventListener("abort", pending.abortListener);
+      }
       pendingApprovalsRef.current.delete(pendingReceipt.id);
       if (error) pending.reject(error);
       else pending.resolve(status);
     };
+    const beginRollback = (failureCode) => {
+      const id = ++approvalSequenceRef.current;
+      pendingApprovalsRef.current.delete(pendingReceipt.id);
+      pendingApprovalsRef.current.set(id, pending);
+      dispatchProjectState({
+        type: "rollbackApproval", id, receipt: pendingReceipt, failureCode,
+      });
+    };
+    if (pendingReceipt.status === "rollback_pending") {
+      save.then(async () => {
+        // Inspect the unmasked durable snapshot; a cancellation tombstone
+        // alone is not evidence that the rollback has been committed.
+        const durable = await loadPersistedProjects({ maskCancelled: false });
+        if (committedReferenceExists(durable, pendingReceipt)) {
+          throw new Error("Cancelled attachment is still in durable storage");
+        }
+        try { clearCancelledKnowledgeReference(pendingReceipt); }
+        catch { /* A lingering tombstone is safe and can be cleaned later. */ }
+        finish(new ReferenceProposalError(pendingReceipt.failureCode));
+      }).catch(() => finish(new ReferenceProposalError("rollback_failed")));
+      return;
+    }
     if (!["added", "duplicate"].includes(pendingReceipt.status)) {
       finish(new ReferenceProposalError(pendingReceipt.status));
       return;
     }
-    save.then(() => {
+    if (pendingReceipt.status === "added" && pendingReceipt.signal) {
+      pending.abortListener = () => {
+        try { rememberCancelledKnowledgeReference(pendingReceipt); }
+        catch (error) { pending.cancellationJournalError = error; }
+      };
+      pendingReceipt.signal.addEventListener("abort", pending.abortListener, { once: true });
+      if (pendingReceipt.signal.aborted) pending.abortListener();
+    }
+    save.then(async () => {
       if (pendingReceipt.signal?.aborted) {
         if (pendingReceipt.status === "added") {
-          dispatchProjectState({ type: "rollbackApproval", receipt: pendingReceipt });
+          beginRollback("approval_cancelled");
+          return;
         }
         finish(new ReferenceProposalError("approval_cancelled"));
         return;
       }
-      if (!committedReferenceExists(committedProjectsRef.current, pendingReceipt)) {
+      // A successful write alone is insufficient: reload from the chosen
+      // durable source to verify that this exact reference can be recovered.
+      const durable = await loadPersistedProjects();
+      if (pendingReceipt.signal?.aborted) {
+        if (pendingReceipt.status === "added") {
+          beginRollback("approval_cancelled");
+          return;
+        }
+        finish(new ReferenceProposalError("approval_cancelled"));
+        return;
+      }
+      if (!committedReferenceExists(durable, pendingReceipt)
+          || !committedReferenceExists(committedProjectsRef.current, pendingReceipt)) {
         finish(new ReferenceProposalError("reference_conflict"));
         return;
       }
       finish(null, pendingReceipt.status);
     }).catch(() => {
       if (pendingReceipt.status === "added") {
-        dispatchProjectState({ type: "rollbackApproval", receipt: pendingReceipt });
+        beginRollback(pendingReceipt.signal?.aborted ? "approval_cancelled" : "persistence_failed");
+        return;
       }
       finish(new ReferenceProposalError("persistence_failed"));
     });
@@ -1554,6 +1602,7 @@ if (loaded.length > 0) {
 
   return {
     projects,
+    storageError,
     settings,
     userProfile,
     backupFolderStatus,

@@ -202,4 +202,24 @@ describe("C1 explicit approval UI", () => {
     unblock();
     await waitFor(() => expect(screen.queryByText(/Référence enregistrée dans les pièces jointes/)).toBeNull());
   });
+
+  it("warns after cancellation if durable rollback fails, even though the preview was cleared", async () => {
+    let unblock;
+    const pending = new Promise((resolve) => { unblock = resolve; });
+    render(<Demo approveOverride={async () => {
+      await pending;
+      throw Object.assign(new Error("rollback rejected"), { code: "rollback_failed" });
+    }} />);
+    await showProposal();
+    fireEvent.change(screen.getByLabelText(/Type de relation/), {
+      target: { value: "research" },
+    });
+    fireEvent.click(screen.getByLabelText(/Je confirme ce lien/));
+    fireEvent.click(screen.getByRole("button", { name: /Confirmer et enregistrer ce lien/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Effacer cet aperçu" }));
+    unblock();
+    await waitFor(() => expect(screen.getByRole("alert").textContent)
+      .toMatch(/Annulation non confirmée sur le stockage/));
+    expect(screen.queryByText(/Référence enregistrée dans les pièces jointes/)).toBeNull();
+  });
 });

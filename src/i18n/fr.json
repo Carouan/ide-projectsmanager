@@ -16,6 +16,7 @@
   "ide2dbrain.errors.invalid_reference": "Référence invalide ou opération interrompue. Aucune nouvelle liaison garantie.",
   "ide2dbrain.errors.approval_cancelled": "Validation interrompue : aucune nouvelle liaison enregistrée.",
   "ide2dbrain.errors.persistence_failed": "L'enregistrement local n'a pas abouti. La référence n'est pas confirmée comme sauvegardée.",
+  "ide2dbrain.errors.rollback_failed": "Annulation non confirmée sur le stockage. N'effectuez pas de nouvel import : vérifiez l'état des références après récupération du stockage.",
   "ide2dbrain.reference.invalid": "Référence 2dBrain invalide ou altérée : données conservées sans les considérer comme approuvées.",
   "ide2dbrain.reference.status": "Référence 2dBrain approuvée",
   "ide2dbrain.reference.category": "Catégorie : {{category}}",

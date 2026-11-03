@@ -12,16 +12,24 @@ const SOURCE_REF = createHash("sha256")
 
 const persistence = vi.hoisted(() => ({
   seed: [],
+  disk: [],
+  loadFailure: false,
   writes: [],
   save: vi.fn(async (projects) => {
     persistence.writes.push(structuredClone(projects));
+    persistence.disk = structuredClone(projects);
   }),
 }));
 
 vi.mock("../src/repositories/storageRepository.js", async (importOriginal) => ({
   ...(await importOriginal()),
-  loadPersistedProjects: async () => structuredClone(persistence.seed),
+  loadPersistedProjects: async () => {
+    if (persistence.loadFailure) throw new Error("Unable to read either project store");
+    return structuredClone(persistence.disk);
+  },
   savePersistedProjects: (projects) => persistence.save(projects),
+  rememberCancelledKnowledgeReference: vi.fn(),
+  clearCancelledKnowledgeReference: vi.fn(),
 }));
 
 function freshProject() {
@@ -86,10 +94,13 @@ function deferred() {
 
 beforeEach(() => {
   persistence.seed = [freshProject()];
+  persistence.disk = structuredClone(persistence.seed);
+  persistence.loadFailure = false;
   persistence.writes = [];
   persistence.save.mockReset();
   persistence.save.mockImplementation(async (projects) => {
     persistence.writes.push(structuredClone(projects));
+    persistence.disk = structuredClone(projects);
   });
   vi.stubGlobal("crypto", webcrypto);
   vi.stubGlobal("TextEncoder", TextEncoder);
@@ -126,6 +137,13 @@ function holdFingerprint() {
 }
 
 describe("actual React store approval receipt", () => {
+  it("never hydrates an empty portfolio or writes it back after a storage conflict", async () => {
+    persistence.loadFailure = true;
+    const ui = renderHook(() => useAppStore());
+    await waitFor(() => expect(ui.result.current.storageError).toBe("unavailable"));
+    expect(ui.result.current.projects).toHaveLength(0);
+    expect(persistence.save).not.toHaveBeenCalled();
+  });
   it("uses the project state committed after async fingerprint verification, not a stale snapshot", async () => {
     const ui = await hydratedStore();
     const { gate, reached } = holdFingerprint();
@@ -172,11 +190,14 @@ describe("actual React store approval receipt", () => {
     const saveGate = deferred();
     persistence.save.mockImplementation((projects) => {
       persistence.writes.push(structuredClone(projects));
-      return projects[0]?.attachments?.length ? saveGate.promise : Promise.resolve();
+      return (async () => {
+        if (projects[0]?.attachments?.length) await saveGate.promise;
+        persistence.disk = structuredClone(projects);
+      })();
     });
     const task = ui.result.current.approveKnowledgeReference(request());
     let finished = false;
-    task.finally(() => { finished = true; });
+    task.then(() => { finished = true; }, () => { finished = true; });
     await waitFor(() => expect(
       persistence.writes.some((list) => list[0]?.attachments?.length === 1)
     ).toBe(true));
@@ -200,7 +221,10 @@ describe("actual React store approval receipt", () => {
     const ui = await hydratedStore();
     const gate = deferred();
     persistence.save.mockImplementation((projects) =>
-      projects[0]?.attachments?.length ? gate.promise : Promise.resolve());
+      (async () => {
+        if (projects[0]?.attachments?.length) await gate.promise;
+        persistence.disk = structuredClone(projects);
+      })());
     const controller = new AbortController();
     const task = ui.result.current.approveKnowledgeReference(request({
       signal: controller.signal,
@@ -210,5 +234,59 @@ describe("actual React store approval receipt", () => {
     gate.resolve();
     await expect(task).rejects.toMatchObject({ code: "approval_cancelled" });
     await waitFor(() => expect(ui.result.current.projects[0].attachments).toHaveLength(0));
+    expect(persistence.disk[0].attachments).toHaveLength(0);
+  });
+
+  it("does not acknowledge cancellation until the rollback has reached durable storage", async () => {
+    const ui = await hydratedStore();
+    const firstWrite = deferred();
+    const rollbackWrite = deferred();
+    let rollbackStarted = false;
+    persistence.save.mockImplementation(async (projects) => {
+      const snapshot = structuredClone(projects);
+      persistence.writes.push(snapshot);
+      if (snapshot[0]?.attachments?.length) await firstWrite.promise;
+      else if (persistence.writes.some((entry) => entry[0]?.attachments?.length)) {
+        rollbackStarted = true;
+        await rollbackWrite.promise;
+      }
+      persistence.disk = snapshot;
+    });
+    const controller = new AbortController();
+    let settled = false;
+    const task = ui.result.current.approveKnowledgeReference(request({ signal: controller.signal }));
+    task.then(() => { settled = true; }, () => { settled = true; });
+    await waitFor(() => expect(ui.result.current.projects[0].attachments).toHaveLength(1));
+    controller.abort();
+    firstWrite.resolve();
+    await waitFor(() => expect(rollbackStarted).toBe(true));
+    expect(settled).toBe(false);
+    expect(persistence.disk[0].attachments).toHaveLength(1,
+      "the cancelled link may have been physically written before rollback");
+    rollbackWrite.resolve();
+    await expect(task).rejects.toMatchObject({ code: "approval_cancelled" });
+    expect(persistence.disk[0].attachments).toHaveLength(0);
+  });
+
+  it("reports rollback_failed instead of an acknowledged cancellation if the rollback cannot persist", async () => {
+    const ui = await hydratedStore();
+    const firstWrite = deferred();
+    persistence.save.mockImplementation(async (projects) => {
+      const snapshot = structuredClone(projects);
+      if (snapshot[0]?.attachments?.length) {
+        await firstWrite.promise;
+        persistence.disk = snapshot;
+      } else if (persistence.disk[0]?.attachments?.length) {
+        throw new Error("Rollback disk failure");
+      }
+    });
+    const controller = new AbortController();
+    const task = ui.result.current.approveKnowledgeReference(request({ signal: controller.signal }));
+    await waitFor(() => expect(ui.result.current.projects[0].attachments).toHaveLength(1));
+    controller.abort();
+    firstWrite.resolve();
+    await expect(task).rejects.toMatchObject({ code: "rollback_failed" });
+    expect(persistence.disk[0].attachments).toHaveLength(1,
+      "never claim cancellation when the durable snapshot still contains the reference");
   });
 });

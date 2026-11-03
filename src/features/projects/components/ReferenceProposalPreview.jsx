@@ -15,7 +15,7 @@ const ERRORS = new Set([
   "invalid_source", "invalid_classification", "invalid_provenance",
   "invalid_approval", "unknown_project", "approval_required",
   "invalid_relation", "stale_proposal", "reference_conflict",
-  "invalid_reference", "persistence_failed", "approval_cancelled",
+  "invalid_reference", "persistence_failed", "approval_cancelled", "rollback_failed",
 ]);
 
 export default function ReferenceProposalPreview({
@@ -115,7 +115,12 @@ export default function ReferenceProposalPreview({
       if (approval.signal.aborted || activeRequest !== requestId.current) return;
       setOutcome(status);
     } catch (error) {
-      if (approval.signal.aborted || activeRequest !== requestId.current) return;
+      if (approval.signal.aborted || activeRequest !== requestId.current) {
+        // A cancelled write that could not be durably rolled back is a real
+        // warning even after the user has dismissed the original preview.
+        if (error?.code === "rollback_failed") setErrorCode("rollback_failed");
+        return;
+      }
       setErrorCode(ERRORS.has(error?.code) ? error.code : "invalid_reference");
       setOutcome(null);
     } finally {

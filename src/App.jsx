@@ -15,6 +15,7 @@ import { useRepositorySnapshot } from "./features/projects/hooks/useRepositorySn
 export default function App() {
   const {
     projects,
+    storageError,
     currentProject,
     createProject,
     importPublicRepositoryProject,
@@ -201,8 +202,19 @@ export default function App() {
   return (
     <I18nProvider locale={settings?.language}>
       <ThemeController preference={settings?.theme} accessibility={settings} />
-      <AppShell main={activeScreen} rightPanel={rightPanel} />
-      <PwaPrompt />
+      {storageError ? (
+        <main role="alert" className="panel" style={{ margin: "2rem auto", maxWidth: "48rem" }}>
+          <h2>{settings?.language === "en" ? "Project storage unavailable" : "Stockage des projets indisponible"}</h2>
+          <p>{settings?.language === "en"
+            ? "Project copies are inconsistent or unavailable. Automatic writes are suspended to protect your data. Restore access to storage and reload the page; do not create or restore projects until the conflict is resolved."
+            : "Les copies des projets sont divergentes ou inaccessibles. Les écritures automatiques sont suspendues pour protéger vos données. Rétablissez l’accès au stockage, puis rechargez la page ; ne créez ni ne restaurez de projets avant résolution du conflit."}</p>
+        </main>
+      ) : (
+        <>
+          <AppShell main={activeScreen} rightPanel={rightPanel} />
+          <PwaPrompt />
+        </>
+      )}
     </I18nProvider>
   );
 }

@@ -16,6 +16,7 @@
   "ide2dbrain.errors.invalid_reference": "Invalid reference or interrupted operation. No new link is guaranteed.",
   "ide2dbrain.errors.approval_cancelled": "Approval cancelled: no new link was saved.",
   "ide2dbrain.errors.persistence_failed": "Local persistence failed. The reference has not been confirmed as saved.",
+  "ide2dbrain.errors.rollback_failed": "Cancellation was not confirmed on disk. Do not import again; verify the references after storage recovers.",
   "ide2dbrain.reference.invalid": "Invalid or altered 2dBrain reference: data kept but not treated as approved.",
   "ide2dbrain.reference.status": "Approved 2dBrain reference",
   "ide2dbrain.reference.category": "Category: {{category}}",
